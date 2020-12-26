@@ -280,7 +280,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const addMediumZoom = () => {
     const zoom = mediumZoom(document.querySelectorAll('#article-container :not(a)>img'))
     zoom.on('open', e => {
-      const photoBg = $(document.documentElement).attr('data-theme') === 'dark' ? '#121212' : '#fff'
+      const photoBg = document.documentElement.getAttribute('data-theme') === 'dark' ? '#121212' : '#fff'
       zoom.update({
         background: photoBg
       })
@@ -288,15 +288,17 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   const jqLoadAndRun = () => {
-    const isFancybox = GLOBAL_CONFIG.lightbox === 'fancybox'
-    const $fancyboxEle = isFancybox ? document.querySelectorAll('#article-container :not(a):not(.gallery-group) > img, #article-container > img') : null
+    const $fancyboxEle = GLOBAL_CONFIG.lightbox === 'fancybox'
+      ? document.querySelectorAll('#article-container :not(a):not(.gallery-group) > img, #article-container > img') 
+      : []
+    const fbLengthNoZero = $fancyboxEle.length > 0
     const $jgEle = document.querySelectorAll('#article-container .justified-gallery')
-    const jgEleLength = $jgEle.length
+    const jgLengthNoZero = $jgEle.length > 0
 
-    if (jgEleLength || $fancyboxEle !== null) {
+    if (jgLengthNoZero || fbLengthNoZero) {
       btf.isJqueryLoad(() => {
-        jgEleLength && runJustifiedGallery($jgEle)
-        isFancybox && addFancybox($fancyboxEle)
+        jgLengthNoZero && runJustifiedGallery($jgEle)
+        fbLengthNoZero && addFancybox($fancyboxEle)
       })
     }
   }
@@ -488,7 +490,20 @@ document.addEventListener('DOMContentLoaded', function () {
  */
   const rightSideFn = {
     switchReadMode: () => { // read-mode
-      document.body.classList.toggle('read-mode')
+      const $body = document.body
+      $body.classList.add('read-mode')
+      const newEle = document.createElement('button')
+      newEle.type = 'button'
+      newEle.className = 'fas fa-sign-out-alt exit-readmode'
+      $body.appendChild(newEle)
+
+      function clickFn () {
+        $body.classList.remove('read-mode')
+        newEle.remove()
+        newEle.removeEventListener('click', clickFn)
+      }
+
+      newEle.addEventListener('click', clickFn)
     },
     switchDarkMode: () => { // Switch Between Light And Dark Mode
       const nowMode = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light'

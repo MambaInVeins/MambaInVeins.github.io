@@ -1,0 +1,362 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>python faker库生成虚拟数据 | MambaInVeins Blog</title><meta name="keywords" content="python"><meta name="author" content="MambaInVeins"><meta name="copyright" content="MambaInVeins"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta name="description" content="python faker库生成虚拟数据简介在软件需求、开发、测试过程中，有时候需要使用一些测试数据，针对这种情况，我们一般要么使用已有的系统数据，要么需要手动制造一些数据。由于现在的业务系统数据多种多样，千变万化。在手动制造数据的过程中，可能需要花费大量精力和工作量，此项工作既繁复又容易出错，而且，部分数据的手造工作无法保障：比如UUID类数据、MD5、SHA加密类数据等。 有一个Python包f">
+<meta property="og:type" content="article">
+<meta property="og:title" content="python faker库生成虚拟数据">
+<meta property="og:url" content="http://mambainveins.gitee.io/mambainveins/2020/05/19/2020-05-19-python_faker_virtual_data/index.html">
+<meta property="og:site_name" content="MambaInVeins Blog">
+<meta property="og:description" content="python faker库生成虚拟数据简介在软件需求、开发、测试过程中，有时候需要使用一些测试数据，针对这种情况，我们一般要么使用已有的系统数据，要么需要手动制造一些数据。由于现在的业务系统数据多种多样，千变万化。在手动制造数据的过程中，可能需要花费大量精力和工作量，此项工作既繁复又容易出错，而且，部分数据的手造工作无法保障：比如UUID类数据、MD5、SHA加密类数据等。 有一个Python包f">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png">
+<meta property="article:published_time" content="2020-05-18T16:00:00.000Z">
+<meta property="article:modified_time" content="2020-05-24T13:47:41.992Z">
+<meta property="article:author" content="MambaInVeins">
+<meta property="article:tag" content="python">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://mambainveins.gitee.io/mambainveins/2020/05/19/2020-05-19-python_faker_virtual_data/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="preconnect" href="//zz.bdstatic.com"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":50,"languages":{"author":"作者: MambaInVeins","link":"链接: ","source":"来源: MambaInVeins Blog","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+};
+
+var saveToLocal = {
+  set: function setWithExpiry(key, value, ttl) {
+    const now = new Date()
+    const expiryDay = ttl * 86400000
+    const item = {
+      value: value,
+      expiry: now.getTime() + expiryDay,
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+  },
+
+  get: function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+
+    if (!itemStr) {
+      return undefined
+    }
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key)
+      return undefined
+    }
+    return item.value
+  }
+}
+
+// https://stackoverflow.com/questions/16839698/jquery-getscript-alternative-in-native-javascript
+const getScript = url => new Promise((resolve, reject) => {
+  const script = document.createElement('script')
+  script.src = url
+  script.async = true
+  script.onerror = reject
+  script.onload = script.onreadystatechange = function() {
+    const loadState = this.readyState
+    if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+    script.onload = script.onreadystatechange = null
+    resolve()
+  }
+  document.head.appendChild(script)
+})</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2020-05-24 21:47:41'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(function () {  window.activateDarkMode = function () {
+    document.documentElement.setAttribute('data-theme', 'dark')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+    }
+  }
+  window.activateLightMode = function () {
+    document.documentElement.setAttribute('data-theme', 'light')
+   if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+    }
+  }
+  const autoChangeMode = 'false'
+  const t = saveToLocal.get('theme')
+  if (autoChangeMode === '1') {
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+    const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+    const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+    if (t === undefined) {
+      if (isLightMode) activateLightMode()
+      else if (isDarkMode) activateDarkMode()
+      else if (isNotSpecified || hasNoSupport) {
+        const now = new Date()
+        const hour = now.getHours()
+        const isNight = hour <= 6 || hour >= 18
+        isNight ? activateDarkMode() : activateLightMode()
+      }
+      window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+        if (saveToLocal.get('theme') === undefined) {
+          e.matches ? activateDarkMode() : activateLightMode()
+        }
+      })
+    } else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else if (autoChangeMode === '2') {
+    const now = new Date()
+    const hour = now.getHours()
+    const isNight = hour <= 6 || hour >= 18
+    if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+    else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else {
+    if (t === 'dark') activateDarkMode()
+    else if (t === 'light') activateLightMode()
+  }const asideStatus = saveToLocal.get('aside-status')
+if (asideStatus !== undefined) {
+   if (asideStatus === 'hide') {
+     document.documentElement.classList.add('hide-aside')
+   } else {
+     document.documentElement.classList.remove('hide-aside')
+   }
+}const fontSizeVal = saveToLocal.get('global-font-size')
+if (fontSizeVal !== undefined) {
+  document.documentElement.style.setProperty('--global-font-size', fontSizeVal + 'px')
+}})()</script><meta name="generator" content="Hexo 5.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="/img/index.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">234</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">102</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">30</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 娱乐</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/images/"><i class="fa-fw fas fa-images"></i><span> 图集</span></a></li><li><a class="site-page" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/contact"><i class="fa-fw fas fa-comments"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/moment"><i class="fa-fw fas fa-comment-alt"></i><span> 碎语</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友人帐</span></a></div><div class="menus_item"><a class="site-page" href="/box"><i class="fa-fw fas fa-box"></i><span> 工具箱</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">MambaInVeins Blog</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 娱乐</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/images/"><i class="fa-fw fas fa-images"></i><span> 图集</span></a></li><li><a class="site-page" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/contact"><i class="fa-fw fas fa-comments"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/moment"><i class="fa-fw fas fa-comment-alt"></i><span> 碎语</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友人帐</span></a></div><div class="menus_item"><a class="site-page" href="/box"><i class="fa-fw fas fa-box"></i><span> 工具箱</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">python faker库生成虚拟数据</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2020-05-18T16:00:00.000Z" title="发表于 2020-05-19 00:00:00">2020-05-19</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2020-05-24T13:47:41.992Z" title="更新于 2020-05-24 21:47:41">2020-05-24</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">1.9k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>7分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="python-faker库生成虚拟数据"><a href="#python-faker库生成虚拟数据" class="headerlink" title="python faker库生成虚拟数据"></a>python faker库生成虚拟数据</h2><h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>在软件需求、开发、测试过程中，有时候需要使用一些测试数据，针对这种情况，我们一般要么使用已有的系统数据，要么需要手动制造一些数据。由于现在的业务系统数据多种多样，千变万化。在手动制造数据的过程中，可能需要花费大量精力和工作量，此项工作既繁复又容易出错，而且，部分数据的手造工作无法保障：比如UUID类数据、MD5、SHA加密类数据等。</p>
+<p>有一个Python包faker能够完成这方面的工作。</p>
+<p> faker是一个Python包，开源的GITHUB项目，主要用来创建伪数据，使用Faker包，无需再手动生成或者手写随机数来生成数据，只需要调用Faker提供的方法，即可完成数据的生成。</p>
+<p> 项目地址：<a target="_blank" rel="noopener" href="https://github.com/joke2k/faker">https://github.com/joke2k/faker</a></p>
+<p> 官方文档：<a target="_blank" rel="noopener" href="https://faker.readthedocs.io/en/master/">https://faker.readthedocs.io/en/master/</a></p>
+<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><pre><code>pip install faker</code></pre>
+<h3 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h3><p>导入</p>
+<pre><code>from faker import Faker</code></pre>
+<p>选择语言</p>
+<pre><code>fake = Faker() # 默认英文
+fake = Faker(&#39;zh_CN&#39;)</code></pre>
+<p>常见语言</p>
+<pre><code>简体中文：zh_CN
+繁体中文：zh_TW
+美国英文：en_US
+英国英文：en_GB
+德文：de_DE
+日文：ja_JP
+韩文：ko_KR
+法文：fr_FR</code></pre>
+<p>常用方法</p>
+<p>速查表</p>
+<p>地理信息伪数据</p>
+<pre><code>fake.city_suffix()：市，县
+fake.city_name()：市名称如东莞（注意没有&#39;市&#39;）
+fake.country()：国家
+fake.country_code()：国家编码
+fake.district()：区
+fake.geo_coordinate()：地理坐标
+fake.latitude()：地理坐标(纬度)
+fake.longitude()：地理坐标(经度)
+fake.postcode()：邮编
+fake.province()：省份 (zh_TW没有此方法)
+fake.address()：详细地址如&#39;天津市惠州县龙潭郭街V座 193516&#39;
+fake.street_address()：街道地址
+fake.street_name()：街道名
+fake.street_suffix()：街、路
+fake.building_number()：&#39;b座&#39;</code></pre>
+<p>基础信息伪数据</p>
+<pre><code>fake.ssn()：生成身份证号
+fake.bs()：随机公司服务名
+fake.company()：随机公司名（长）
+fake.company_prefix()：随机公司名（短）
+fake.company_suffix()：公司性质如&#39;信息有限公司&#39;
+fake.credit_card_expire(start=&#39;now&#39;, end=&#39;+10y&#39;, date_format=&#39;%m/%y&#39;)：随机信用卡到期日如&#39;03/30&#39;
+fake.credit_card_full()：生成完整信用卡信息
+fake.credit_card_number(card_type=None)：信用卡号如&#39;4634641497776241478&#39;
+fake.credit_card_provider()：信用卡类型
+fake.credit_card_security_code()：信用卡安全码
+fake.job()：随机职位
+fake.first_name()：
+fake.first_name_female()：女性名
+fake.first_name_male()：男性名
+fake.first_romanized_name()：罗马名
+fake.last_name()：
+fake.last_name_female()：女姓
+fake.last_name_male()：男姓
+fake.last_romanized_name()：
+fake.name()：随机生成全名
+fake.name_female()：男性全名
+fake.name_male()：女性全名
+fake.romanized_name()：罗马名
+fake.msisdn()：移动台国际用户识别码，即移动用户的ISDN号码
+fake.phone_number()：随机生成手机号
+fake.phonenumber_prefix()：随机生成手机号段如&#39;139&#39;</code></pre>
+<p>个人账户信息伪数据</p>
+<pre><code>fake.ascii_company_email()：随机ASCII公司邮箱名
+fake.ascii_email()：随机ASCII邮箱
+fake.ascii_free_email()：
+fake.ascii_safe_email()：
+fake.company_email()：
+fake.email()：
+fake.free_email()：
+fake.free_email_domain()：
+fake.safe_email()：安全邮箱</code></pre>
+<p>网络基础信息伪数据</p>
+<pre><code>fake.domain_name()：生成域名
+fake.domain_word()：域词(即，不包含后缀)
+fake.ipv4()：随机IP4地址
+fake.ipv6()：随机IP6地址
+fake.mac_address()：随机MAC地址
+fake.tld()：网址域名后缀(.com,.net.cn,等等，不包括.)
+fake.uri()：随机URI地址
+fake.uri_extension()：网址文件后缀
+fake.uri_page()：网址文件（不包含后缀）
+fake.uri_path()：网址文件路径（不包含文件名）
+fake.url()：随机URL地址
+fake.user_name()：随机用户名
+fake.image_url()：随机URL地址</code></pre>
+<p>浏览器信息伪数据</p>
+<pre><code>fake.chrome()：随机生成Chrome的浏览器user_agent信息
+fake.firefox()：随机生成FireFox的浏览器user_agent信息
+fake.internet_explorer()：随机生成IE的浏览器user_agent信息
+fake.opera()：随机生成Opera的浏览器user_agent信息
+fake.safari()：随机生成Safari的浏览器user_agent信息
+fake.linux_platform_token()：随机Linux信息
+fake.user_agent()：随机user_agent信息</code></pre>
+<p>文件信息伪数据</p>
+<pre><code>fake.file_extension()：随机文件扩展名如&#39;avi&#39;，&#39;txt&#39;
+fake.file_name()：随机文件名（包含扩展名，不包含路径）
+fake.file_path()：随机文件路径（包含文件名，扩展名）
+fake.mime_type()：随机mime Type</code></pre>
+<p>数字伪数据</p>
+<pre><code>fake.numerify()：三位随机数字
+fake.random_digit()：0~9随机数
+fake.random_digit_not_null()：1~9的随机数
+fake.random_int()：随机数字，默认0~9999，可以通过设置min,max来设置
+fake.random_number()：随机数字，参数digits设置生成的数字位数
+fake.pyfloat()：left_digits=5 #生成的整数位数,right_digits=2 #生成的小数位数, positive=True #是否只有正数
+fake.pyint()：随机Int数字（参考random_int()参数）
+fake.pydecimal()：随机Decimal数字（参考pyfloat参数）</code></pre>
+<p>文本加密伪数据</p>
+<pre><code>fake.pystr()：随机字符串
+fake.random_element()：随机字母
+fake.random_letter()：随机字母
+fake.paragraph()：随机生成一个段落
+fake.paragraphs()：随机生成多个段落，通过参数nb来控制段落数，返回数组
+fake.sentence()：随机生成一句话
+fake.sentences()：随机生成多句话，与段落类似
+fake.text()：随机生成一篇文章（不要幻想着人工智能了，至今没完全看懂一句话是什么意思）
+fake.word()：随机生成词语
+fake.words()：随机生成多个词语，用法与段落，句子，类似
+fake.binary()：随机生成二进制编码
+fake.boolean()：True/False
+fake.language_code()：随机生成两位语言编码
+fake.locale()：随机生成语言/国际 信息
+fake.md5()：随机生成MD5
+fake.null_boolean()：NULL/True/False
+fake.password()：随机生成密码,可选参数：length：密码长度；special_chars：是否能使用特殊字符；digits：是否包含数字；upper_case：是否包含大写字母；lower_case：是否包含小写字母
+fake.sha1()：随机SHA1
+fake.sha256()：随机SHA256
+fake.uuid4()：随机UUID</code></pre>
+<p>时间信息伪数据</p>
+<pre><code>fake.am_pm()：AM/PM
+fake.century()：随机世纪
+fake.date(pattern=&#39;%Y-%m-%d&#39;, end_datetime=None)：随机日期如&#39;1993-08-03&#39;
+fake.date_between(start_date=&#39;-30y&#39;, end_date=&#39;today&#39;)：随机生成指定范围内日期，参数：start_date，end_date取值：具体日期或者today,-30d,-30y类似如datetime.date(2000, 7, 26)
+fake.date_between_dates()：随机生成指定范围内日期，用法同上如datetime.date(2020, 3, 18)
+fake.date_object()：随机生产从1970-1-1到指定日期的随机日期。
+fake.date_this_month()：生成这个月的时间如datetime.date(2020, 3, 3)
+fake.date_this_year()：生成这个年的时间如datetime.date(2020, 1, 17)
+fake.date_time()：随机生成指定时间（1970年1月1日至今）如datetime.datetime(406, 3, 4, 19, 3, 14)
+fake.date_time_ad()：生成公元1年到现在的随机时间
+fake.date_time_between()：用法同dates
+fake.future_date()：未来日期
+fake.future_datetime()：未来时间
+fake.month()：随机月份
+fake.month_name()：随机月份（英文）
+fake.past_date()：随机生成已经过去的日期
+fake.past_datetime()：随机生成已经过去的时间
+fake.time()：随机24小时时间
+fake.timedelta()：随机获取时间差
+fake.time_object()：随机24小时时间，time对象
+fake.time_series()：随机TimeSeries对象
+fake.timezone()：随机时区
+fake.unix_time()：随机Unix时间
+fake.year()：随机年份如&#39;1990&#39;
+fake.day_of_week()：当前周几如 &#39;Monday&#39;
+fake.iso8601(tzinfo=None, end_datetime=None) 当前时区时间如&#39;2007-07-24T06:05:39&#39;</code></pre>
+<p>其他伪数据</p>
+<pre><code>fake.currency_code()：货币编码
+fake.color_name()：随机颜色名
+fake.hex_color()：随机HEX颜色如&#39;#80d09a&#39;
+fake.rgb_color()：随机RGB颜色如&#39;198,177,26&#39;
+fake.safe_color_name()：随机安全色名
+fake.safe_hex_color()：随机安全HEX颜色如&#39;#111100&#39;
+fake.isbn10()：随机ISBN（10位）
+fake.isbn13()：随机ISBN（13位）
+fake.lexify()：替换所有问号（“？”）带有随机字母的事件。
+fake.pyiterable()：
+fake.pylist()：随机生成list
+fake.pyset()：随机生成集合
+fake.pystruct()：
+fake.pytuple()：
+fake.pydict()：
+fake.profile()：随机生成档案信息
+fake.simple_profile()：随机生成简单档案信息
+fake.dsv(dialect=&#39;faker-csv&#39;, header=None, data_columns=(&#39;&#123;&#123;name&#125;&#125;&#39;, &#39;&#123;&#123;address&#125;&#125;&#39;), num_rows=10, include_row_ids=False, **fmtparams)：随机文件内容如(&#39;&quot;赵彬&quot;,&quot;湖南省秀梅县孝南南昌路Q座 268638&quot;\r\n&#39;</code></pre>
+<p>本文的速查方法是基于’zh_CN’其它语言可能部分方法不适用</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">MambaInVeins</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://mambainveins.gitee.io/mambainveins/2020/05/19/2020-05-19-python_faker_virtual_data/">http://mambainveins.gitee.io/mambainveins/2020/05/19/2020-05-19-python_faker_virtual_data/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://mambainveins.gitee.io/mambainveins" target="_blank">MambaInVeins Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/python/">python</a></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" data-sites="wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i> 打赏<div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/img/wechat.jpg" target="_blank"><img class="post-qr-code-img" src="/img/wechat.jpg" alt="wechat"/></a><div class="post-qr-code-desc">wechat</div></li><li class="reward-item"><a href="/img/alipay.jpg" target="_blank"><img class="post-qr-code-img" src="/img/alipay.jpg" alt="alipay"/></a><div class="post-qr-code-desc">alipay</div></li></ul></div></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2020/05/19/2020-05-19-import_alibaba_icon_in_frontend/"><img class="prev-cover" src="https://cdn.jsdelivr.net/gh/jerryc127/CDN/Photo/photo.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">前端引用阿里巴巴矢量图标库</div></div></a></div><div class="next-post pull-right"><a href="/2020/05/15/2020-05-15-flask_web_app_dev_process/"><img class="next-cover" src="https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Flask Web程序开发流程</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> 相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2020/03/24/2020-03-24-Text_extraction_third-party_library_goose/" title="正文提取第三方库goose"><img class="cover" src="https://cdn.jsdelivr.net/gh/jerryc127/CDN/Photo/photo.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-03-24</div><div class="title">正文提取第三方库goose</div></div></a></div><div><a href="/2020/03/25/2020-03-25-Universal_extractor_for_news_webpage_text_GeneralNewsExtractor/" title="新闻网页正文通用抽取器GeneralNewsExtractor"><img class="cover" src="https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-03-25</div><div class="title">新闻网页正文通用抽取器GeneralNewsExtractor</div></div></a></div><div><a href="/2020/03/28/2020-03-28-scrapy_configfile_settings/" title="scrapy配置文件settings"><img class="cover" src="https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-03-28</div><div class="title">scrapy配置文件settings</div></div></a></div><div><a href="/2020/03/29/2020-03-29-scrapy_start_multiple_crawlers_simultaneously/" title="scrapy同时启动多个爬虫"><img class="cover" src="https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-03-29</div><div class="title">scrapy同时启动多个爬虫</div></div></a></div><div><a href="/2020/03/30/2020-03-30-scrapy_reads_content_in_configfile_setting_py/" title="scrapy读取配置文件setting.py中内容"><img class="cover" src="https://cdn.jsdelivr.net/gh/jerryc127/CDN/Photo/photo.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-03-30</div><div class="title">scrapy读取配置文件setting.py中内容</div></div></a></div><div><a href="/2020/04/01/2020-04-01-python_translate_google_youdao_tecent/" title="python 利用Google、有道、腾讯制作翻译功能"><img class="cover" src="https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-04-01</div><div class="title">python 利用Google、有道、腾讯制作翻译功能</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#python-faker%E5%BA%93%E7%94%9F%E6%88%90%E8%99%9A%E6%8B%9F%E6%95%B0%E6%8D%AE"><span class="toc-number">1.</span> <span class="toc-text">python faker库生成虚拟数据</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AE%80%E4%BB%8B"><span class="toc-number">1.1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85"><span class="toc-number">1.2.</span> <span class="toc-text">安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8"><span class="toc-number">1.3.</span> <span class="toc-text">使用</span></a></li></ol></li></ol></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 By MambaInVeins</div><div class="footer_custom_text"><a href="http://mambainveins.gitee.io/">Mamba Never Out</a>!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="font-plus" type="button" title="放大字体"><i class="fas fa-plus"></i></button><button id="font-minus" type="button" title="缩小字体"><i class="fas fa-minus"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="false" data-click="true"></script><script>(function(){
+  const bp = document.createElement('script');
+  const curProtocol = window.location.protocol.split(':')[0];
+  if (curProtocol === 'https') {
+    bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+  }
+  else{
+    bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+  }
+  bp.dataset.pjax = ''
+  const s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(bp, s);
+})()</script></div></body></html>

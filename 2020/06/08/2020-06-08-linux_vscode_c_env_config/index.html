@@ -1,0 +1,256 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>linux 中 VSCode C++环境配置 | MambaInVeins Blog</title><meta name="keywords" content="vscode"><meta name="author" content="MambaInVeins"><meta name="copyright" content="MambaInVeins"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta name="description" content="VS code本身是一个编辑器，所以如果需要调试等功能需要自己安装一些插件，并且配置相关的json文件。 linux 环境下，g++和clang都可以作为C++的编译器，我这里选择使用的是clang。 首先是插件选择： (1) C&#x2F;C++ 微软自带的C&#x2F;C++插件。 (2) C&#x2F;C++ Clang Command Adapter：提供静态检测（Lint） (3) Code Runner：右键即可编">
+<meta property="og:type" content="article">
+<meta property="og:title" content="linux 中 VSCode C++环境配置">
+<meta property="og:url" content="http://mambainveins.gitee.io/mambainveins/2020/06/08/2020-06-08-linux_vscode_c_env_config/index.html">
+<meta property="og:site_name" content="MambaInVeins Blog">
+<meta property="og:description" content="VS code本身是一个编辑器，所以如果需要调试等功能需要自己安装一些插件，并且配置相关的json文件。 linux 环境下，g++和clang都可以作为C++的编译器，我这里选择使用的是clang。 首先是插件选择： (1) C&#x2F;C++ 微软自带的C&#x2F;C++插件。 (2) C&#x2F;C++ Clang Command Adapter：提供静态检测（Lint） (3) Code Runner：右键即可编">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/jerryc127/CDN/Photo/photo.jpg">
+<meta property="article:published_time" content="2020-06-07T16:00:00.000Z">
+<meta property="article:modified_time" content="2020-06-09T16:42:28.675Z">
+<meta property="article:author" content="MambaInVeins">
+<meta property="article:tag" content="vscode">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/jerryc127/CDN/Photo/photo.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://mambainveins.gitee.io/mambainveins/2020/06/08/2020-06-08-linux_vscode_c_env_config/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="preconnect" href="//zz.bdstatic.com"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":50,"languages":{"author":"作者: MambaInVeins","link":"链接: ","source":"来源: MambaInVeins Blog","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+};
+
+var saveToLocal = {
+  set: function setWithExpiry(key, value, ttl) {
+    const now = new Date()
+    const expiryDay = ttl * 86400000
+    const item = {
+      value: value,
+      expiry: now.getTime() + expiryDay,
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+  },
+
+  get: function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+
+    if (!itemStr) {
+      return undefined
+    }
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key)
+      return undefined
+    }
+    return item.value
+  }
+}
+
+// https://stackoverflow.com/questions/16839698/jquery-getscript-alternative-in-native-javascript
+const getScript = url => new Promise((resolve, reject) => {
+  const script = document.createElement('script')
+  script.src = url
+  script.async = true
+  script.onerror = reject
+  script.onload = script.onreadystatechange = function() {
+    const loadState = this.readyState
+    if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+    script.onload = script.onreadystatechange = null
+    resolve()
+  }
+  document.head.appendChild(script)
+})</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: false,
+  postUpdate: '2020-06-10 00:42:28'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(function () {  window.activateDarkMode = function () {
+    document.documentElement.setAttribute('data-theme', 'dark')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+    }
+  }
+  window.activateLightMode = function () {
+    document.documentElement.setAttribute('data-theme', 'light')
+   if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+    }
+  }
+  const autoChangeMode = 'false'
+  const t = saveToLocal.get('theme')
+  if (autoChangeMode === '1') {
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+    const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+    const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+    if (t === undefined) {
+      if (isLightMode) activateLightMode()
+      else if (isDarkMode) activateDarkMode()
+      else if (isNotSpecified || hasNoSupport) {
+        const now = new Date()
+        const hour = now.getHours()
+        const isNight = hour <= 6 || hour >= 18
+        isNight ? activateDarkMode() : activateLightMode()
+      }
+      window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+        if (saveToLocal.get('theme') === undefined) {
+          e.matches ? activateDarkMode() : activateLightMode()
+        }
+      })
+    } else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else if (autoChangeMode === '2') {
+    const now = new Date()
+    const hour = now.getHours()
+    const isNight = hour <= 6 || hour >= 18
+    if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+    else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else {
+    if (t === 'dark') activateDarkMode()
+    else if (t === 'light') activateLightMode()
+  }const asideStatus = saveToLocal.get('aside-status')
+if (asideStatus !== undefined) {
+   if (asideStatus === 'hide') {
+     document.documentElement.classList.add('hide-aside')
+   } else {
+     document.documentElement.classList.remove('hide-aside')
+   }
+}const fontSizeVal = saveToLocal.get('global-font-size')
+if (fontSizeVal !== undefined) {
+  document.documentElement.style.setProperty('--global-font-size', fontSizeVal + 'px')
+}})()</script><meta name="generator" content="Hexo 5.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="/img/index.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">234</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">102</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">30</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 娱乐</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/images/"><i class="fa-fw fas fa-images"></i><span> 图集</span></a></li><li><a class="site-page" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/contact"><i class="fa-fw fas fa-comments"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/moment"><i class="fa-fw fas fa-comment-alt"></i><span> 碎语</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友人帐</span></a></div><div class="menus_item"><a class="site-page" href="/box"><i class="fa-fw fas fa-box"></i><span> 工具箱</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://cdn.jsdelivr.net/gh/jerryc127/CDN/Photo/photo.jpg)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">MambaInVeins Blog</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 娱乐</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/images/"><i class="fa-fw fas fa-images"></i><span> 图集</span></a></li><li><a class="site-page" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/contact"><i class="fa-fw fas fa-comments"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/moment"><i class="fa-fw fas fa-comment-alt"></i><span> 碎语</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友人帐</span></a></div><div class="menus_item"><a class="site-page" href="/box"><i class="fa-fw fas fa-box"></i><span> 工具箱</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">linux 中 VSCode C++环境配置</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2020-06-07T16:00:00.000Z" title="发表于 2020-06-08 00:00:00">2020-06-08</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2020-06-09T16:42:28.675Z" title="更新于 2020-06-10 00:42:28">2020-06-10</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/">环境配置</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">1.1k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>4分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>VS code本身是一个编辑器，所以如果需要调试等功能需要自己安装一些插件，并且配置相关的json文件。</p>
+<p>linux 环境下，g++和clang都可以作为C++的编译器，我这里选择使用的是clang。</p>
+<p>首先是插件选择：</p>
+<p>(1) C/C++ 微软自带的C/C++插件。</p>
+<p>(2) C/C++ Clang Command Adapter：提供静态检测（Lint）</p>
+<p>(3) Code Runner：右键即可编译运行单文件</p>
+<p>(4) Bracket Pair Colorizer：彩虹花括号</p>
+<p>(5) Include Autocomplete：提供头文件名字的补全</p>
+<p>以上插件下载完之后，在文件工作区(workspace) 新建一个文件夹作为你项目的根目录文件，然后新建一个”.vscode” 文件，该文件夹存放相关json的配置文件，其中launch.json 和tasks.json 两个配置文件是必须的，除了这两个之外，还可以加上setting.json。如果setting.json不加设置，就会使用设置，基本上满足使用了。</p>
+<p>关于，launch.json的配置为：</p>
+<pre><code>// https://github.com/Microsoft/vscode-cpptools/blob/master/launch.md
+&#123;
+    &quot;version&quot;: &quot;0.2.0&quot;,
+    &quot;configurations&quot;: [
+        &#123;
+            &quot;name&quot;: &quot;(gdb) Launch&quot;, // 配置名称，将会在启动配置的下拉菜单中显示
+            &quot;type&quot;: &quot;cppdbg&quot;, // 配置类型，这里只能为cppdbg
+            &quot;request&quot;: &quot;launch&quot;, // 请求配置类型，可以为launch（启动）或attach（附加）
+            &quot;program&quot;: &quot;$&#123;fileDirname&#125;/$&#123;fileBasenameNoExtension&#125;.out&quot;, // 将要进行调试的程序的路径
+            &quot;args&quot;: [], // 程序调试时传递给程序的命令行参数，一般设为空即可
+            &quot;stopAtEntry&quot;: false, // 设为true时程序将暂停在程序入口处，我一般设置为true
+            &quot;cwd&quot;: &quot;$&#123;workspaceFolder&#125;&quot;, // 调试程序时的工作目录
+            &quot;environment&quot;: [], // （环境变量？）
+            &quot;externalConsole&quot;: true, // 调试时是否显示控制台窗口，一般设置为true显示控制台
+            &quot;internalConsoleOptions&quot;: &quot;neverOpen&quot;, // 如果不设为neverOpen，调试时会跳到“调试控制台”选项卡，你应该不需要对gdb手动输命令吧？
+            &quot;MIMode&quot;: &quot;gdb&quot;, // 指定连接的调试器，可以为gdb或lldb。但目前lldb在windows下没有预编译好的版本。
+            // &quot;miDebuggerPath&quot;: &quot;gdb.exe&quot;, // 调试器路径，Windows下后缀不能省略，Linux下则去掉
+            &quot;setupCommands&quot;: [ // 用处未知，模板如此
+                &#123;
+                    &quot;description&quot;: &quot;Enable pretty-printing for gdb&quot;,
+                    &quot;text&quot;: &quot;-enable-pretty-printing&quot;,
+                    &quot;ignoreFailures&quot;: false
+                &#125;
+            ],
+            &quot;preLaunchTask&quot;: &quot;Compile&quot; // 调试会话开始前执行的任务，一般为编译程序。与tasks.json的label相对应
+        &#125;
+    ]
+&#125;</code></pre>
+<p>tasks.json的配置为：</p>
+<pre><code>// https://code.visualstudio.com/docs/editor/tasks
+&#123;
+    &quot;version&quot;: &quot;2.0.0&quot;,
+    &quot;tasks&quot;: [
+        &#123;
+            &quot;label&quot;: &quot;Compile&quot;, // 任务名称，与launch.json的preLaunchTask相对应
+            &quot;command&quot;: &quot;clang++&quot;, // 要使用的编译器 clang++  或者g++
+            &quot;args&quot;: [
+                &quot;$&#123;file&#125;&quot;,
+                &quot;-o&quot;, // 指定输出文件名，不加该参数则默认输出a.exe，Linux下默认a.out
+                &quot;$&#123;fileDirname&#125;/$&#123;fileBasenameNoExtension&#125;.out&quot;,
+                &quot;-g&quot;, // 生成和调试有关的信息
+                &quot;-Wall&quot;, // 开启额外警告
+                &quot;-static-libgcc&quot;, // 静态链接
+                // &quot;-fcolor-diagnostics&quot;, // 彩色的错误信息？但貌似clang默认开启而gcc不接受此参数
+                // &quot;--target=x86_64-w64-mingw&quot;, // clang的默认target为msvc，不加这一条就会找不到头文件；Linux下去掉这一条
+                &quot;-std=c++11&quot; // C语言最新标准为c11，或根据自己的需要进行修改
+            ], // 编译命令参数
+            &quot;type&quot;: &quot;shell&quot;, // 可以为shell或process，前者相当于先打开shell再输入命令，后者是直接运行命令
+            &quot;group&quot;: &#123;
+                &quot;kind&quot;: &quot;build&quot;,
+                &quot;isDefault&quot;: true // 设为false可做到一个tasks.json配置多个编译指令，需要自己修改本文件，我这里不多提
+            &#125;,
+            &quot;presentation&quot;: &#123;
+                &quot;echo&quot;: true,
+                &quot;reveal&quot;: &quot;always&quot;, // 在“终端”中显示编译信息的策略，可以为always，silent，never。具体参见VSC的文档
+                &quot;focus&quot;: false, // 设为true后可以使执行task时焦点聚集在终端，但对编译c和c++来说，设为true没有意义
+                &quot;panel&quot;: &quot;shared&quot; // 不同的文件的编译信息共享一个终端面板
+            &#125;
+            // &quot;problemMatcher&quot;:&quot;$gcc&quot; // 如果你不使用clang，去掉前面的注释符，并在上一条之后加个逗号。照着我的教程做的不需要改（也可以把这行删去)
+        &#125;
+    ]
+&#125;</code></pre>
+<p>ctrl+shift+B是编译，按F5是编译+运行。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">MambaInVeins</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://mambainveins.gitee.io/mambainveins/2020/06/08/2020-06-08-linux_vscode_c_env_config/">http://mambainveins.gitee.io/mambainveins/2020/06/08/2020-06-08-linux_vscode_c_env_config/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://mambainveins.gitee.io/mambainveins" target="_blank">MambaInVeins Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/vscode/">vscode</a></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/gh/jerryc127/CDN/Photo/photo.jpg" data-sites="wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i> 打赏<div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/img/wechat.jpg" target="_blank"><img class="post-qr-code-img" src="/img/wechat.jpg" alt="wechat"/></a><div class="post-qr-code-desc">wechat</div></li><li class="reward-item"><a href="/img/alipay.jpg" target="_blank"><img class="post-qr-code-img" src="/img/alipay.jpg" alt="alipay"/></a><div class="post-qr-code-desc">alipay</div></li></ul></div></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2020/06/08/2020-06-08-learn_docker/"><img class="prev-cover" src="https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Docker学习记录</div></div></a></div><div class="next-post pull-right"><a href="/2020/06/08/2020-06-08-migrate_docker_container_to_server/"><img class="next-cover" src="https://cdn.jsdelivr.net/gh/jerryc127/CDN/Photo/photo.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">将本地docker容器迁移到服务端</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> 相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2020/03/19/2020-03-19-linux_install_vscode/" title="linux 安装 vscode"><img class="cover" src="https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-03-19</div><div class="title">linux 安装 vscode</div></div></a></div><div><a href="/2020/04/18/2020-04-18-VsCode_write_markdown/" title="VsCode编写Markdown文档"><img class="cover" src="https://cdn.jsdelivr.net/gh/jerryc127/CDN/Photo/photo.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-04-18</div><div class="title">VsCode编写Markdown文档</div></div></a></div><div><a href="/2020/04/20/2020-04-20-vscode_add_right_click_menu_to_open_the_folder_with_vscode/" title="VSCODE添加右键打开文件夹功能"><img class="cover" src="https://cdn.jsdelivr.net/gh/jerryc127/CDN/Photo/photo.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-04-20</div><div class="title">VSCODE添加右键打开文件夹功能</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-info-avatar is-center"><img class="avatar-img" src="/img/index.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">MambaInVeins</div><div class="author-info__description">身体和灵魂总有一个在路上</div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">234</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">标签</div><div class="length-num">102</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">分类</div><div class="length-num">30</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/mambainveins"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/mambainveins" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:mambainveins@protonmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的小站，博客正在迁移中。</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2020/12/24/2020-12-24-blog_migrate/" title="blog migrate butterfly"><img src="https://cdn.jsdelivr.net/gh/jerryc127/CDN/Photo/photo.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="blog migrate butterfly"/></a><div class="content"><a class="title" href="/2020/12/24/2020-12-24-blog_migrate/" title="blog migrate butterfly">blog migrate butterfly</a><time datetime="2020-12-23T16:00:00.000Z" title="发表于 2020-12-24 00:00:00">2020-12-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2020/12/24/2020-12-24-linux_shell_devnull%20copy/" title="Shell重定向＆&gt;file、2&gt;&amp;1、1&gt;&amp;2的区别"><img src="https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Shell重定向＆&gt;file、2&gt;&amp;1、1&gt;&amp;2的区别"/></a><div class="content"><a class="title" href="/2020/12/24/2020-12-24-linux_shell_devnull%20copy/" title="Shell重定向＆&gt;file、2&gt;&amp;1、1&gt;&amp;2的区别">Shell重定向＆&gt;file、2&gt;&amp;1、1&gt;&amp;2的区别</a><time datetime="2020-12-23T16:00:00.000Z" title="发表于 2020-12-24 00:00:00">2020-12-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2020/12/24/2020-12-24-linux_shell_devnull/" title="Linux /dev/null详解"><img src="https://cdn.jsdelivr.net/gh/jerryc127/CDN/Photo/photo.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Linux /dev/null详解"/></a><div class="content"><a class="title" href="/2020/12/24/2020-12-24-linux_shell_devnull/" title="Linux /dev/null详解">Linux /dev/null详解</a><time datetime="2020-12-23T16:00:00.000Z" title="发表于 2020-12-24 00:00:00">2020-12-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2020/12/24/2020-12-24-local_ctf_wiki/" title="本地搭建ctf-wiki"><img src="https://cdn.jsdelivr.net/gh/jerryc127/CDN/Photo/photo.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="本地搭建ctf-wiki"/></a><div class="content"><a class="title" href="/2020/12/24/2020-12-24-local_ctf_wiki/" title="本地搭建ctf-wiki">本地搭建ctf-wiki</a><time datetime="2020-12-23T16:00:00.000Z" title="发表于 2020-12-24 00:00:00">2020-12-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2020/12/23/2020-12-23-linux_pwn_canary/" title="linux pwn canary"><img src="https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="linux pwn canary"/></a><div class="content"><a class="title" href="/2020/12/23/2020-12-23-linux_pwn_canary/" title="linux pwn canary">linux pwn canary</a><time datetime="2020-12-22T16:00:00.000Z" title="发表于 2020-12-23 00:00:00">2020-12-23</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 By MambaInVeins</div><div class="footer_custom_text"><a href="http://mambainveins.gitee.io/">Mamba Never Out</a>!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="font-plus" type="button" title="放大字体"><i class="fas fa-plus"></i></button><button id="font-minus" type="button" title="缩小字体"><i class="fas fa-minus"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="false" data-click="true"></script><script>(function(){
+  const bp = document.createElement('script');
+  const curProtocol = window.location.protocol.split(':')[0];
+  if (curProtocol === 'https') {
+    bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+  }
+  else{
+    bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+  }
+  bp.dataset.pjax = ''
+  const s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(bp, s);
+})()</script></div></body></html>

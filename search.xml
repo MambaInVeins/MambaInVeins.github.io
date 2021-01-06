@@ -4,6 +4,33 @@
   
     
     <entry>
+      <title>scrapy将不同页面元素整理到同一个Item中</title>
+      <link href="2021/01/06/2021-01-06-scrapy_pages_into_one_item/"/>
+      <url>2021/01/06/2021-01-06-scrapy_pages_into_one_item/</url>
+      
+        <content type="html"><![CDATA[<p>scrapy爬虫，如何将不同页面的元素采集并整理到同一个Item中呢？</p><p>例如，我想将 page1 与 page2 中的元素整合，直接通过二者的解析函数没办法做到。所以这个时候需要用到 meta 参数来传递数据信息。具体过程为：</p><p>（1）在page1的页面解析函数中构造一个 Item 对象</p><p>（2）然后将该 Item 对象作为元数据传递到 meta 中，meta是一个字典，除了一些内置关键字以外，用户可以自定义关键字。这里可以使用 meta[‘item’] = Item 构造这个键值对</p><pre><code>def parse_page1(self, response):    item = MyItem()    item[&#39;main_url&#39;] = response.url    request = scrapy.Request(&quot;http://www.example.com/some_page.html&quot;,                            callback=self.parse_page2)    request.meta[&#39;item&#39;] = item # 通过meta属性将parse_page1的Item传递到parse_page2中    return request</code></pre><p>（3）再在page2的解析函数中，使用该数据对即可。</p><pre><code>    def parse_page2(self, response):        item = response.meta[&#39;item&#39;]        item[&#39;other_url&#39;] = response.url        return item</code></pre><p>总结：</p><p>上述 page1 中对新的 URL 进行对Request时，回调函数 callback 所指明的方法是 parse_page2。同时通过属性 meta 将 parse_page1 的 Item 传递给了 parse_page2 。通过这种操作可以将 page1 与 page2 中需要整合的元素整合到同一个 Item 中。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> python </category>
+          
+          <category> spider </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> scrapy </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>博客从jekyll迁移至hexo</title>
       <link href="2020/12/24/2020-12-24-blog_migrate/"/>
       <url>2020/12/24/2020-12-24-blog_migrate/</url>

@@ -4,6 +4,264 @@
   
     
     <entry>
+      <title>MikroTik RouterOS软路由常用命令</title>
+      <link href="2021/04/12/2021-04-12-RouterOS_command/"/>
+      <url>2021/04/12/2021-04-12-RouterOS_command/</url>
+      
+        <content type="html"><![CDATA[<h2 id="MikroTik-RouterOS软路由常用命令"><a href="#MikroTik-RouterOS软路由常用命令" class="headerlink" title="MikroTik RouterOS软路由常用命令"></a>MikroTik RouterOS软路由常用命令</h2><p>MikroTik RouterOS是一种路由操作系统，是基于Linux核心开发，兼容x86 PC的路由软件,并通过该软件将标准的PC电脑变成专业路由器，在软件RouterOS 软路由图的开发和应用上不断的更新和发展，软件经历了多次更新和改进，使其功能在不断增强和完善。特别在无线、认证、策略路由、带宽控制和防火墙过滤等功能上有着非常突出的功能，其极高的性价比，受到许多网络人士的青睐。</p><p>在没有条件购买和实用硬件路由器或者交换的时候，这款软路由可以作为一项参考。</p><pre><code>主页地址：https://mikrotik.com/wiki文档：https://wiki.mikrotik.com/wiki/Main_Page好了，有什么本文档没有详细叙述的命令或者实用经验，大家可以通过官网和wiki来下载OS和阅读相关的文章 </code></pre><p>一、登录方式</p><pre><code>1、winbox：这款官方的工具提供客户端的方式登录RouterOS的系统界面，这样对于一个小白用户或者有网络基础的童鞋都可以很明白的使用2、web：RouterOS提供80端口的访问方式来像winbox一样来登录管理RouterOS3、ssh：RouterOS提供标准的22端口来访问RouterOS，通过命令行的方式管理RouterOS。这是很多linux和网络工程师比较喜欢的一种管理界面。</code></pre><p>二、ssh登录操作</p><pre><code>1、routeros默认使用的用户名是admin，密码为空2、ssh端口号是默认的22端口3、端口号可以更改 </code></pre><p>三、常用命令</p><p>修改用户密码</p><pre><code>[admin@MikroTik]&gt;/user                               #进入操作路径[admin@MikroTik]/user&gt;print                           #显示RouterOS用户[admin@MikroTik]/user&gt;set admin password=123456        #修改admin用户密码为123456[admin@MikroTik] /user&gt; /                              #返回根目录</code></pre><p>在当前用户下修改密码</p><pre><code>[admin@MikroTik]&gt;password                             #修改本目录用户密码</code></pre><p>备份命令</p><pre><code>[admin@MikroTik]&gt;/system backup                           #进入操作路径[admin@MikroTik] /system backup&gt;save name=testbackup         #备份名为testbackup[admin@MikroTik] /system backup&gt;load name=testbackup         #载入备份testbackup[admin@MikroTik]&gt;file print                                                                   #查看备份情况</code></pre><p>导出指令</p><pre><code>[admin@MikroTik]&gt;ip address print                          #查看IP[admin@MikroTik]&gt;/ip address                              #进入IP操作路径[admin@MikroTik]/ip address&gt;export file=address  #导出一个名为address的IP地址配置参数[admin@MikroTik]&gt;export compact                          #查看IP地址配置参数</code></pre><p>系统重启与关机</p><pre><code>[admin@MikroTik]&gt;system reboot                         #系统重启[admin@MikroTik]&gt;system shutdown                      #系统关机</code></pre><p>修改RouterOS主机名</p><pre><code>[admin@MikroTik]&gt;system identity print                     #查看RouterOS主机名[admin@MikroTik]&gt;system identity set name=MyRouterOS  #修改RouterOS主机名为MyRouterOS</code></pre><p>系统资源管理</p><pre><code>[admin@MikroTik] &gt; /system resource                        #操作路径[admin@MikroTik] /system resource&gt; print              #查看CPU占用率\内存\硬盘等使用情况[admin@MikroTik] /system resource&gt; monitor           #查看CPU和空闲内存使用情况</code></pre><p>开通ssh远程</p><pre><code>[admin@MikroTik] &gt; ip service print                                             #查看服务[admin@MikroTik] &gt; ip service enable ssh                                  #开启SSH服务[admin@MikroTik] &gt; ip service disable ssh                                 #关闭SSH服务[admin@MikroTik] &gt; ip service set ssh port=22 address=10.8.9.11   #允许10.8.9.11访问SSH访问，其它IP都均被拒绝</code></pre><p>Interface接口基本操作</p><pre><code>[admin@MikroTik] &gt; interface print                                              #显示接口状态[admin@MikroTik] &gt; interface enable ether1            #启动ether1网卡[admin@MikroTik] &gt; interface print stats               #显示接口状态+静态流量[admin@MikroTik] &gt; interface monitor-traffic ether1     #监测网卡动态流量[admin@MikroTik] &gt; interface ethernet print detail                #显示网卡参数</code></pre><p>IP配置与ARP</p><pre><code>[admin@MikroTik] &gt; ip address add address=192.168.10.1/24 interface=ether2   #添加IP地址到ether2接口上[admin@MikroTik] &gt; ip address print                                           #显示IP地址[admin@MikroTik] &gt; ip arp print                                                    #显示arp信息[admin@MikroTik] &gt; ip arp add address=192.168.10.100 interface=00:23:24:2e:78:3e   #添加静态IP与ARP[admin@MikroTik] &gt;/interface ethernet set ether2 arp=reply-only  #设置ether2接口非静态的ARP条目将无法与路由进行通信</code></pre><p>防火墙过滤(firewall Filte)—-域名过滤</p><pre><code>[admin@MikroTik]&gt;ip firewall filter add action=drop chain=forward content=www.jd.com</code></pre><p>防火墙过滤(firewall Filte)—-端口映射将内网主机192.168.10.200的3389端口映射到外网的9999端口</p><pre><code>[admin@MikroTik] &gt; ip firewall nat add chain=dstnat protocol=tcp dst-port=9999 in-interface=WAN action=dst-nat to-addresses=192.168.10.200 to-ports=3389</code></pre><p>四、什么是 NPK 文件</p><p>NPK 扩展名指的是用于输送和安装更新的MikroTik路由器软件包文件。该路由器的MikroTik操作系统软件的信息存储在这些文件。此信息包括IP地址，IP服务，以太网接口，电子邮件设置，串行端口和本地用户管理，桥配置，以及信息包和系统资源管理。这些文件保存在一个压缩的二进制包格式。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> router </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> router </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>一些机器码</title>
+      <link href="2021/04/12/2021-04-12-jmp_call_push/"/>
+      <url>2021/04/12/2021-04-12-jmp_call_push/</url>
+      
+        <content type="html"><![CDATA[<p>复习了下jmp的跳转，以及机器码</p><p>0xE8 CALL 后面的四个字节是地址<br>0xE9 JMP 后面的四个字节是偏移<br>0xEB JMP 后面的二个字节是偏移<br>0xFF15 CALL 后面的四个字节是存放地址的地址<br>0xFF25 JMP 后面的四个字节是存放地址的地址<br>0x68 PUSH 后面的四个字节入栈<br>0x6A PUSH 后面的一个字节入栈</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> tools </category>
+          
+          <category> IDA </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> IDA </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>linux LD_PRELOAD</title>
+      <link href="2021/04/10/2021-04-10-LD_PRELOAD_tutorial/"/>
+      <url>2021/04/10/2021-04-10-LD_PRELOAD_tutorial/</url>
+      
+        <content type="html"><![CDATA[<p><a href="https://catonmat.net/simple-ld-preload-tutorial">A Simple LD_PRELOAD Tutorial</a></p><p><a href="https://os.51cto.com/art/201004/195510.htm">Unix操作系统LD_PRELOAD简介</a></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> linux </category>
+          
+          <category> ubuntu </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> linux </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>GDB 查看指定地址的内容</title>
+      <link href="2021/04/10/2021-04-10-gdb_x/"/>
+      <url>2021/04/10/2021-04-10-gdb_x/</url>
+      
+        <content type="html"><![CDATA[<h1 id="GDB-查看指定地址的内容"><a href="#GDB-查看指定地址的内容" class="headerlink" title="GDB 查看指定地址的内容"></a>GDB 查看指定地址的内容</h1><p>使用examine命令（简写是x）来查看内存地址中的值。</p><p>x命令的语法如下所示：</p><pre><code>x/&lt;n/f/u&gt; &lt;addr&gt;</code></pre><p>n、f、u是可选的参数。</p><p>n 是一个正整数，表示显示内存的长度，也就是说从当前地址向后显示几个地址的内容。</p><p>f 表示显示的格式，参见上面。如果地址所指的是字符串，那么格式可以是s，如果地十是指令地址，那么格式可以是i。一般来说，GDB会根据变量的类型输出变量的值。但你也可以自定义GDB的输出的格式。例如，你想输出一个整数的十六进制，或是二进制来查看这个整型变量的中的位的情况。要做到这样，你可以使用GDB的数据显示格式：</p><pre><code>x 按十六进制格式显示变量。d 按十进制格式显示变量。u 按十六进制格式显示无符号整型。o 按八进制格式显示变量。t 按二进制格式显示变量。a 按十六进制格式显示变量。c 按字符格式显示变量。f 按浮点数格式显示变量。</code></pre><p>u 表示从当前地址往后请求的字节数，如果不指定的话，GDB默认是4个bytes。u参数可以用下面的字符来代替，b表示单字节，h表示双字节，w表示四字 节，g表示八字节。当我们指定了字节长度后，GDB会从指内存定的内存地址开始，读写指定字节，并把其当作一个值取出来。</p><p><addr>表示一个内存地址。</p><p>n/f/u三个参数可以一起使用。例如：</p><p>命令：x/3uh 0x54320 表示，从内存地址0x54320读取内容，h表示以双字节为一个单位，3表示三个单位，u表示按十六进制显示。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> tools </category>
+          
+          <category> gdb </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> gdb </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>HTTP Basic auth认证</title>
+      <link href="2021/04/10/2021-04-10-http_basic_auth/"/>
+      <url>2021/04/10/2021-04-10-http_basic_auth/</url>
+      
+        <content type="html"><![CDATA[<h1 id="HTTP-Basic-auth认证"><a href="#HTTP-Basic-auth认证" class="headerlink" title="HTTP Basic auth认证"></a>HTTP Basic auth认证</h1><h2 id="Basic-概述"><a href="#Basic-概述" class="headerlink" title="Basic 概述"></a>Basic 概述</h2><p>Basic认证是HTTP中非常简单的认证方式，因为简单，所以不是很安全，不过仍然非常常用。</p><p>当一个客户端向一个需要认证的HTTP服务器进行数据请求时，如果之前没有认证过，HTTP服务器会返回401状态码，要求客户端输入用户名和密码。用户输入用户名和密码后，用户名和密码会经过BASE64加密附加到请求信息中再次请求HTTP服务器，HTTP服务器会根据请求头携带的认证信息，决定是否认证成功及做出相应的响应。</p><h2 id="使用Tomcat进行Basic认证"><a href="#使用Tomcat进行Basic认证" class="headerlink" title="使用Tomcat进行Basic认证"></a>使用Tomcat进行Basic认证</h2><p>如果熟悉Tomcat的朋友，肯定知道Tomcat自带的有个manager项目，访问这个项目需要Basic认证。</p><p>下面我们来给我们自己的项目加Basic认证。</p><p>配置项目的 web.xml</p><p>示例：</p><pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;web-app xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns=&quot;http://java.sun.com/xml/ns/javaee&quot; 　　xmlns:web=&quot;http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd&quot; 　　xsi:schemaLocation=&quot;http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd&quot; id=&quot;WebApp_ID&quot; version=&quot;3.0&quot;&gt;&lt;display-name&gt;lvyou&lt;/display-name&gt;&lt;servlet&gt;    &lt;servlet-name&gt;home&lt;/servlet-name&gt;    &lt;servlet-class&gt;com.coder4j.web.servlet.HomeServlet&lt;/servlet-class&gt;&lt;/servlet&gt;&lt;servlet-mapping&gt;    &lt;servlet-name&gt;home&lt;/servlet-name&gt;    &lt;url-pattern&gt;/home.do&lt;/url-pattern&gt;&lt;/servlet-mapping&gt;    &lt;!-- 下面是Basic认证配置 --&gt;    &lt;security-constraint&gt;        &lt;web-resource-collection&gt;            &lt;web-resource-name&gt;GuiLin&lt;/web-resource-name&gt;            &lt;url-pattern&gt;/*&lt;/url-pattern&gt;        &lt;/web-resource-collection&gt;        &lt;auth-constraint&gt;            &lt;role-name&gt;lvyou&lt;/role-name&gt;        &lt;/auth-constraint&gt;    &lt;/security-constraint&gt;    &lt;login-config&gt;        &lt;auth-method&gt;BASIC&lt;/auth-method&gt;        &lt;realm-name&gt;guilin photos&lt;/realm-name&gt;    &lt;/login-config&gt;    &lt;!-- Basic认证配置结束 --&gt;&lt;welcome-file-list&gt;    &lt;welcome-file&gt;index.html&lt;/welcome-file&gt;    &lt;welcome-file&gt;index.jsp&lt;/welcome-file&gt;&lt;/welcome-file-list&gt;&lt;/web-app&gt;</code></pre><p>对上面加注释的部分进行简单的解释：</p><pre><code>web-resource-name : 给这个认证起个名字url-pattern : 哪些地址需要认证，/*表示此项目的任意地址都需要认证，/lvyou/*表示/lvyou下的任意地址都需要认证。role-name : 哪些角色的用户认证后可以访问此资源（光认证还不够哟，必须得是许可的角色哟），我这里规定必须是lvyou这个角色的用户才能看我的照片。auth-method : 认证方式为BASIC认证。realm-name : 给出的认证提示。</code></pre><p>修改 tomcat-users.xml</p><p>tomcat 提供了用户配置文件，我们直接使用就行了。</p><pre><code>&lt;?xml version=&#39;1.0&#39; encoding=&#39;utf-8&#39;?&gt;&lt;tomcat-users&gt;&lt;role rolename=&quot;lvyou&quot;/&gt;&lt;user username=&quot;tom&quot; password=&quot;tomcat&quot; roles=&quot;lvyou&quot;/&gt;&lt;/tomcat-users&gt;</code></pre><p>至此，两步就完成了Basic 认证，如果想访问我的照片，就需要输入tom 和 tomcat才行。</p><h2 id="Basic-认证的过程"><a href="#Basic-认证的过程" class="headerlink" title="Basic 认证的过程"></a>Basic 认证的过程</h2><p>Basic认证的流程很简单，现概述如下：</p><p>1, 客户端向服务器请求数据，并且请求的数据是需要认证才能看的，并且客户端目前没有认证过。</p><p>2, 访问的页面需要认证，客户端弹出认证窗口。</p><p>认证窗口关闭之前，浏览器状态一直是：pending等待用户输入。</p><p>点击 x 或取消，将会出现401状态码，响应内容如下：</p><p><img src="https://image-static.segmentfault.com/782/440/782440550-58e8660c86082_fix732"></p><p>响应头中有一句话：</p><pre><code>WWW-Authorization: Basic realm=&quot;guilin photos&quot;</code></pre><p>表示需要认证，提示信息为：guilin photos</p><p>3, 刷新页面，输入正确的用户名和密码，将会进入到我们的项目中</p><p>输入用户名和密码的请求信息头如下：</p><p><img src="https://image-static.segmentfault.com/356/688/3566880750-57393b338b1ee_fix732"></p><p>这是我们的认证信息。</p><p>加密策略如下：</p><pre><code>用户名和密码用:合并，将合并后的字符串使用BASE64加密为密文，每次请求时，将密文附于请求头中，服务器接收此密文，进行解析，判断是否认证</code></pre><h2 id="Java-实现"><a href="#Java-实现" class="headerlink" title="Java 实现"></a>Java 实现</h2><p>我们知道了流程，当然可以用代码来实现。</p><p>核心代码：</p><pre><code>HttpSession session = request.getSession();String user = (String) session.getAttribute(&quot;user&quot;);String pass;if (user == null) &#123;    try &#123;        response.setCharacterEncoding(&quot;utf-8&quot;);        PrintWriter out = response.getWriter();        String authorization = request.getHeader(&quot;Authorization&quot;);        if (authorization == null || authorization.equals(&quot;&quot;)) &#123;            response.setStatus(401);            response.setHeader(&quot;WWW-Authenticate&quot;, &quot;Basic realm=\&quot;input username and password\&quot;&quot;);            out.print(&quot;401 认证失败&quot;);            return;        &#125;        String userAndPass = new String(new BASE64Decoder().decodeBuffer(authorization.split(&quot; &quot;)[1]));        if (userAndPass.split(&quot;:&quot;).length &lt; 2) &#123;            response.setStatus(401);            response.setHeader(&quot;WWW-Authenticate&quot;, &quot;Basic realm=\&quot;input username and password\&quot;&quot;);            out.print(&quot;401 认证失败&quot;);            return;        &#125;        user = userAndPass.split(&quot;:&quot;)[0];        pass = userAndPass.split(&quot;:&quot;)[1];        if (user.equals(&quot;111&quot;) &amp;&amp; pass.equals(&quot;111&quot;)) &#123;            session.setAttribute(&quot;user&quot;, user);            // 跳转合适的地方        &#125; else &#123;            response.setStatus(401);            response.setHeader(&quot;WWW-Authenticate&quot;, &quot;Basic realm=\&quot;input username and password\&quot;&quot;);            out.print(&quot;401 认证失败&quot;);            return;        &#125;    &#125; catch (Exception ex) &#123;        ex.printStackTrace();    &#125;&#125; else &#123;    // 跳转合适的地方&#125;</code></pre><p>Basic认证的核心就是响应401状态码，告知浏览器需要用户输入用户名和密码，然后就是后台按照Basic加密的方式进行解密验证即可。</p><h2 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h2><p>HTTP基本认证的目标是提供简单的用户验证功能，其认证过程简单明了，适合于对安全性要求不高的系统或设备中，如大家所用路由器的配置页面的认证，几乎都采取了这种方式。其缺点是没有灵活可靠的认证策略，另外，BASE64的加密强度非常低，直接能在请求头中看到，几乎相当于明文了。</p><h2 id="实例：弱口令穷举攻击"><a href="#实例：弱口令穷举攻击" class="headerlink" title="实例：弱口令穷举攻击"></a>实例：弱口令穷举攻击</h2><p>某VPN admin console 中 Authorization 是采用 basic auth 授权方式验证客户端请求，Authorization 请求头对应的值是 (basic base64编码) 忽略括号，其中 base64编码是将 用户名:密码 这种格式进行处理生成的。可利用口令爆破的方式，对其管理员口令进行破解。</p><p>弱口令集合</p><pre><code>https://github.com/legik/fast-detects/blob/master/weak-basic-auth.yaml</code></pre>]]></content>
+      
+      
+      <categories>
+          
+          <category> pentest </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Basic认证 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>将shell的输出重定向/存储到GDB变量中</title>
+      <link href="2021/04/10/2021-04-10-shell_output_to_gdb_variable/"/>
+      <url>2021/04/10/2021-04-10-shell_output_to_gdb_variable/</url>
+      
+        <content type="html"><![CDATA[<h1 id="将shell的输出重定向-存储到GDB变量中"><a href="#将shell的输出重定向-存储到GDB变量中" class="headerlink" title="将shell的输出重定向/存储到GDB变量中"></a>将shell的输出重定向/存储到GDB变量中</h1><p>我想知道如何在GDB中了解当前的系统架构，并将此信息存储在一个变量中供以后评估。</p><p>就像是：</p><pre><code>set variable $x=`shell uname -m`</code></pre><p>theres 2种方式：</p><p>旧的方式：</p><pre><code>(gdb) shell echo set \$x=\&quot;$(uname -m)\&quot; &gt;/tmp/foo.gdb(gdb) source /tmp/foo.gdb</code></pre><p>python更新：</p><pre><code>(gdb) python gdb.execute(&quot;set $y=\&quot;&quot; + os.uname()[4] + &quot;\&quot;&quot;)</code></pre>]]></content>
+      
+      
+      <categories>
+          
+          <category> tools </category>
+          
+          <category> gdb </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> gdb </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>IDA重新设置文件加载基址</title>
+      <link href="2021/04/10/2021-04-10-ida_rebase_program/"/>
+      <url>2021/04/10/2021-04-10-ida_rebase_program/</url>
+      
+        <content type="html"><![CDATA[<h1 id="IDA重新设置文件加载基址"><a href="#IDA重新设置文件加载基址" class="headerlink" title="IDA重新设置文件加载基址"></a>IDA重新设置文件加载基址</h1><p>当动态调试的时候，跟踪到dll中的函数，由于dll动态加载，dll的动态地址不方便在IDA中定位，那么IDA有一项功能可以重新设置EXE/DLL在IDA中的加载基址。</p><p><img src="http://image.bubuko.com/info/201411/20180919184321673880.jpg"></p><p><img src="http://image.bubuko.com/info/201411/20180919184322297927.jpg"></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> tools </category>
+          
+          <category> IDA </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> IDA </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>杀死 Defunct process</title>
+      <link href="2021/04/10/2021-04-10-kill_defunct_process/"/>
+      <url>2021/04/10/2021-04-10-kill_defunct_process/</url>
+      
+        <content type="html"><![CDATA[<h1 id="杀死-Defunct-process"><a href="#杀死-Defunct-process" class="headerlink" title="杀死 Defunct process"></a>杀死 Defunct process</h1><p>有个问题困扰了我相当长一段时间：某个服务在重启或者关闭的时候，旧的服务进程有时候会进入Defunct状态，但是监听端口仍然被其绑定。此时kill -9 对此进程完全无效。旧进程维持Defunct状态的时间不一定，有时1-2分钟，有时要十几分钟，之后进程会自动消失。这时候才能启动新的服务程序，之前会由于端口冲突无法进行端口绑定。</p><p>”Defunct processes are processes that have become corrupted in such a way the no long can communicate (not really the right word, more like signal each other) with their parent or child process. So kill the parent or child and 99% of the time (around here at least) the defunct process will go away! No parent or child, you’re out of luck, or look for a stuck automount.“</p><p>这个总结还是比较全的。提到杀死父进程、子进程、还有看看mount问题。</p><p>什么是看看mount问题呢？可以参考这个链接：<a href="https://blog.51cto.com/liuqunying/1716678">一个杀不死的小强，kill进程无效的原因</a>，在2.6.33.1内核之前的一个NFS bug可能会导致此问题。</p><p>然后根据我的实际经验，其实还有一个办法：将所有与服务端口建立TCP连接的进程都关闭掉，这时候原服务进程也有可能（90%）马上就退出了。</p><p>总结一下，kill defunct process的步骤大概如下：<br>1）杀掉父进程。ps -ef | grep defunct ，前三列分别是UID、PID、PPID（这就是进程他爹啦）。把进程他爹杀杀杀。<br>2）杀掉子进程。ps -ef –forest。把子进程杀杀杀。<br>3）也许是nfs的问题，look into it。<br>4）如果这个进程是个内部服务，可以尝试将所有与该服务有建立TCP连接的进程都关闭掉。netstat -tnp | grep 端口号。最后一列是pid，杀杀杀。我要说明一下，这个方法我并没有找到理论支持，但在CentOS5.4环境下，它很多次帮我解决了问题。<br>5）如果到了这一步defunct进程还健在，It’s very unlucky. 有两个艰难的选择：1、重启服务器； 2、等待，一般不到20分钟这个defunct进程会自动消失。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> linux </category>
+          
+          <category> ubuntu </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>vmware虚拟机磁盘崩溃修复</title>
+      <link href="2021/03/31/2021-03-31-vmware_disk_corrupt/"/>
+      <url>2021/03/31/2021-03-31-vmware_disk_corrupt/</url>
+      
+        <content type="html"><![CDATA[<p>vmware虚拟机磁盘崩溃</p><p>“磁盘xxx.vmdk”出现一个或多个无法修复的内部错误。请通过该磁盘的备份副本进行恢复。<br>指定的虚拟磁盘需要进行修复</p><p>方法一：</p><pre><code>打开命令提示符cmd，进入到VMware安装路径如：cd C:\Program Files (x86)\VMware\VMware Workstation找到你需要修复的虚拟磁盘路径即虚拟机安装路径如：D:\虚拟机\04Windows Server 2003 Standard Edition\04Windows Server 2003 Standard Edition.vmdk执行修复命令vmware-vdiskmanager -R “虚拟磁盘路径”如：vmware-vdiskmanager -R “D:\虚拟机\04Windows Server 2003 Standard Edition\04Windows Server 2003 Standard Edition.vmdk”</code></pre><p>但我执行失败：</p><pre><code>The vitual disk,&#39;xxx.vmdk&#39;，is corrupted and cannot be repaired.</code></pre><p>此时已经有点绝望了。但也不能放弃，遂又搜了第二种办法</p><p><a href="https://serverfault.com/questions/993860/how-to-repaire-a-vmdk-that-is-is-corrupted-and-cannot-be-repaired">https://serverfault.com/questions/993860/how-to-repaire-a-vmdk-that-is-is-corrupted-and-cannot-be-repaired</a></p><pre><code>Try using vmware-vdiskmanager to repair the image.Since VMware already likely tried running this command on its own, this probably will not help, but it&#39;s the easiest thing to try.On macOS with VMware Fusion open terminal and change directory to /Applications/VMware Fusion.app/Contents/Library./vmware-vdiskmanager -R /path/to/your_corrupted_disk.vmdkIf you get a message saying that The virtual disk, &#39;/path/to/your_corrupted_disk.vmdk&#39;, is corrupted and cannot be repaired. Try using StarWind V2V Converter on Windows to repair the disk.Download StarWind V2V Converter from https://www.starwindsoftware.com/starwind-v2v-converter, and install it on a Windows PC.Make a copy of your_corrupted_disk.vmdk along with all related .vmdks. (your_corrupted_disk-s001.vmdk, your_corrupted_disk-s002.vmdk, ...). Best to copy the whole parent directory.Use StarWind to convert it from a local vmdk to a local vmdk. It will flatten all your &quot;*.vmdk&quot; files into a single fileCreate a new virtual machine and select to &quot;use an existing virtual disk&quot; and point it to the fixed version.</code></pre><p>下载工具StarWind V2V Converter,没用明白。。。</p><p>最后还是还原了之前的快照。。。虽然丢失了一定的进度，但万幸没全丢，所以保存快照很重要阿！！！</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> tools </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> vmware </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>linux hook</title>
+      <link href="2021/03/20/2021-03-20-linux_elf_hook/"/>
+      <url>2021/03/20/2021-03-20-linux_elf_hook/</url>
+      
+        <content type="html"><![CDATA[<p>向正在运行的Linux应用程序注入代码  <a href="https://www.freebuf.com/articles/system/6388.html">https://www.freebuf.com/articles/system/6388.html</a></p><p>32位elf格式中的10种重定位类型 <a href="https://zhuanlan.zhihu.com/p/42495476">https://zhuanlan.zhihu.com/p/42495476</a></p><p>linux hook技术 <a href="http://www.voidcn.com/article/p-sfjritoa-bcx.html">http://www.voidcn.com/article/p-sfjritoa-bcx.html</a></p><p>Three Ways to Inject Your Code into Another Process <a href="https://www.codeproject.com/Articles/4610/Three-Ways-to-Inject-Your-Code-into-Another-Proces">https://www.codeproject.com/Articles/4610/Three-Ways-to-Inject-Your-Code-into-Another-Proces</a></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> linux </category>
+          
+          <category> hook </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> pwn </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>爬取图片懒加载页面</title>
       <link href="2021/01/07/2021-01-07-lazy_img/"/>
       <url>2021/01/07/2021-01-07-lazy_img/</url>

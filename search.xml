@@ -4,6 +4,33 @@
   
     
     <entry>
+      <title>爬取图片懒加载页面</title>
+      <link href="2021/01/07/2021-01-07-lazy_img/"/>
+      <url>2021/01/07/2021-01-07-lazy_img/</url>
+      
+        <content type="html"><![CDATA[<p>图片懒加载 loading.gif<br><a href="https://m.fang.com/xf/nanjing/1810180382/allphoto.htm">https://m.fang.com/xf/nanjing/1810180382/allphoto.htm</a><br>//static.soufunimg.com/common_m/m_public/201511/images/allimgloading.gif</p><img class="lazy" src="//imgwcs2.soufunimg.com/viewimage/house/2020_11/18/569eb342-a646-42f8-a150-af6398dc5ebf/96x96c4_80_1.png" data-original="//imgwcs2.soufunimg.com/viewimage/house/2020_11/18/569eb342-a646-42f8-a150-af6398dc5ebf/96x96c4_80_1.png" style="display: inline;" width="100%"><p><a href="https://blog.csdn.net/weixin_44774193/article/details/99899827">https://blog.csdn.net/weixin_44774193/article/details/99899827</a></p><h2 id="什么是图片懒加载"><a href="#什么是图片懒加载" class="headerlink" title="什么是图片懒加载"></a>什么是图片懒加载</h2><p>在一些网站或者app上会看到由于滑动过快，而图片没有加载出来由色块或者其他图片代替的情况，当图片出现在我们的视图中，再迅速将占位图片换成我们真正想展示的图片。</p><h2 id="为什么要使用图片懒加载"><a href="#为什么要使用图片懒加载" class="headerlink" title="为什么要使用图片懒加载"></a>为什么要使用图片懒加载</h2><p>如果网站有大量的图片，加载的过程是很耗时间的，例如新闻资讯类需要大量图片的网站。可想而知，网站的初始加载时间会很长，再加上网络等其他影响，用户体验会很差。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> python </category>
+          
+          <category> spider </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> spider </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>scrapy将不同页面元素整理到同一个Item中</title>
       <link href="2021/01/06/2021-01-06-scrapy_pages_into_one_item/"/>
       <url>2021/01/06/2021-01-06-scrapy_pages_into_one_item/</url>
@@ -1052,7 +1079,7 @@
       <link href="2020/08/19/2020-08-19-pwntools_install/"/>
       <url>2020/08/19/2020-08-19-pwntools_install/</url>
       
-        <content type="html"><![CDATA[<h2 id="python2安装pwntools"><a href="#python2安装pwntools" class="headerlink" title="python2安装pwntools"></a>python2安装pwntools</h2><p>更新pip</p><pre><code>python -m pip install --upgrade pip -i https://pypi.douban.com/simple/</code></pre><p>安装pwntools</p><pre><code>pip install --upgrade pwntools -i https://pypi.douban.com/simple/</code></pre><p>遇到问题：</p><pre><code>Installing collected packages: capstone, ropgadget, psutil, intervaltree, pyelftools, pwntoolsAttempting uninstall: capstone    Found existing installation: capstone 3.0.4ERROR: Cannot uninstall &#39;capstone&#39;. It is a distutils installed project and thus we cannot accurately determine which files belong to it which would lead to only a partial uninstall.</code></pre><p>跳过capstone包安装</p><pre><code>pip install --upgrade pwntools --ignore-installed capstone -i https://pypi.douban.com/simple/</code></pre><p>测试</p><pre><code>pythonfrom pwn import *asm(&quot;xor eax,eax&quot;) </code></pre>]]></content>
+        <content type="html"><![CDATA[<h2 id="python2安装pwntools"><a href="#python2安装pwntools" class="headerlink" title="python2安装pwntools"></a>python2安装pwntools</h2><p>更新pip</p><pre><code>python -m pip install --upgrade pip -i https://pypi.douban.com/simple/</code></pre><p>安装pwntools</p><pre><code>pip install --upgrade pwntools -i https://pypi.douban.com/simple/</code></pre><p>遇到问题：</p><pre><code>Installing collected packages: capstone, ropgadget, psutil, intervaltree, pyelftools, pwntoolsAttempting uninstall: capstone    Found existing installation: capstone 3.0.4ERROR: Cannot uninstall &#39;capstone&#39;. It is a distutils installed project and thus we cannot accurately determine which files belong to it which would lead to only a partial uninstall.</code></pre><p>跳过capstone包安装</p><pre><code>pip install --upgrade pwntools --ignore-installed capstone -i https://pypi.douban.com/simple/</code></pre><p>测试</p><pre><code>pythonfrom pwn import *asm(&quot;xor eax,eax&quot;) </code></pre><h2 id="python3安装pwntools"><a href="#python3安装pwntools" class="headerlink" title="python3安装pwntools"></a>python3安装pwntools</h2><pre><code>cd ~git clone https://github.com/Gallopsled/pwntoolscd pwntoolsapt-get install python3 python3-pip python3-dev git libssl-dev libffi-dev build-essentialpip3 install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simplepython3 setup.py install#验证方法python3import pwnpwn.asm(&quot;xor eax,eax&quot;)</code></pre>]]></content>
       
       
       <categories>

@@ -54,6 +54,31 @@
     
     
     <entry>
+      <title>burpsuite不能拦截本地包</title>
+      <link href="2021/05/14/2021-05-14-burpsuite_localhost/"/>
+      <url>2021/05/14/2021-05-14-burpsuite_localhost/</url>
+      
+        <content type="html"><![CDATA[<p>浏览时用本地ip 127.0.0.1,发现burpsuite并不能截断</p><p>修改firefox</p><p>about:config network.proxy.allow_hijacking_localhost true </p><p>或者直接利用网卡ip地址</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> others </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> burpsuite </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>基于vulhub复现Django JSONField SQL注入漏洞（CVE-2019-14234）</title>
       <link href="2021/05/13/2021-05-13-django_CVE-2019-14234/"/>
       <url>2021/05/13/2021-05-13-django_CVE-2019-14234/</url>

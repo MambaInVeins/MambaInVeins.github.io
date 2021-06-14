@@ -1,0 +1,351 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>爬虫经验分享 | MambaInVeins Blog</title><meta name="keywords" content="爬虫"><meta name="author" content="MambaInVeins"><meta name="copyright" content="MambaInVeins"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta name="description" content="大数据时代下爬虫技术的兴起最近越来越多的新闻报道，某某公司人员因非法使用爬虫技术被逮捕，利用“爬虫”抓视频网络公司高管获刑……爬虫究竟是合法还是违法的？我只能说，技术是无罪的，但是用到了错的地方代价就是非常巨大的了。言归正传，今天主要给大家讲一下大数据时代下的爬虫技术。 [TOC]  一、爬虫基本定义定义：按我个人的理解，爬虫就是获取互联网公开数据的自动化工具。需要指出的是，公开数据，就是网站上公">
+<meta property="og:type" content="article">
+<meta property="og:title" content="爬虫经验分享">
+<meta property="og:url" content="http://mambainveins.gitee.io/mambainveins/2020/04/27/2020/2020-04-27-Crawler_experience_sharing/index.html">
+<meta property="og:site_name" content="MambaInVeins Blog">
+<meta property="og:description" content="大数据时代下爬虫技术的兴起最近越来越多的新闻报道，某某公司人员因非法使用爬虫技术被逮捕，利用“爬虫”抓视频网络公司高管获刑……爬虫究竟是合法还是违法的？我只能说，技术是无罪的，但是用到了错的地方代价就是非常巨大的了。言归正传，今天主要给大家讲一下大数据时代下的爬虫技术。 [TOC]  一、爬虫基本定义定义：按我个人的理解，爬虫就是获取互联网公开数据的自动化工具。需要指出的是，公开数据，就是网站上公">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0209.png">
+<meta property="article:published_time" content="2020-04-27T04:00:00.000Z">
+<meta property="article:modified_time" content="2021-05-25T14:28:08.301Z">
+<meta property="article:author" content="MambaInVeins">
+<meta property="article:tag" content="爬虫">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0209.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://mambainveins.gitee.io/mambainveins/2020/04/27/2020/2020-04-27-Crawler_experience_sharing/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="preconnect" href="//zz.bdstatic.com"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":50,"languages":{"author":"作者: MambaInVeins","link":"链接: ","source":"来源: MambaInVeins Blog","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+};
+
+var saveToLocal = {
+  set: function setWithExpiry(key, value, ttl) {
+    const now = new Date()
+    const expiryDay = ttl * 86400000
+    const item = {
+      value: value,
+      expiry: now.getTime() + expiryDay,
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+  },
+
+  get: function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+
+    if (!itemStr) {
+      return undefined
+    }
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key)
+      return undefined
+    }
+    return item.value
+  }
+}
+
+// https://stackoverflow.com/questions/16839698/jquery-getscript-alternative-in-native-javascript
+const getScript = url => new Promise((resolve, reject) => {
+  const script = document.createElement('script')
+  script.src = url
+  script.async = true
+  script.onerror = reject
+  script.onload = script.onreadystatechange = function() {
+    const loadState = this.readyState
+    if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+    script.onload = script.onreadystatechange = null
+    resolve()
+  }
+  document.head.appendChild(script)
+})</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2021-05-25 22:28:08'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(function () {  window.activateDarkMode = function () {
+    document.documentElement.setAttribute('data-theme', 'dark')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+    }
+  }
+  window.activateLightMode = function () {
+    document.documentElement.setAttribute('data-theme', 'light')
+   if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+    }
+  }
+  const autoChangeMode = 'false'
+  const t = saveToLocal.get('theme')
+  if (autoChangeMode === '1') {
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+    const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+    const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+    if (t === undefined) {
+      if (isLightMode) activateLightMode()
+      else if (isDarkMode) activateDarkMode()
+      else if (isNotSpecified || hasNoSupport) {
+        const now = new Date()
+        const hour = now.getHours()
+        const isNight = hour <= 6 || hour >= 18
+        isNight ? activateDarkMode() : activateLightMode()
+      }
+      window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+        if (saveToLocal.get('theme') === undefined) {
+          e.matches ? activateDarkMode() : activateLightMode()
+        }
+      })
+    } else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else if (autoChangeMode === '2') {
+    const now = new Date()
+    const hour = now.getHours()
+    const isNight = hour <= 6 || hour >= 18
+    if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+    else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else {
+    if (t === 'dark') activateDarkMode()
+    else if (t === 'light') activateLightMode()
+  }const asideStatus = saveToLocal.get('aside-status')
+if (asideStatus !== undefined) {
+   if (asideStatus === 'hide') {
+     document.documentElement.classList.add('hide-aside')
+   } else {
+     document.documentElement.classList.remove('hide-aside')
+   }
+}const fontSizeVal = saveToLocal.get('global-font-size')
+if (fontSizeVal !== undefined) {
+  document.documentElement.style.setProperty('--global-font-size', fontSizeVal + 'px')
+}})()</script><meta name="generator" content="Hexo 5.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/blogpublic/MambaInVeins.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">243</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">96</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">32</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/moment"><i class="fa-fw fas fa-comment-alt"></i><span> 碎语</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 常用链接</span></a></div><div class="menus_item"><a class="site-page" href="/box"><i class="fa-fw fas fa-box"></i><span> 工具箱</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0209.png)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">MambaInVeins Blog</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/moment"><i class="fa-fw fas fa-comment-alt"></i><span> 碎语</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 常用链接</span></a></div><div class="menus_item"><a class="site-page" href="/box"><i class="fa-fw fas fa-box"></i><span> 工具箱</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">爬虫经验分享</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2020-04-27T04:00:00.000Z" title="发表于 2020-04-27 12:00:00">2020-04-27</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2021-05-25T14:28:08.301Z" title="更新于 2021-05-25 22:28:08">2021-05-25</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/python/">python</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/python/spider/">spider</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">6.9k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>20分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="大数据时代下爬虫技术的兴起"><a href="#大数据时代下爬虫技术的兴起" class="headerlink" title="大数据时代下爬虫技术的兴起"></a>大数据时代下爬虫技术的兴起</h1><p>最近越来越多的新闻报道，某某公司人员因非法使用爬虫技术被逮捕，利用“爬虫”抓视频网络公司高管获刑……爬虫究竟是合法还是违法的？我只能说，技术是无罪的，但是用到了错的地方代价就是非常巨大的了。言归正传，今天主要给大家讲一下大数据时代下的爬虫技术。</p>
+<p>[TOC]</p>
+<hr>
+<h3 id="一、爬虫基本定义"><a href="#一、爬虫基本定义" class="headerlink" title="一、爬虫基本定义"></a>一、爬虫基本定义</h3><h4 id="定义："><a href="#定义：" class="headerlink" title="定义："></a>定义：</h4><p>按我个人的理解，爬虫就是获取互联网<strong>公开数据</strong>的自动化工具。需要指出的是，公开数据，就是网站上公开让用户浏览、获取的数据，而不是通过特殊技术入侵到网站服务器获取的非公开数据。</p>
+<p>简单来说，从某些网站提取出我们感兴趣、有价值的内容，可以是图片、文本，也可以是音乐、视频，但是我们不可能去每一个网页去点去看，然后再复制粘贴保存。所以我们需要一种能自动获取网页内容并可以按照指定规则提取相应内容的程序，这就是爬虫技术。使用爬虫代替人工，减少人工处理的代价。</p>
+<h4 id="用途"><a href="#用途" class="headerlink" title="用途"></a>用途</h4><ul>
+<li><p>批量下载保存（小说、音乐、视频、图片） 最基础使用</p>
+<p><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/20200428130813.jpg"></p>
+</li>
+<li><p>12306抢票、演唱会门票：</p>
+</li>
+<li><p>网络投票：刷票</p>
+</li>
+<li><p>商品秒杀：618 双11折扣力度大，抢购商品一扫而空，很多人添加到购物车的商品都没有抢到，网速和手速都严重地限制了自己，使用脚本大大提升秒杀成功率。</p>
+</li>
+<li><p>搜索引擎：我们对搜索引擎并不陌生，Google、百度等搜索引擎可能每天都在帮我们快速获得信息。而爬虫就是其中第一步，不断抓取各个网站的网页，存放到搜索引擎的数据库；接着，索引程序读取数据库的网页进行清理，建立倒排索引；最后，搜索程序接收用户的查询关键词，去索引里面找到相关内容，并通过一定的排序算法（Pagerank等）把最相关最好的结果排在最前面呈现给用户。</p>
+</li>
+<li><p>数据获取：比如获得各个机场的实时流量、获得热点城市的火车票情况、各种热门公司招聘中的职位数及月薪分布、某公司的门店变化情况等等信息获取，之后做数据分析处理、机器学习、数据预测等等。</p>
+</li>
+<li><p>信息整合：简单来说就是抓取分散在各个角落的信息，整合后用网站、APP等呈现出来，减少了用户查询的时间。比如大家熟知的去哪儿，整合了各家航空公司的机票价格，方便用户比对哪个航班的价格便宜。各式各样的新闻聚合网站。</p>
+</li>
+</ul>
+<p>了解了爬虫的用途，我们来讲几个相关概念：</p>
+<h4 id="搜索引擎优化SEO"><a href="#搜索引擎优化SEO" class="headerlink" title="搜索引擎优化SEO"></a>搜索引擎优化SEO</h4><p>网站需要搜索引擎爬虫带来<strong>流量</strong>，让更多网站收录自己的站点，于是出现了网站主动进行<strong>搜索引擎优化（SEO, Search Engine Optimization）</strong>，也就是告诉搜索引擎，我这里的内容好，快来抓取吧！</p>
+<h4 id="君子协议robots-txt"><a href="#君子协议robots-txt" class="headerlink" title="君子协议robots.txt"></a>君子协议robots.txt</h4><p>但是又不能让爬虫无限制地爬取，于是产生了一个<strong>君子协议robots.txt</strong>。网站在自己的网站根目录上放上这个文件，告诉爬虫哪些内容可以抓，哪些内容不可以抓；搜索引擎读取网站的robots.txt来知道自己的抓取范围，同时也在访问网站时通过User-Agent来向网站表明自己的身份，比如，Google的爬虫叫做Googlebot，百度的爬虫叫做Baiduspider。</p>
+<h4 id="反爬虫"><a href="#反爬虫" class="headerlink" title="反爬虫"></a>反爬虫</h4><p>但是为了获取数据、获取利益，并不是所有爬虫都遵守君子协议，大量爬虫的行为给网站带来网络带宽、服务器计算力等方面很大的压力，造成不必要的流量浪费和资源消耗。为了降低这种毫无利益的压力和避免自己的数据被他人集中收集，网站通过技术手段来限制爬虫，衍生出众多的反爬虫技术:</p>
+<ul>
+<li><p>使用账户保护数据，数据仅对登录用户可见；</p>
+</li>
+<li><p>数据多次异步加载；</p>
+</li>
+<li><p>限制IP访问频率，甚至封锁IP；</p>
+</li>
+<li><p>输入验证码以获得访问权限；</p>
+</li>
+<li><p>数据在服务器端加密，浏览器端解密；</p>
+</li>
+<li><p>一些产品：Cloudflare Bot Management</p>
+<p>通过将机器学习，Cloudflare 会对每个请求发自机器人的可能性进行评分，利用来自整个 Cloudflare 网络的威胁情报，检测和防范不良机器人。</p>
+</li>
+<li><h6 id="……"><a href="#……" class="headerlink" title="……"></a>……</h6></li>
+</ul>
+<h4 id="反反爬虫"><a href="#反反爬虫" class="headerlink" title="反反爬虫"></a>反反爬虫</h4><p>如何绕过各类网站的反爬虫</p>
+<hr>
+<h3 id="二、爬虫基本流程、原理以及实现方式"><a href="#二、爬虫基本流程、原理以及实现方式" class="headerlink" title="二、爬虫基本流程、原理以及实现方式"></a>二、爬虫基本流程、原理以及实现方式</h3><p>接下来我们来具体讲一下爬虫的基本流程、原理、实现方式</p>
+<h4 id="基本流程"><a href="#基本流程" class="headerlink" title="基本流程"></a>基本流程</h4><p>发起请求——获取响应内容——解析内容——保存数据</p>
+<p><strong>1、发起请求</strong><br>使用http库向目标站点发起请求，即发送一个Request</p>
+<p>Request包含：请求头、请求体等</p>
+<p>（1）常用的请求方式：GET，POST</p>
+<p>get请求的参数直接放在url后：k1=xxx&amp;k2=yyy&amp;k3=zzz，常见的比如查询，像百度wd=。。。</p>
+<p>post请求的参数放在请求体内:存放于form data表单中，常见的比如登陆，会将用户名密码填入表单</p>
+<p>（2）头部信息</p>
+<p>user-agent。比如，你需要得到手机版页面，就要设置浏览器身份标识为手机浏览器的user-agent。</p>
+<p>post请求的参数放在请求体内:存放于form data表单中，常见的比如</p>
+<p><strong>2、获取响应内容</strong><br>如果服务器能正常响应，一般会得到一个网页，里面包含排版文字、图片、视频等数据，是一个丰富内容格式的页面。然而，我通过浏览器查看源代码，看到的却是文本格式的html代码（css/js）。有时候也会返回json、图片、视频等。</p>
+<p>常见响应状态码：</p>
+<p>200：代表访问成功</p>
+<p>301：代表跳转，重定向</p>
+<p>403：请求的资源不允许访问，没有权限</p>
+<p>404：请求的内容不存在</p>
+<p>500：内部服务器错误，可能是暂时的，后面要再次请求试试</p>
+<p>502：网关错误</p>
+<p>503：服务不可用</p>
+<blockquote>
+<p>100-199 用于指定客户端应相应的某些动作。<br>200-299 用于表示请求成功。<br>300-399 用于已经移动的文件并且常被包含在定位头信息中指定新的地址信息。<br>400-499 用于指出客户端的错误。<br>500-599 用于支持服务器错误。</p>
+</blockquote>
+<p><strong>3、解析内容</strong></p>
+<p>解析html数据：正则表达式，第三方解析库如Beautifulsoup，lxml等</p>
+<p>解析json数据：json模块</p>
+<p>解析二进制数据:以b的方式写入文件</p>
+<p><strong>4、保存数据</strong><br>数据库、文件</p>
+<h4 id="爬虫架构"><a href="#爬虫架构" class="headerlink" title="爬虫架构"></a>爬虫架构</h4><p>爬虫分为五个基本构架：</p>
+<ul>
+<li>调度器：相当于一台电脑的CPU，主要负责调度URL管理器、下载器、解析器之间的协调工作。</li>
+<li>URL管理器：包括待爬取的URL地址和已爬取的URL地址，防止重复抓取URL和循环抓取URL，实现URL管理器主要用三种方式，通过内存、数据库、缓存数据库来实现。</li>
+<li>网页下载器：通过传入一个URL地址来下载网页内容</li>
+<li>网页解析器：将下载下来的网页内容进行解析，可以按照我们的要求来提取出我们有用的信息，也可以根据DOM树的解析方式来解析。网页解析器有正则表达式（直观，将网页转成字符串通过模糊匹配的方式来提取有价值的信息，当文档比较复杂的时候，该方法提取数据的时候就会非常的困难），可以使用html.parser 和 beautifulsoup 以及 lxml ，这些都是以 DOM 树的方式进行解析的。</li>
+<li>数据存储器：用于将HTML解析器解析出来的数据通过文件或者数据库形式储存起来</li>
+</ul>
+<h4 id="使用工具"><a href="#使用工具" class="headerlink" title="使用工具"></a>使用工具</h4><p><strong>语言</strong>：python 网页改版、网页封锁变换莫测，昨天写好的爬虫今天可能就不起作用了，我们就需要在最快的时间调试找出问题所在，并以最快的速度修复，使其尽快上线跑起来。所以需要依赖一个快速开发、灵活的语言，同时又有完整丰富的库支撑。而同时具备这些优点的语言，无疑就是Python了。Python的库有多丰富呢，几乎所有你想要的功能Python都有库实现了。在开发过程中，需要什么基本功能，不妨先去搜搜、问问，看看是不是已经有人实现了这个功能，并且上传到pypi上了，而你要做到可能仅仅是pip install。</p>
+<p>要下载网页就用，Python标准模块urllib.request，还有好的没话说的第三方开源模块requests，异步http请求的有aiohttp。要处理网址url就用Python自带的模块urllib.parse。我要解析html就用基于C语言库的高效率模块lxml, 好用的beautifulsoap，正则库re。要管理网址，记录下载成功的、失败的、未下载的各种url的状态，就用Python封装的key-value数据库leveldb。要用成熟的爬虫框架，就用历史悠久的scrapy，后起之秀pyspider。要支持javascript和ajax，就用浏览器模拟框架Selenium。</p>
+<p><strong>爬虫分析利器</strong>：F12 抓包分析</p>
+<p>浏览器的F12快捷键，也可以通过鼠标右键菜单“检查”（Inspect）打开自带的开发者工具，</p>
+<p><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/20200428130830.png"></p>
+<pre><code>左上角箭头 用来点击查看网页的元素
+第二个手机、平板图标 用来模拟移动端显示网页
+Elements 查看渲染后的网页标签元素。是渲染后（包括异步加载的图片、数据等）的完整网页的html，不是最初下载的那个html。
+Console 查看JavaScript的console log信息，写网页时比较有用
+Sources 显示网页源码、CSS、JavaScript代码
+Network 查看所有加载的请求，对爬虫很有帮助</code></pre>
+<p>爬虫常用的就是1Network，2是清空请求记录，3是保持记录，这在网页有重定向的时候很有用，4是加载这个网页，一共请求了181次。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/20200428131008.png"></p>
+<p>图中左边红框就是点击的请求网址；绿框就是详情窗口。详情窗口包括，Headers（请求头）、Preview（预览响应）、Response（服务器响应内容）和Timing（耗时）。Preview、Response 帮助我们查看该条请求是不是有爬虫想要的数据；Headers帮助我们在爬虫中重建http请求，以便爬虫得到和浏览器一样的数据。了解和熟练使用F12开发者工具，就如虎添翼可以顺利写出自己的爬虫。</p>
+<p>当然也可以使用bp和fiddler。但对于一般网站的爬取来讲，F12的功能已经足够。</p>
+<h4 id="常见反爬手段"><a href="#常见反爬手段" class="headerlink" title="常见反爬手段"></a>常见反爬手段</h4><p>1.U-A校验、referer校验</p>
+<p>最简单的反爬虫机制应该是U-A校验了。浏览器在发送请求的时候，会附带一部分浏览器及当前系统环境的参数给服务器，这部分数据放在HTTP请求的header部分。只需要爬虫模拟正常浏览器的user-agent即可。python中可以自己找到常见UA随机选取，也可以直接用第三方库fake-useragent。</p>
+<p>referer校验。referer字段可以追溯网站访问来源（一般被称为防盗链），在构造header的时候，传入Referer参数，它的值一般为搜索引擎，或者原网站就可以了。</p>
+<p>2.检测ip、限制访问频率</p>
+<p>一般来说，真人浏览网页的速度相对程序是很慢的，但是爬虫不一样。如果有人一秒钟访问了100次同一个网站，那几乎毫无疑问，这就是爬虫。不过有的人真的是用手在操作页面，手速太快，导致网页都提示 “操作频率太快…”。</p>
+<p>一般来说，面对这种情况，我们有两种办法来解决。</p>
+<p>第一种办法访问慢点。在每次访问完网站之后就设置一个time.sleep，限制访问速度。或者访问时间间隔你可以设定为一个随机值，例如0到10之间的随机秒数。</p>
+<p>第二种方法就是换ip。网站一般是通过ip来识别访问者的身份的，所以我们只要不停地更换ip，就可以伪装成不同的人。通过设置代理ip的办法绕过这个限制。有不少提供免费代理ip的网站，像<a target="_blank" rel="noopener" href="https://www.xicidaili.com/nt/%EF%BC%8C%E6%88%91%E4%BB%AC%E5%8F%AF%E4%BB%A5%E4%BB%8E%E7%BD%91%E7%AB%99%E4%B8%8A%E6%8B%BF%E5%88%B0%E5%BE%88%E5%A4%9A%E4%BB%A3%E7%90%86ip%E3%80%82%E4%BD%86%E6%98%AF%E8%BF%99%E4%BA%9Bip%E5%B9%B6%E4%B8%8D%E6%98%AF%E6%AF%8F%E4%B8%AA%E9%83%BD%E8%83%BD%E7%94%A8%E7%9A%84%EF%BC%8C%E6%88%96%E8%80%85%E8%AF%B4%EF%BC%8C%E6%B2%A1%E5%87%A0%E4%B8%AA%E8%83%BD%E7%94%A8%E7%9A%84%E3%80%82%E6%8B%BF%E5%88%B0%E7%9A%84ip%E5%9C%A8%E4%BD%BF%E7%94%A8%E5%89%8D%E6%88%91%E4%BB%AC%E8%BF%98%E9%9C%80%E8%A6%81%E5%AF%B9%E5%85%B6%E8%BF%9B%E8%A1%8C%E6%A3%80%E6%B5%8B%EF%BC%8C%E5%9B%A0%E4%B8%BA%E4%BD%A0%E4%B8%8D%E7%9F%A5%E9%81%93%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E5%AE%83%E5%B0%B1%E4%B8%8D%E5%8F%AF%E7%94%A8%E4%BA%86%E3%80%82%E6%89%80%E4%BB%A5%E5%B9%B3%E6%97%B6%E5%A4%9A%E5%82%A8%E5%AD%98%E4%B8%80%E4%BA%9B%E4%BB%A3%E7%90%86ip%EF%BC%8C%E5%85%8D%E5%BE%97%E8%A6%81%E7%94%A8%E7%9A%84%E6%97%B6%E5%80%99%E6%B2%A1%E5%BE%97%E7%94%A8%E3%80%82%E5%8F%AF%E4%BB%A5%E4%BD%BF%E7%94%A8http://icanhazip.com/">https://www.xicidaili.com/nt/，我们可以从网站上拿到很多代理ip。但是这些ip并不是每个都能用的，或者说，没几个能用的。拿到的ip在使用前我们还需要对其进行检测，因为你不知道什么时候它就不可用了。所以平时多储存一些代理ip，免得要用的时候没得用。可以使用http://icanhazip.com/</a> 这个网站来检测你的代理IP是否设定成功。当你直接使用浏览器访问这个网站的时候，它会返回你的IP地址。</p>
+<p>3.登陆以及验证码</p>
+<p>需要身份验证后才能看到想要的数据，例如很多论坛只有登陆后才可以看到楼主分享的数据。这时候有两种方法解决，一种是携带之前访问成功的cookie持续会话，不过这种会有时限；第二种是模拟登陆表但post账号密码以及其他键值。</p>
+<p>还有些网站，不管你做什么，登录还是访问页面，都需要输入验证码进行验证。在这种情况下，我们必须识别出验证码，才能爬取网站内容。有些简单的字母加数字的验证码可以用ocr进行识别，复杂一点的可以利用机器学习、模板匹配等方法识别，其他一些滑动验证之类的就需要其他的技巧来破解，这里就不详谈了。在登陆的表单基础上中加一个识别出的验证码即可。</p>
+<p>4.蜜罐反爬</p>
+<p>蜜罐这个词，最早是来自于网络攻防中。一方会故意设置一个或者几个服务器，故意留下漏洞，让另一方轻易的入侵进来。这些被故意设置的服务器，就叫做蜜罐。里面可能安装了监控软件，用来监控入侵者。同时，蜜罐还可以拖延入侵者的时间。在反爬虫的机制中，也有一种蜜罐技术。网页上会故意留下一些人类看不到或者绝对不会点击的链接。由于爬虫会从源代码中获取内容，所以爬虫可能会访问这样的链接。这个时候，只要网站发现了有IP访问这个链接，立刻永久封禁该IP + User-Agent + Mac地址等等可以用于识别访问者身份的所有信息。这个时候，访问者即便是把IP换了，也没有办法访问这个网站了。给爬虫造成了非常大的访问障碍。但一般我们写的都是定向爬虫，定向爬虫的爬行轨迹是由我们来决定的，爬虫会访问哪些网址我们都是知道的。因此即使网站有蜜罐，定向爬虫也不一定会中招。</p>
+<p>5.使用ajax异步加载</p>
+<p>站页面是动态页面，采用 Ajax 异步加载数据方式来呈现数据。一般就是网页中查看更多、loadmore这种，一般是用 ajax 异步加载json数据，再渲染到网页中。这时候直接模拟ajax请求，利用json包解析返回的xhr包内容就可以得到想要的内容。但是有些网站把 ajax 请求的所有参数全部加密了。我们根本没办法构造自己所需要的数据的请求，就会遇到基于 JavaScript 的反爬虫手段。</p>
+<p>6.基于 JavaScript 的反爬虫手段</p>
+<p>在响应数据页面之前，先返回一段带有JavaScript 代码的页面，用于验证访问者有无 JavaScript 的执行环境，以确定使用的是不是浏览器。这种反爬虫方法，通常情况下，这段JS代码执行后，会发送一个带参数key的请求，后台通过判断key的值来决定是响应真实的页面，还是响应伪造或错误的页面。因为key参数是动态生成的，每次都不一样，难以分析出其生成方法，使得无法构造对应的http请求。</p>
+<p>面对这种情况，我们也有两种办法来解决。</p>
+<p>第一种方法：可以采用 selenium+phantomJS/geckodriver/chromedriver 框架的方式进行爬取。调用浏览器内核，并利用driver执行 js 来模拟人为操作以及触发页面中的js脚本。从填写表单到点击按钮再到滚动页面，全部都可以模拟，不考虑具体的请求和响应过程，只是完完整整的把人浏览页面获取数据的过程模拟一遍,所以会很慢，也会吃内存。</p>
+<p>第二种方法：就是分析js生成key参数方法，在浏览器中逐步调试js，一步一步逆向分析，找到了key的生成方式，再利用execjs执行js脚本，构造相同动态生成的参数，代入爬虫之中。那此种方法难度较大，cloadflare防护五秒盾就是一个例子，它的cookie里面会包含__cfduid, cf_clearance 这个两个字段，需要对等待5秒的js进行逆向分析，找到其生成字段的方式。</p>
+<p>比较有趣的反爬虫手段：</p>
+<p>去哪儿网用的 <strong>CSS 偏移反爬虫</strong>手段，页面展示的数字和html文件里的数字不一致。<strong>字体反爬</strong>，通过调用自定义的ttf文件来渲染网页中的文字，而网页中的文字不再是文字，而是相应的字体编码，通过复制或者简单的采集是无法采集到编码后的文字内容。</p>
+<p>更多反爬技术可以查看今年刚出的一本书《Python3 反爬虫原理与绕过实战》。</p>
+<p>但其实除了爬取过程中遇到的反爬技术，其他流程中也会遇到大大小小的问题。</p>
+<h4 id="其他常见问题"><a href="#其他常见问题" class="headerlink" title="其他常见问题"></a>其他常见问题</h4><p>1.URL管理</p>
+<p>（1）状态记录</p>
+<p>对于timeout的URL，需要后面再次抓取，所以需要记录所有URL的各种状态，包括：</p>
+<ul>
+<li>已经下载成功</li>
+<li>下载多次失败无需再下载</li>
+<li>正在下载</li>
+<li>下载失败要再次尝试</li>
+</ul>
+<p>增加了对网络请求的各种处理，这个爬虫就健壮多了，不会动不动就异常退出，给后面运维带来很多的工作量。</p>
+<p>（2）清洗去重</p>
+<p>网络请求开始之前，先把url清洗一遍，可以避免重复下载、无效下载，节省服务器和网络开销。</p>
+<p>（3）抓取策略：</p>
+<p>广度优先遍历策略：将新下载网页包含的链接直接追加到待抓取URL队列末尾。即按照树的层次进行搜索，如果此层没有搜索完成，不会进入下一层搜索。</p>
+<img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/20200428131025.jpg" style="zoom:50%;" />
+
+<p>深度优先遍历策略：网络爬虫会从起始页开始，一个链接一个链接跟踪下去，处理完这条线路的链接之后，在再转入下一个起始页，继续跟踪链接。</p>
+<p>大站优先策略：对于待抓取URL队列中的所有网页，根据所属的网站进行分类。对于待下载页面数多的网站，优先下载。这个策略也因此叫做大站优先策略。</p>
+<p>反向链接数策略：反向链接数是指一个网页被其他网页链接指向的数量。反向链接数表示的是一个网页的内容受到其他人的推荐的程度。因此，很多时候搜索引擎的抓取系统会使用这个指标来评价网页的重要程度，从而决定不同网页的抓取先后顺序。</p>
+<p>Partial PageRank策略：对于已经下载的网页，连同待抓取URL队列中的URL，形成网页集合，计算每个页面的PageRank值，计算完之后，将待抓取URL队列中的URL按照PageRank值的大小排列，并按照该顺序抓取页面。</p>
+<p>2.清理提取内容：</p>
+<p>从新闻网页的html里面快速、准确提取想要的信息数据，比如标题、发布时间、正文内容等，这又带来内容提取上的难度。</p>
+<p>（1）标题的提取：标题基本上都会出现在html的<title>标签里面</p>
+<p>（2）发布时间提取：一般在<time>标签中，或者使用正则表达式进行匹配提取发布时间</p>
+<p>（3）正文提取：github上有一些现成的库，例如Goose、GNE等，利用节点文本密度实现正文快速采集</p>
+<p>熟练掌握re/beautifulsoup/lxml，熟悉正则、xpath、css提取器。</p>
+<p>3.存储：</p>
+<p>爬虫织网式的爬取，会把每个网站几年前的新闻网页都给翻出来，从而获得海量的网页需要存储。就是存储上的难度。现如今，我们能用的数据库很多，老牌关系型数据库如 MySQL(MariaDB), PostgreSQL 等，新型的NoSQL数据库，还有NewSqL数据库。选择实在太多，但MySQL(Mariadb)从易获取性、易使用性、稳定性、社区活跃性方面都有较大优势，所以，我们在够用的情况下都选择MySQL。PyMySQL是一个纯Python实现的MySQL客户端。因为是纯Python实现，它和Python 3的异步模块aysncio可以很好的结合起来，形成了aiomysql 模块，后面我们写异步爬虫时就可以对数据库进行异步操作了。</p>
+<p>存储的另一个问题就是数据库设计，需要考虑到数据去重以及后期读取问题。</p>
+<p>4.数据更新：</p>
+<p>如何保证爬取数据的及时性，网站时刻都在发布最新信息，爬虫在织网式抓取“旧”信息的同时，如何兼顾获取“新”信息？</p>
+<p>5.异常处理、日志记录</p>
+<p>我们写的爬虫在运行过程中，会出现各种异常，而且有些异常是不可预期的，也不知道它会出现在什么地方，我们就需要用try来捕获异常让程序不中断，但是我们又需要看看捕获的异常是什么内容，由此来改善我们的爬虫。这个时候，就需要进行异常处理并记录日日志。logging 模块，Python提供的输出日志的模块，可以输出到屏幕（stdout、stderr），也可以输出到文件。爬虫在运行过程中，可能会碰到千奇百怪的异常，把这些异常都记录下来，可以很好的帮助改善爬虫。</p>
+<p>6.分布式爬虫部署</p>
+<p><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/20200428131033.jpg"></p>
+<p>每一个爬虫的调度器Scheduler都从队列中取出请求和存入请求，这样就实现多个爬虫，多台机器同时爬取的目标。</p>
+<p>7.和爬虫无关的 但也是后续要做的就是 数据分析以及数据可视化过程。</p>
+<h3 id="三、其他"><a href="#三、其他" class="headerlink" title="三、其他"></a>三、其他</h3><h4 id="推荐框架"><a href="#推荐框架" class="headerlink" title="推荐框架"></a>推荐框架</h4><p>Scrapy：该框架应该是Python爬虫使用最多的爬虫框架了，利用这个框架我们可以快速地完成爬虫的开发。而且框架本身性能卓越、可配置性极强，开发者社区也十分活跃，具有配套的各种插件，几乎可以实现任何站点的爬取逻辑。官网：<a href="scrapy.org/">scrapy.org</a></p>
+<h4 id="推荐书目"><a href="#推荐书目" class="headerlink" title="推荐书目"></a>推荐书目</h4><p>《Python3网络爬虫开发实战》</p>
+<p>《Python3 反爬虫原理与绕过实战》</p>
+<p>《精通Scrapy网络爬虫》</p>
+<h4 id="法律问题"><a href="#法律问题" class="headerlink" title="法律问题"></a>法律问题</h4><p>那既然是公开数据，为什么还会有人因为爬虫被抓坐牢呢？因为有些团队或机构，大量收集一些公司或者个人数据，并且因此<strong>获利</strong>时（或者影响数据生产方利益时），会让数据生产方或者被侵犯的个人很不爽，就会由此产生法律纠纷。爬虫违法主要原因有：</p>
+<p>1.为违法违规组织提供爬虫相关服务</p>
+<p>例如，厦门有个技术宅男杨某，培训AI人工智能学习识别各种验证码，帮助黑客认证个人信息，一年牟利300多万。</p>
+<p>2.个人隐私数据抓取与贩卖</p>
+<p>例如，简历大数据公司“巧达科技”利用某知名互联网公司某个接口，窃取了大量客户信息，用于出售简历数据。</p>
+<p>感兴趣的可以查看，<a target="_blank" rel="noopener" href="https://github.com/HiddenStrawberry/Crawler_Illegal_Cases_In_China">中国爬虫违法违规案例汇总</a>，整理了中国大陆爬虫开发者涉诉与违规相关的新闻、资料与法律法规，了解下爬虫禁区。</p>
+<h4 id="成功案例"><a href="#成功案例" class="headerlink" title="成功案例"></a>成功案例</h4><p>有好些公司的商业模式就建立在爬虫技术之上的，比如搜索引擎公司、大数据处理公司、网络舆情监控公司，没有数据，他们的公司就没法运转。google和百度、国民资讯app的今日头条（早期通过抓取数百家机构的新闻源，然后以技术手段来分发给用户，做到千人千面的阅读体验）、天眼查/企查查（ 这两家企业把各个省，市的官方几千万家工商信息抓取出来，结构化整合后提供给用户查询）、很多个人站长、自由职业者都是靠着抓取和整合数据做出了不错的流量和用户，每年有不菲的收入。</p>
+<p>爬虫作为一种技术本身可能无所谓善恶，但是使用它的人就有善恶之分。如何使用爬虫，爬取的数据如何使用，都可能产生潜在的法律问题。无论何种目的，网络爬虫都不能突破法律的底线，守法合规，既是一直自我约束，也是自我保护。</p>
+<h3 id="四、总结"><a href="#四、总结" class="headerlink" title="四、总结"></a>四、总结</h3><p>爬虫是一个运用综合技能的工作，一个好的爬虫工程师应该要具备前端(html、JS、浏览器和APP抓包)，HTTP知识，简单数据挖掘(数据结构化、清洗、排重等工作)，数据存储等知识。学习任何知识，都不应该纸上谈兵，要做的就是多动手练习，而在这个过程中，你会遇到各种各样的问题，各种各样的坑，而在解决这些问题中会摸索出该去掌握的技巧和经验，这都是学习和进阶的时刻。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">MambaInVeins</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://mambainveins.gitee.io/mambainveins/2020/04/27/2020/2020-04-27-Crawler_experience_sharing/">http://mambainveins.gitee.io/mambainveins/2020/04/27/2020/2020-04-27-Crawler_experience_sharing/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://mambainveins.gitee.io/mambainveins" target="_blank">MambaInVeins Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E7%88%AC%E8%99%AB/">爬虫</a></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0209.png" data-sites="wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i> 打赏<div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/blogpublic/wechat.jpg" target="_blank"><img class="post-qr-code-img" src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/blogpublic/wechat.jpg" alt="wechat"/></a><div class="post-qr-code-desc">wechat</div></li><li class="reward-item"><a href="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/blogpublic/alipay.jpg" target="_blank"><img class="post-qr-code-img" src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/blogpublic/alipay.jpg" alt="alipay"/></a><div class="post-qr-code-desc">alipay</div></li></ul></div></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2020/04/28/2020/2020-04-28-Use_Flask_uwsgi_Nginx_to_deploy_Flask_official_environment/"><img class="prev-cover" src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0406.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">使用Flask_uwsgi_Nginx部署Flask正式环境</div></div></a></div><div class="next-post pull-right"><a href="/2020/04/26/2020/2020-04-26-bootstrap-table_localized_Chinese_setting/"><img class="next-cover" src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0163.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">bootstrap-table 本地化中文设置</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> 相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2020/04/03/2020/2020-04-03-scrapy_two_ways_crawl_clear_dark_web/" title="scrapy两条链路分别爬取明暗网数据"><img class="cover" src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0227.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-04-03</div><div class="title">scrapy两条链路分别爬取明暗网数据</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%97%B6%E4%BB%A3%E4%B8%8B%E7%88%AC%E8%99%AB%E6%8A%80%E6%9C%AF%E7%9A%84%E5%85%B4%E8%B5%B7"><span class="toc-number">1.</span> <span class="toc-text">大数据时代下爬虫技术的兴起</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E7%88%AC%E8%99%AB%E5%9F%BA%E6%9C%AC%E5%AE%9A%E4%B9%89"><span class="toc-number">1.0.1.</span> <span class="toc-text">一、爬虫基本定义</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%9A%E4%B9%89%EF%BC%9A"><span class="toc-number">1.0.1.1.</span> <span class="toc-text">定义：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%94%A8%E9%80%94"><span class="toc-number">1.0.1.2.</span> <span class="toc-text">用途</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E%E4%BC%98%E5%8C%96SEO"><span class="toc-number">1.0.1.3.</span> <span class="toc-text">搜索引擎优化SEO</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%90%9B%E5%AD%90%E5%8D%8F%E8%AE%AErobots-txt"><span class="toc-number">1.0.1.4.</span> <span class="toc-text">君子协议robots.txt</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%8D%E7%88%AC%E8%99%AB"><span class="toc-number">1.0.1.5.</span> <span class="toc-text">反爬虫</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#%E2%80%A6%E2%80%A6"><span class="toc-number">1.0.1.5.0.1.</span> <span class="toc-text">……</span></a></li></ol></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%8D%E5%8F%8D%E7%88%AC%E8%99%AB"><span class="toc-number">1.0.1.6.</span> <span class="toc-text">反反爬虫</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E7%88%AC%E8%99%AB%E5%9F%BA%E6%9C%AC%E6%B5%81%E7%A8%8B%E3%80%81%E5%8E%9F%E7%90%86%E4%BB%A5%E5%8F%8A%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F"><span class="toc-number">1.0.2.</span> <span class="toc-text">二、爬虫基本流程、原理以及实现方式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E6%B5%81%E7%A8%8B"><span class="toc-number">1.0.2.1.</span> <span class="toc-text">基本流程</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%88%AC%E8%99%AB%E6%9E%B6%E6%9E%84"><span class="toc-number">1.0.2.2.</span> <span class="toc-text">爬虫架构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E5%B7%A5%E5%85%B7"><span class="toc-number">1.0.2.3.</span> <span class="toc-text">使用工具</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E5%8F%8D%E7%88%AC%E6%89%8B%E6%AE%B5"><span class="toc-number">1.0.2.4.</span> <span class="toc-text">常见反爬手段</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B6%E4%BB%96%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98"><span class="toc-number">1.0.2.5.</span> <span class="toc-text">其他常见问题</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E5%85%B6%E4%BB%96"><span class="toc-number">1.0.3.</span> <span class="toc-text">三、其他</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8E%A8%E8%8D%90%E6%A1%86%E6%9E%B6"><span class="toc-number">1.0.3.1.</span> <span class="toc-text">推荐框架</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8E%A8%E8%8D%90%E4%B9%A6%E7%9B%AE"><span class="toc-number">1.0.3.2.</span> <span class="toc-text">推荐书目</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B3%95%E5%BE%8B%E9%97%AE%E9%A2%98"><span class="toc-number">1.0.3.3.</span> <span class="toc-text">法律问题</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%88%90%E5%8A%9F%E6%A1%88%E4%BE%8B"><span class="toc-number">1.0.3.4.</span> <span class="toc-text">成功案例</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E6%80%BB%E7%BB%93"><span class="toc-number">1.0.4.</span> <span class="toc-text">四、总结</span></a></li></ol></li></ol></li></ol></div></div></div></div></main><footer id="footer" style="background-image: url(https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0209.png)"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By MambaInVeins</div><div class="footer_custom_text"><a href="http://mambainveins.gitee.io/">Mamba Never Out</a>!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="font-plus" type="button" title="放大字体"><i class="fas fa-plus"></i></button><button id="font-minus" type="button" title="缩小字体"><i class="fas fa-minus"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="false" data-click="true"></script><script>(function(){
+  const bp = document.createElement('script');
+  const curProtocol = window.location.protocol.split(':')[0];
+  if (curProtocol === 'https') {
+    bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+  }
+  else{
+    bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+  }
+  bp.dataset.pjax = ''
+  const s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(bp, s);
+})()</script></div></body></html>

@@ -1,0 +1,417 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Flask-Login使用 | MambaInVeins Blog</title><meta name="keywords" content="flask"><meta name="author" content="MambaInVeins"><meta name="copyright" content="MambaInVeins"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta name="description" content="Flask-Login使用安装和配置1.安装 pip install flask-login 2.配置 使用Flask-Login的应用程序中最重要的部分是LoginManager类(登录管理器)，然后对app进行配置。 from flask import Flask from flask_login import LoginManager   app &#x3D; Flask(__name__)  # 实">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Flask-Login使用">
+<meta property="og:url" content="http://mambainveins.gitee.io/mambainveins/2020/05/20/2020/2020-05-20-flask_login/index.html">
+<meta property="og:site_name" content="MambaInVeins Blog">
+<meta property="og:description" content="Flask-Login使用安装和配置1.安装 pip install flask-login 2.配置 使用Flask-Login的应用程序中最重要的部分是LoginManager类(登录管理器)，然后对app进行配置。 from flask import Flask from flask_login import LoginManager   app &#x3D; Flask(__name__)  # 实">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0224.png">
+<meta property="article:published_time" content="2020-05-19T16:00:00.000Z">
+<meta property="article:modified_time" content="2021-05-25T14:28:10.289Z">
+<meta property="article:author" content="MambaInVeins">
+<meta property="article:tag" content="flask">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0224.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://mambainveins.gitee.io/mambainveins/2020/05/20/2020/2020-05-20-flask_login/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="preconnect" href="//zz.bdstatic.com"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":50,"languages":{"author":"作者: MambaInVeins","link":"链接: ","source":"来源: MambaInVeins Blog","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+};
+
+var saveToLocal = {
+  set: function setWithExpiry(key, value, ttl) {
+    const now = new Date()
+    const expiryDay = ttl * 86400000
+    const item = {
+      value: value,
+      expiry: now.getTime() + expiryDay,
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+  },
+
+  get: function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+
+    if (!itemStr) {
+      return undefined
+    }
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key)
+      return undefined
+    }
+    return item.value
+  }
+}
+
+// https://stackoverflow.com/questions/16839698/jquery-getscript-alternative-in-native-javascript
+const getScript = url => new Promise((resolve, reject) => {
+  const script = document.createElement('script')
+  script.src = url
+  script.async = true
+  script.onerror = reject
+  script.onload = script.onreadystatechange = function() {
+    const loadState = this.readyState
+    if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+    script.onload = script.onreadystatechange = null
+    resolve()
+  }
+  document.head.appendChild(script)
+})</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2021-05-25 22:28:10'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(function () {  window.activateDarkMode = function () {
+    document.documentElement.setAttribute('data-theme', 'dark')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+    }
+  }
+  window.activateLightMode = function () {
+    document.documentElement.setAttribute('data-theme', 'light')
+   if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+    }
+  }
+  const autoChangeMode = 'false'
+  const t = saveToLocal.get('theme')
+  if (autoChangeMode === '1') {
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+    const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+    const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+    if (t === undefined) {
+      if (isLightMode) activateLightMode()
+      else if (isDarkMode) activateDarkMode()
+      else if (isNotSpecified || hasNoSupport) {
+        const now = new Date()
+        const hour = now.getHours()
+        const isNight = hour <= 6 || hour >= 18
+        isNight ? activateDarkMode() : activateLightMode()
+      }
+      window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+        if (saveToLocal.get('theme') === undefined) {
+          e.matches ? activateDarkMode() : activateLightMode()
+        }
+      })
+    } else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else if (autoChangeMode === '2') {
+    const now = new Date()
+    const hour = now.getHours()
+    const isNight = hour <= 6 || hour >= 18
+    if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+    else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else {
+    if (t === 'dark') activateDarkMode()
+    else if (t === 'light') activateLightMode()
+  }const asideStatus = saveToLocal.get('aside-status')
+if (asideStatus !== undefined) {
+   if (asideStatus === 'hide') {
+     document.documentElement.classList.add('hide-aside')
+   } else {
+     document.documentElement.classList.remove('hide-aside')
+   }
+}const fontSizeVal = saveToLocal.get('global-font-size')
+if (fontSizeVal !== undefined) {
+  document.documentElement.style.setProperty('--global-font-size', fontSizeVal + 'px')
+}})()</script><meta name="generator" content="Hexo 5.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/blogpublic/MambaInVeins.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">243</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">96</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">32</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/moment"><i class="fa-fw fas fa-comment-alt"></i><span> 碎语</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 常用链接</span></a></div><div class="menus_item"><a class="site-page" href="/box"><i class="fa-fw fas fa-box"></i><span> 工具箱</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0224.png)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">MambaInVeins Blog</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/moment"><i class="fa-fw fas fa-comment-alt"></i><span> 碎语</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 常用链接</span></a></div><div class="menus_item"><a class="site-page" href="/box"><i class="fa-fw fas fa-box"></i><span> 工具箱</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Flask-Login使用</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2020-05-19T16:00:00.000Z" title="发表于 2020-05-20 00:00:00">2020-05-20</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2021-05-25T14:28:10.289Z" title="更新于 2021-05-25 22:28:10">2021-05-25</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/python/">python</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/python/flask/">flask</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">2.9k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>10分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="Flask-Login使用"><a href="#Flask-Login使用" class="headerlink" title="Flask-Login使用"></a>Flask-Login使用</h2><h3 id="安装和配置"><a href="#安装和配置" class="headerlink" title="安装和配置"></a>安装和配置</h3><p>1.安装</p>
+<pre><code>pip install flask-login</code></pre>
+<p>2.配置</p>
+<p>使用Flask-Login的应用程序中最重要的部分是LoginManager类(登录管理器)，然后对app进行配置。</p>
+<pre><code>from flask import Flask
+from flask_login import LoginManager
+
+
+app = Flask(__name__)  # 实例化一个flask对象
+app.config[&quot;SECRET_KEY&quot;] = &#39;雅蠛蝶&#39;  # 设置session的secret key
+
+login_manager = LoginManager()  # 实例化一个登录的管理实例
+login_manager.init_app(app)</code></pre>
+<p>默认情况下，Flask-Login使用 sessions 进行身份验证。也就是数说你必须在app上设置 secret key，否则Flask会向您显示一条错误消息。</p>
+<p>3.user_loader 回调函数</p>
+<p>user session 记录的是用户 ID (user_id)，回调函数的作用就是通过 user_id 返回对应的 User 对象。把返回的user对象存储到session中。user_loader 回调函数在 user_id 非法的时候不应该抛出异常，而要返回 None。没有这个回调函数的话，Flask-Login 将无法工作。</p>
+<pre><code>@login_manager.user_loader
+def user_loader(user_id):
+    from user.models import User  # 导入User表
+    user = User.query.get(int(user_id))
+    return user</code></pre>
+<p>4.User类的实现</p>
+<p>使用flask-login插件需要User类的实现以下几个属性和方法：</p>
+<ul>
+<li>is_authenticated：属性，用来判断是否是已经授权了，如果通过授权就会返回true</li>
+<li>is_active： 属性，判断是否已经激活</li>
+<li>is_anonymous： 属性，判断是否是匿名用户</li>
+<li>get_id()： 方法，返回用户的唯一标识</li>
+</ul>
+<p>当然，这些属性和方法也可以直接继承于userMixin的默认方法和属性，不用自己去实现。</p>
+<pre><code>from flask_login import UserMixin
+
+class User(UserMixin,db.Model):  # db是flask-sqlalchemy的实例
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password= db.Column(db.String(128))
+    avatar_hash = db.Column(db.String(32))
+
+    def __init__(self,id,username,email):
+        self.id = id
+        self.username = username
+        self.email = email
+
+    def __repr__(self):
+        return &#39;&lt;User %r&gt;&#39; % self.username</code></pre>
+<h3 id="flask-login的应用"><a href="#flask-login的应用" class="headerlink" title="flask-login的应用"></a>flask-login的应用</h3><p>1.登录Demo</p>
+<pre><code># 用户进行身份验证后，你可以使用该login_user 功能登录。
+
+from flask import request
+from test.models import User  # 导入User类
+
+
+@app.route(&#39;/login&#39;, methods=[&#39;GET&#39;, &#39;POST&#39;])
+def login():
+    # Here we use a class of some kind to represent and validate our
+    # client-side form data. For example, WTForms is a library that will
+    # handle this for us, and we use a custom LoginForm to validate.
+    form = LoginForm()
+    if form.validate():
+        # Login and validate the user.
+        # user should be an instance of your `User` class
+        username = request.form.get(&#39;username&#39;)
+        password = request.form.get(&#39;password&#39;)
+        user = User.query.filter_by(User.username==username, User.password==password).first()
+        login_user(user)  # 登录
+        flask.flash(&#39;Logged in successfully.&#39;)
+
+        next = flask.request.args.get(&#39;next&#39;)
+        # is_safe_url should check if the url is safe for redirects.
+        # See http://flask.pocoo.org/snippets/62/ for an example.
+        if not is_safe_url(next):
+            return flask.abort(400)
+
+        return flask.redirect(next or flask.url_for(&#39;index&#39;))
+    return flask.render_template(&#39;login.html&#39;, form=form)</code></pre>
+<p>这里的是登陆的请求操作，通过用户查询，判断是否有权限，然后通过login_user(user)，其实也是调用user_loader()把用户设置到session中。</p>
+<p>这里的next参数可能有安全问题而不能直接跳转，可以考虑使用is_safe_url去过滤。</p>
+<p>2.使用flask-login登陆后的一些参数和方法</p>
+<p>登陆后的用户，默认提供了current_user的用户代理方法，在每个模板中都可以直接使用：</p>
+<pre><code>&#123;% if current_user.is_authenticated %&#125;
+    Hi &#123;&#123; current_user.name &#125;&#125;!
+    &#123;% endif %&#125;</code></pre>
+<p>需要用户登录的视图可以使用 @login_required 来装饰</p>
+<pre><code>@app.route(&quot;/settings&quot;)
+@login_required
+def settings():
+    pass</code></pre>
+<p>注销用户，logout_user()，这样会清除cookie和session</p>
+<pre><code>@app.route(&quot;/logout&quot;)
+@login_required
+def logout():
+    logout_user()
+    return redirect(somewhere)</code></pre>
+<p>3.自定义登录操作</p>
+<pre><code># 设置登陆视图，用于未授权操作的跳转(即用户未登录时，默认跳转到哪里)
+login_manager.login_view = &quot;auth.login&quot;
+
+# 设置快闪消息，用于提示用户
+login_manager.login_message = u&quot;Please login to access this page.&quot;
+
+# 可以设置None,&#39;basic&#39;,&#39;strong&#39;以提供不同的安全等级
+login_manager.session_protection = &quot;basic&quot;
+
+# 自定义消息类别
+login_manager.login_message_category = &quot;info&quot;
+&quot;&quot;&quot;
+就是在登陆页面的重定向时候，可以携带到登陆请求的参数，例如在一个用户页面，session过期，这是要跳转到登陆页面，那么会把当前的链接当参数存放到next里面传递到登陆请求中。当然了，这里还可以设置USE_SESSION_FOR_NEXT =True 这样就把链接放session里面了；而这些可携带参数链接必须在info的路径下。
+&quot;&quot;&quot;</code></pre>
+<p>4.使用Request Loader自定义登录</p>
+<p>有时候你想要不使用cookies来登录用户，比如使用头部值或者作为查询参数传递的api键值。 在这些情况下，您应该使用request_loader回调。 这个回调应该和你的user_loader回调一样，只是它接受Flask请求而不是user_id。</p>
+<p>举个例子，你可以通过路径的参数或者请求头里携带的Authorzation消息进行验证用户：</p>
+<pre><code>@login_manager.request_loader
+def load_user_from_request(request):
+
+    # first, try to login using the api_key url arg
+    api_key = request.args.get(&#39;api_key&#39;)
+    if api_key:
+        user = User.query.filter_by(api_key=api_key).first()
+        if user:
+            return user
+
+    # next, try to login using Basic Auth
+    api_key = request.headers.get(&#39;Authorization&#39;)
+    if api_key:
+        api_key = api_key.replace(&#39;Basic &#39;, &#39;&#39;, 1)
+        try:
+            api_key = base64.b64decode(api_key)
+        except TypeError:
+            pass
+        user = User.query.filter_by(api_key=api_key).first()
+        if user:
+            return user
+
+    # finally, return None if both methods did not login the user
+    return None</code></pre>
+<p>5.匿名用户</p>
+<p>默认情况下，当用户实际未登录时，current_user 将设置为 AnonymousUserMixin 对象。它具有以下属性和方法：</p>
+<ul>
+<li>is_active并且is_authenticated是 False</li>
+<li>is_anonymous 是 True</li>
+<li>get_id() 回报  None</li>
+</ul>
+<p>如果您对匿名用户有自定义要求（例如，他们需要具有权限字段），您可以提供一个可调用的（类或工厂函数），用于创建匿名用户 LoginManager</p>
+<pre><code>login_manager.anonymous_user = MyAnonymousUser</code></pre>
+<p>6.记住我(remember)</p>
+<p>默认情况下，当用户关闭浏览器时，Flask会话将被删除，用户将被注销。“记住我”可防止用户在关闭浏览器时意外退出。但这不意味着记忆或预填充用户的用户名和密码在登录表单的用户注销之后。</p>
+<p>“记住我”功能可能很难实现。但是，Flask-Login使它几乎透明 - 只需  remember=True 转到 login_user 呼叫。Cookie将保存在用户的计算机上，然后Flask-Login将自动从该cookie恢复用户ID（如果该cookie不在会话中）。cookie过期前的时间可以使用  REMEMBER_COOKIE_DURATION 配置进行设置， 也可以传递给它 login_user。cookie是防篡改的，因此如果用户篡改它（即插入别人的用户ID代替他们自己的用户ID），cookie就会被拒绝，就好像它不存在一样。</p>
+<p>该级别的功能将自动处理。但是，你可以（并且应该，如果你的应用程序处理任何类型的敏感数据）提供额外的基础结构，以提高您记住的cookie的安全性。</p>
+<p>7.替代Tokens</p>
+<p>使用用户ID作为记忆令牌的值意味着您必须更改用户的ID以使其登录会话无效。一种改进方法是使用备用用户ID而不是用户ID。例如：</p>
+<pre><code>@login_manager.user_loader
+def load_user(user_id):
+    return User.query.filter_by(alternative_id=user_id).first()</code></pre>
+<p>然后，User类下的 get_id 方法将返回替代ID而不是用户的主ID：</p>
+<pre><code>def get_id(self):
+    return unicode(self.alternative_id)</code></pre>
+<p>这样，当用户更改密码时，您可以自由地将用户的替代ID更改为新的随机生成的值，这将确保其旧的身份验证会话将不再有效。请注意，替代ID仍必须唯一标识用户…将其视为第二个用户ID。</p>
+<p>8.Fresh Logins</p>
+<p>当用户登录时，他们的会话被标记为“新鲜”，这表示他们实际上在该会话上进行了身份验证。当他们的会话被销毁并且他们用“记住我”cookie重新登录时，它被标记为“非新鲜”。login_required 不区分新鲜度，这对大多数页面来说都很好。但是，更改个人信息等敏感操作应该需要重新登录。（无论如何，更改密码等操作都需要重新输入密码。）</p>
+<p>fresh_login_required，除了验证用户是否已登录外，还将确保其登录是新鲜的。如果没有，它会将它们发送到可以重新输入凭据的页面。您可以自定义其行为在相同的方式，你可以自定义login_required，通过设置 LoginManager.refresh_view，needs_refresh_message以及 needs_refresh_message_category：</p>
+<pre><code>login_manager.refresh_view = &quot;accounts.reauthenticate&quot;
+login_manager.needs_refresh_message = (
+    u&quot;To protect your account, please reauthenticate to access this page.&quot;
+)
+login_manager.needs_refresh_message_category = &quot;info&quot;</code></pre>
+<p>或者通过提供自己的回调来处理刷新</p>
+<pre><code>@login_manager.needs_refresh_handler
+def refresh():
+    # do stuff
+    return a_response</code></pre>
+<p>要将会话再次标记为新鲜，请调用  flask_login.confirm_login 函数。</p>
+<p>9.Cookie设置</p>
+<ul>
+<li>REMEMBER_COOKIE_NAME</li>
+</ul>
+<p>存储“记住我”信息的 cookie 名。 默认值： remember_token</p>
+<ul>
+<li>REMEMBER_COOKIE_DURATION</li>
+</ul>
+<p>cookie过期时间，为一个 datetime.timedelta 对象。 默认值： 365 天 (1 非闰阳历年)</p>
+<ul>
+<li>REMEMBER_COOKIE_DOMAIN</li>
+</ul>
+<p>如果“记住我” cookie 应跨域，在此处设置域名值 （即 .example.com 会允许 example 下所有子域 名）。 默认值： None</p>
+<ul>
+<li>REMEMBER_COOKIE_PATH</li>
+</ul>
+<p>限制”记住我“ cookie 存储到某一路径下。 默认值： /</p>
+<ul>
+<li>REMEMBER_COOKIE_SECURE</li>
+</ul>
+<p>限制 “Remember Me” cookie 在某些安全通道下有用 （典型地 HTTPS）。默认值： None </p>
+<ul>
+<li>REMEMBER_COOKIE_HTTPONLY</li>
+</ul>
+<p>保护 “Remember Me” cookie 不能通过客户端脚本访问。 默认值： False</p>
+<ul>
+<li>REMEMBER_COOKIE_REFRESH_EACH_REQUEST</li>
+</ul>
+<p>如果设置为True，cookie则会在每次请求时刷新，这会破坏生命周期，默认值：False</p>
+<p>10.会话保护</p>
+<p>虽然上述功能有助于保护您的“记住我”令牌免受Cookie窃贼的攻击，但会话Cookie仍然容易受到攻击。Flask-Login包括会话保护，以帮助防止用户的会话被盗。</p>
+<p>你可以LoginManager在应用程序的配置中配置会话保护。如果启用，它可以在任一 模式basic或strong模式下运行。要将其设置为LoginManager，请将session_protection属性设置 为”basic”或”strong”：</p>
+<pre><code>login_manager.session_protection = &quot;strong&quot;
+
+或者，禁用它：
+
+login_manager.session_protection = None</code></pre>
+<p>默认情况下，它在”basic”模式下激活。它可以在应用程序的配置通过设置被禁用SESSION_PROTECTION设置None， “basic”或”strong”。</p>
+<p>当会话保护处于活动状态时，每个请求都会为用户的计算机生成一个标识符（基本上是IP地址和用户代理的安全散列）。如果会话没有关联的标识符，则将存储生成的标识符。如果它有一个标识符，并且它与生成的标识符匹配，那么请求就可以了。</p>
+<p>如果标识符在basic模式下不匹配，或者会话是永久性的，则会话将被简单地标记为非新鲜，并且任何需要重新登录的内容将强制用户重新进行身份验证。（当然，您必须已经在适当的时候使用新的登录才能产生效果。）</p>
+<p>如果标识符在strong非永久会话的模式下不匹配，则删除整个会话（以及记忆标记，如果存在）。</p>
+<p>11.禁用API的会话</p>
+<p>在对API进行身份验证时，您可能希望禁用设置Flask会话cookie。为此，请使用自定义会话接口，该接口根据您在请求中设置的标志跳过保存会话。例如：</p>
+<pre><code>from flask import g
+from flask.sessions import SecureCookieSessionInterface
+from flask_login import user_loaded_from_header
+
+class CustomSessionInterface(SecureCookieSessionInterface):
+    &quot;&quot;&quot;Prevent creating session from API requests.&quot;&quot;&quot;
+    def save_session(self, *args, **kwargs):
+        if g.get(&#39;login_via_header&#39;):
+            return
+        return super(CustomSessionInterface, self).save_session(*args,
+                                                                **kwargs)
+
+app.session_interface = CustomSessionInterface()
+
+@user_loaded_from_header.connect
+def user_loaded_from_header(self, user=None):
+    g.login_via_header = True</code></pre>
+<p>12.本地化</p>
+<p>默认情况下，LoginManager用于flash在需要用户登录时显示消息。这些消息是英文的。如果您需要本地化，请在发送之前将这些消息的localize_callback属性设置LoginManager为要调用的函数flash，例如gettext。将使用消息调用此函数，并将其返回值发送给flash。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">MambaInVeins</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://mambainveins.gitee.io/mambainveins/2020/05/20/2020/2020-05-20-flask_login/">http://mambainveins.gitee.io/mambainveins/2020/05/20/2020/2020-05-20-flask_login/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://mambainveins.gitee.io/mambainveins" target="_blank">MambaInVeins Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/flask/">flask</a></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0224.png" data-sites="wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i> 打赏<div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/blogpublic/wechat.jpg" target="_blank"><img class="post-qr-code-img" src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/blogpublic/wechat.jpg" alt="wechat"/></a><div class="post-qr-code-desc">wechat</div></li><li class="reward-item"><a href="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/blogpublic/alipay.jpg" target="_blank"><img class="post-qr-code-img" src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/blogpublic/alipay.jpg" alt="alipay"/></a><div class="post-qr-code-desc">alipay</div></li></ul></div></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2020/05/20/2020/2020-05-20-flask_SQLAlchemy_query/"><img class="prev-cover" src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0107.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">flask SQLAlchemy 查询语句</div></div></a></div><div class="next-post pull-right"><a href="/2020/05/20/2020/2020-06-30-python_pyc/"><img class="next-cover" src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0072.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">python pyc文件</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> 相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2020/04/03/2020/2020-04-03-flask_pass_data/" title="flask传递数据"><img class="cover" src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0266.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-04-03</div><div class="title">flask传递数据</div></div></a></div><div><a href="/2020/04/11/2020/2020-04-11-flask_date_control_datepicker/" title="flask 日期控件datepicker使用"><img class="cover" src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0004.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-04-11</div><div class="title">flask 日期控件datepicker使用</div></div></a></div><div><a href="/2020/04/12/2020/2020-04-12-flask-bootstrap_offline_loading/" title="flask-bootstrap离线加载"><img class="cover" src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0174.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-04-12</div><div class="title">flask-bootstrap离线加载</div></div></a></div><div><a href="/2020/04/20/2020/2020-04-20-Flask_bootstrap-table_table_sorting_and_searching/" title="Flask利用bootstrap-table实现表格排序、搜索"><img class="cover" src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0097.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-04-20</div><div class="title">Flask利用bootstrap-table实现表格排序、搜索</div></div></a></div><div><a href="/2020/04/21/2020/2020-04-21-flask_upload_and_download/" title="flask 实现上传下载"><img class="cover" src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0100.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-04-21</div><div class="title">flask 实现上传下载</div></div></a></div><div><a href="/2020/04/21/2020/2020-04-21-flask_use_of_template_filters_and_custom_filters/" title="flask 模板过滤器及自定义过滤器的使用"><img class="cover" src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0315.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-04-21</div><div class="title">flask 模板过滤器及自定义过滤器的使用</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Flask-Login%E4%BD%BF%E7%94%A8"><span class="toc-number">1.</span> <span class="toc-text">Flask-Login使用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85%E5%92%8C%E9%85%8D%E7%BD%AE"><span class="toc-number">1.1.</span> <span class="toc-text">安装和配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#flask-login%E7%9A%84%E5%BA%94%E7%94%A8"><span class="toc-number">1.2.</span> <span class="toc-text">flask-login的应用</span></a></li></ol></li></ol></div></div></div></div></main><footer id="footer" style="background-image: url(https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0224.png)"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By MambaInVeins</div><div class="footer_custom_text"><a href="http://mambainveins.gitee.io/">Mamba Never Out</a>!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="font-plus" type="button" title="放大字体"><i class="fas fa-plus"></i></button><button id="font-minus" type="button" title="缩小字体"><i class="fas fa-minus"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="false" data-click="true"></script><script>(function(){
+  const bp = document.createElement('script');
+  const curProtocol = window.location.protocol.split(':')[0];
+  if (curProtocol === 'https') {
+    bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+  }
+  else{
+    bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+  }
+  bp.dataset.pjax = ''
+  const s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(bp, s);
+})()</script></div></body></html>

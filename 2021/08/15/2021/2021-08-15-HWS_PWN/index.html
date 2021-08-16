@@ -1,0 +1,421 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>HWS PWN | MambaInVeins Blog</title><meta name="keywords" content="pwn"><meta name="author" content="MambaInVeins"><meta name="copyright" content="MambaInVeins"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta name="description" content="堆栈利用之对抗linux保护linux常见保护机制Canary：函数开始执行的时候往栈里插入Canary值，函数返回时验证该值是否合法，防止栈溢出 Fortify：防止格式化字符串漏洞，包含%n的格式化字符串不能位于程序内存中的可写地址。当使用位置参数时，必须使用范围内所有参数。 NX&#x2F;DEP：堆栈不可执行 PIE&#x2F;ASLR：地址空间分布随机化，增加ROP利用难度 RELRO：设置符号重定向表为只">
+<meta property="og:type" content="article">
+<meta property="og:title" content="HWS PWN">
+<meta property="og:url" content="http://mambainveins.gitee.io/mambainveins/2021/08/15/2021/2021-08-15-HWS_PWN/index.html">
+<meta property="og:site_name" content="MambaInVeins Blog">
+<meta property="og:description" content="堆栈利用之对抗linux保护linux常见保护机制Canary：函数开始执行的时候往栈里插入Canary值，函数返回时验证该值是否合法，防止栈溢出 Fortify：防止格式化字符串漏洞，包含%n的格式化字符串不能位于程序内存中的可写地址。当使用位置参数时，必须使用范围内所有参数。 NX&#x2F;DEP：堆栈不可执行 PIE&#x2F;ASLR：地址空间分布随机化，增加ROP利用难度 RELRO：设置符号重定向表为只">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0152.png">
+<meta property="article:published_time" content="2021-08-14T16:00:00.000Z">
+<meta property="article:modified_time" content="2021-08-16T12:13:18.671Z">
+<meta property="article:author" content="MambaInVeins">
+<meta property="article:tag" content="pwn">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0152.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://mambainveins.gitee.io/mambainveins/2021/08/15/2021/2021-08-15-HWS_PWN/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="preconnect" href="//zz.bdstatic.com"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":50,"languages":{"author":"作者: MambaInVeins","link":"链接: ","source":"来源: MambaInVeins Blog","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+};
+
+var saveToLocal = {
+  set: function setWithExpiry(key, value, ttl) {
+    const now = new Date()
+    const expiryDay = ttl * 86400000
+    const item = {
+      value: value,
+      expiry: now.getTime() + expiryDay,
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+  },
+
+  get: function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+
+    if (!itemStr) {
+      return undefined
+    }
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key)
+      return undefined
+    }
+    return item.value
+  }
+}
+
+// https://stackoverflow.com/questions/16839698/jquery-getscript-alternative-in-native-javascript
+const getScript = url => new Promise((resolve, reject) => {
+  const script = document.createElement('script')
+  script.src = url
+  script.async = true
+  script.onerror = reject
+  script.onload = script.onreadystatechange = function() {
+    const loadState = this.readyState
+    if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+    script.onload = script.onreadystatechange = null
+    resolve()
+  }
+  document.head.appendChild(script)
+})</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2021-08-16 20:13:18'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(function () {  window.activateDarkMode = function () {
+    document.documentElement.setAttribute('data-theme', 'dark')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+    }
+  }
+  window.activateLightMode = function () {
+    document.documentElement.setAttribute('data-theme', 'light')
+   if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+    }
+  }
+  const autoChangeMode = 'false'
+  const t = saveToLocal.get('theme')
+  if (autoChangeMode === '1') {
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+    const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+    const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+    if (t === undefined) {
+      if (isLightMode) activateLightMode()
+      else if (isDarkMode) activateDarkMode()
+      else if (isNotSpecified || hasNoSupport) {
+        const now = new Date()
+        const hour = now.getHours()
+        const isNight = hour <= 6 || hour >= 18
+        isNight ? activateDarkMode() : activateLightMode()
+      }
+      window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+        if (saveToLocal.get('theme') === undefined) {
+          e.matches ? activateDarkMode() : activateLightMode()
+        }
+      })
+    } else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else if (autoChangeMode === '2') {
+    const now = new Date()
+    const hour = now.getHours()
+    const isNight = hour <= 6 || hour >= 18
+    if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+    else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else {
+    if (t === 'dark') activateDarkMode()
+    else if (t === 'light') activateLightMode()
+  }const asideStatus = saveToLocal.get('aside-status')
+if (asideStatus !== undefined) {
+   if (asideStatus === 'hide') {
+     document.documentElement.classList.add('hide-aside')
+   } else {
+     document.documentElement.classList.remove('hide-aside')
+   }
+}const fontSizeVal = saveToLocal.get('global-font-size')
+if (fontSizeVal !== undefined) {
+  document.documentElement.style.setProperty('--global-font-size', fontSizeVal + 'px')
+}})()</script><meta name="generator" content="Hexo 5.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/blogpublic/MambaInVeins.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">245</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">96</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">32</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/moment"><i class="fa-fw fas fa-comment-alt"></i><span> 碎语</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 常用链接</span></a></div><div class="menus_item"><a class="site-page" href="/box"><i class="fa-fw fas fa-box"></i><span> 工具箱</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0152.png)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">MambaInVeins Blog</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/moment"><i class="fa-fw fas fa-comment-alt"></i><span> 碎语</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 常用链接</span></a></div><div class="menus_item"><a class="site-page" href="/box"><i class="fa-fw fas fa-box"></i><span> 工具箱</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">HWS PWN</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-08-14T16:00:00.000Z" title="发表于 2021-08-15 00:00:00">2021-08-15</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2021-08-16T12:13:18.671Z" title="更新于 2021-08-16 20:13:18">2021-08-16</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/ctf/">ctf</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">4k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>14分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="堆栈利用之对抗linux保护"><a href="#堆栈利用之对抗linux保护" class="headerlink" title="堆栈利用之对抗linux保护"></a>堆栈利用之对抗linux保护</h1><h2 id="linux常见保护机制"><a href="#linux常见保护机制" class="headerlink" title="linux常见保护机制"></a>linux常见保护机制</h2><pre><code>Canary：函数开始执行的时候往栈里插入Canary值，函数返回时验证该值是否合法，防止栈溢出
+Fortify：防止格式化字符串漏洞，包含%n的格式化字符串不能位于程序内存中的可写地址。当使用位置参数时，必须使用范围内所有参数。
+NX/DEP：堆栈不可执行
+PIE/ASLR：地址空间分布随机化，增加ROP利用难度
+RELRO：设置符号重定向表为只读，并且在程序启动时就解析并绑定所有动态符号，从而减少对GOT（Golbal Offset Table）的攻击。但是还是可读的，可以进行信息泄露。</code></pre>
+<h2 id="常用网址"><a href="#常用网址" class="headerlink" title="常用网址"></a>常用网址</h2><pre><code>shellcode大全 http://shell-storm.org/shellcode/
+HWS夏令营教程 https://www.bilibili.com/video/BV1Yf4y197Wi?from=search&amp;seid=8827483358032554587
+CTF-WIKI https://ctf-wiki.org/
+CTF-ALL-IN-ONE https://firmianay.gitbook.io/ctf-all-in-one/
+pwnable.kr刷题 http://pwnable.kr</code></pre>
+<h2 id="栈"><a href="#栈" class="headerlink" title="栈"></a>栈</h2><h3 id="基础栈结构"><a href="#基础栈结构" class="headerlink" title="基础栈结构"></a>基础栈结构</h3><ul>
+<li><p>后进先出 push/pop</p>
+</li>
+<li><p>用于保存函数调用信息和局部变量</p>
+</li>
+<li><p>由高地址往低地址写入</p>
+</li>
+</ul>
+<h4 id="传参"><a href="#传参" class="headerlink" title="传参"></a>传参</h4><ul>
+<li>x86:函数参数保存在栈上，在函数返回地址上方</li>
+<li>x64:优先寄存器传参，前六个参数rdi rsi rdx rcx r8 r9，更多参数才会保存在栈上</li>
+</ul>
+<h4 id="函数调用"><a href="#函数调用" class="headerlink" title="函数调用"></a>函数调用</h4><p>进入函数时</p>
+<pre><code>call xxx
+    push retaddr(call的下一条指令地址，要知道怎么回来)
+    jump xxx
+
+xxx
+    push rbp（保存栈，好恢复）
+    mov rbp,rsp（栈底抬上去）
+    sub rsp,xxh（抬高栈顶给局部函数预留栈空间）</code></pre>
+<p>退出函数时</p>
+<pre><code>leave
+    mov rsp,rbp（把rsp弄回来）
+    pop rbp（把rbp弄回来）
+
+ret
+    pop rip（这个时候rip就被retaddr的值取代了）</code></pre>
+<h3 id="栈溢出"><a href="#栈溢出" class="headerlink" title="栈溢出"></a>栈溢出</h3><p>程序向栈中某个变量中写入的字节数，超过了这个变量本身申请的字节数，导致与其相邻栈上的变量被改变。轻则崩溃，重则控制执行流程。</p>
+<p>前提：程序向栈上写入数据；写入数据的大小没有被控制。</p>
+<h3 id="对抗DEP-NX保护机制"><a href="#对抗DEP-NX保护机制" class="headerlink" title="对抗DEP/NX保护机制"></a>对抗DEP/NX保护机制</h3><h4 id="ret2-text"><a href="#ret2-text" class="headerlink" title="ret2_text"></a>ret2_text</h4><p>控制程序执行程序本身已有的代码（.text） ,恰好有合适的代码的话….</p>
+<p>例子ret2_text:pwn1</p>
+<p>checksec</p>
+<pre><code>Arch:     amd64-64-little
+RELRO:    Full RELRO
+Stack:    No canary found
+NX:       NX enabled
+PIE:      No PIE (0x400000)</code></pre>
+<p>getshell 0x400686</p>
+<p>栈溢出直接覆盖rip=0x400686</p>
+<p>发现Pwntools遇到Got EOF while reading in interactive</p>
+<p>Ubuntu18.04 64位 和 部分Ubuntu16.04 64位 调用system的时候，rsp的最低字节必须为0x00（栈以16字节对齐），否则无法运行system指令。要解决这个问题，只要将返回地址设置为跳过函数开头的push rbp就可以了</p>
+<h5 id="栈的字节对齐"><a href="#栈的字节对齐" class="headerlink" title="栈的字节对齐"></a>栈的字节对齐</h5><p>栈的字节对齐，实际是指栈顶指针必须须是16字节的整数倍。栈对齐帮助在尽可能少的内存访问周期内读取数据，不对齐堆栈指针可能导致严重的性能下降。</p>
+<p>上文我们说，即使数据没有对齐，我们的程序也是可以执行的，只是效率有点低而已，但是某些型号的Intel和AMD处理器对于有些实现多媒体操作的SSE指令，如果数据没有对齐的话，就无法正确执行。这些指令对16字节内存进行操作，在SSE单元和内存之间传送数据的指令要求内存地址必须是16的倍数。</p>
+<p>因此，任何针对x86_64处理器的编译器和运行时系统都必须保证分配用来保存可能会被SSE寄存器读或写的数据结构的内存，都必须是16字节对齐的，这就形成了一种标准：</p>
+<pre><code>任何内存分配函数（alloca, malloc, calloc或realloc）生成的块起始地址都必须是16的倍数。
+大多数函数的栈帧的边界都必须是16直接的倍数。</code></pre>
+<p>如上，在运行时栈中，不仅传递的参数和局部变量要满足字节对齐，我们的栈指针（%rsp）也必须是16的倍数。</p>
+<h4 id="ret2-shellcode"><a href="#ret2-shellcode" class="headerlink" title="ret2_shellcode"></a>ret2_shellcode</h4><p>控制程序执行shellcode代码（用于完成某个功能的汇编代码，功能如获取目标系统shell），需要shellcode所在的区域具有可执行权限</p>
+<p>例子ret2_shellcode:pwn2</p>
+<p>checksec</p>
+<pre><code>Arch:     amd64-64-little
+RELRO:    Full RELRO
+Stack:    No canary found
+NX:       NX disabled
+PIE:      No PIE (0x400000)
+RWX:      Has RWX segments</code></pre>
+<p>利用RWX段写shellcode,溢出跳转至shellcode</p>
+<h4 id="ret2-libc"><a href="#ret2-libc" class="headerlink" title="ret2_libc"></a>ret2_libc</h4><h5 id="ROP（Return-Oriented-Programming）"><a href="#ROP（Return-Oriented-Programming）" class="headerlink" title="ROP（Return Oriented Programming）"></a>ROP（Return Oriented Programming）</h5><p>有了NX保护之后，堆、栈、bss段没有执行权限… </p>
+<p>在栈溢出的基础上，利用程序中已有的小片段gadegts来改变某些寄存器或者变量的值，从而控制程序的执行流程。所谓gadgets就是以ret结尾的指令序列，通过这些指令序列，我们可以修改某些地址的内容，方便连续地控制程序的执行流程。</p>
+<p>需要跳转的目标函数如果程序中没有呢，如system，Libc中应有尽有，泄露libc基址</p>
+<p>然而ALSR/PIE保护技术使得程序基地址每次加载不一样，如果开启了PIE，连基本的gadgets的地址都不知道，怎么办？结合其他漏洞或者功能进行泄露</p>
+<h4 id="ROP-ret2libc"><a href="#ROP-ret2libc" class="headerlink" title="ROP(ret2libc)"></a>ROP(ret2libc)</h4><p>假设需要利用ROP调用system(‘/bin/sh’)</p>
+<pre><code>思路：
+1.泄露GOT表中某个函数的libc地址
+2.在libc中找到system,&#39;/bin/sh&#39;和这个函数的相对偏移
+3.得到system和/bin/sh的地址
+4.构造rop链成功利用
+注意：
+只能泄露已经执行过一次函数的libc地址，因为动态链接库的加载机制是lazy原则,即用时加载，第二次就不用加载了。
+在执行了一次某函数之后，GOT表中就会把一个函数在程序中的终极偏移存起来
+终极偏移=libc基址（每次加载都不一样）+库内函数相对偏移
+system =  libc基址 + system在库中相对偏移
+/bin/sh = libc基址 + /bin/sh在库中相对偏移</code></pre>
+<p>例子：ret2_libc:pwn3</p>
+<h3 id="对抗Canary保护"><a href="#对抗Canary保护" class="headerlink" title="对抗Canary保护"></a>对抗Canary保护</h3><h4 id="泄露Canary的值（任意读的功能）"><a href="#泄露Canary的值（任意读的功能）" class="headerlink" title="泄露Canary的值（任意读的功能）"></a>泄露Canary的值（任意读的功能）</h4><pre><code>mov rax fs:28h
+mov [rsp+38h+var_30],rax
+...
+mov rcx,[rsp+38h+var_30]
+xor rcx,fs:28h
+jnz -&gt; call stack_chk_fail</code></pre>
+<h4 id="覆写副本值"><a href="#覆写副本值" class="headerlink" title="覆写副本值"></a>覆写副本值</h4><pre><code>需要进行fs:28h位置的爆破， 在mapped段，相对于Libc基地址在每次电脑重启时的偏移是一定的，就可以读出来或者覆写掉</code></pre>
+<h4 id="劫持stack-chk-fail函数"><a href="#劫持stack-chk-fail函数" class="headerlink" title="劫持stack_chk_fail函数"></a>劫持stack_chk_fail函数</h4><pre><code>修改stack_chk_fail的GOT地址，便可以在触发canary检查失败时，跳转到指定位置</code></pre>
+<h4 id="stack-smashing"><a href="#stack-smashing" class="headerlink" title="stack smashing"></a>stack smashing</h4><pre><code>当canary被覆盖之后，会call到__stack_chk_fail打印argv[0]这个指针指向的字符串，默认是程序的名字。
+如果我们把它覆盖为其他的地址时，它就会把其他内存地址的信息给打印出来。（比如校验时内存里的账号密码等）
+
+这里利用__stack_chk_fail实现任意地址读。
+gdb调试下进入___stack_chk_fail函数，再步入__GI__fortify_fail函数，可以看到这里执行了一个叫做__libc_message的函数
+功能大概就是输出一些错误信息
+其中当前程序的路径名是从argv[0]中取得的并存放在栈上，然后用类似于格式化字符串的方式进行拼接。
+只要输入足够长，是可以覆盖__libc_message的参数的，从而把我们覆盖的地址位置的数据打印出来。
+
+
+不过不知道为什么，我调试时__libc_message打印的是 *** stack smashing detected ***: &lt;unknown&gt; terminated，并不是文件名，unknown字符串在输入上方栈帧，无法覆盖。
+RCX  0x7ffff7b988f1 ◂— cmp    al, 0x75 /* &#39;&lt;unknown&gt;&#39; */
+RDX  0x7ffff7b988d9 ◂— jae    0x7ffff7b9894f /* &#39;stack smashing detected&#39; */
+RDI  0x1
+RSI  0x7ffff7b988fb ◂— sub    ch, byte ptr [rdx] /* &#39;*** %s ***: %s terminated\n&#39; */</code></pre>
+<p>例子：smashing:smashing</p>
+<h4 id="BROP逐字节爆破-没有源码及二进制文件"><a href="#BROP逐字节爆破-没有源码及二进制文件" class="headerlink" title="BROP逐字节爆破(没有源码及二进制文件)"></a>BROP逐字节爆破(没有源码及二进制文件)</h4><pre><code>攻击条件：
+（1）远程程序必须先存在一个已知的栈溢出漏洞，并且知道如何触发漏洞
+（2）服务器进程在crash之后会重新复活，并且复活的进程不会被re-rand，意思是虽然有ASLR保护，但是复活的进程和之前的进程的地址随机化与canary是一样的。当前像nginx、Mysql、Apache、OpenSSL、Samba等服务器应用都符合这种特性。
+
+基本思路：
+1.判断栈溢出的长度
+2.逐字节爆破Canary（如果没有开，就跳过这一步）
+3.寻找stop gadget
+    如果把返回地址覆盖成某些随意选取的内存地址，程序很大可能会crash。但如果返回地址指向了一块代码区域，当程序的执行流跳到那段区域之后，程序不会crash而是进入了无限循环，这时程序仅仅是hang在了那里，攻击者能够一直保持连接状态。这种类型的gadget称为stop gadget。
+    可以不断爆破返回地址尝试出stop gadget
+    为什么要找stop gadget，因为有了stop gadget，就可以在需要尝试的return address之后填上足够多的stop gadget，那么任何会造成进程崩溃的gadget还是会造成进程崩溃，但是useful gadget就会进入block状态。
+4.寻找useful gadget
+    useful gadget就是一类可以操控有用的寄存器的gadget。特殊的useful gadget也就是BROP gadgets，需要从栈上pop 6个值然后执行ret，利用之前的stop gadget很容易找到BROP gadget。
+    在返回地址之后的六个使程序崩溃的值，再填入stop gadget。很少有连续pop六次。brop gadget偏移9就是 pop rdi;ret;
+        pop rbx;
+        pop rbp;
+        pop r12;
+        pop r13;
+        pop r14;
+        pop r15;
+        ret;
+5.寻找可用的PLT表项
+    如果攻击者发现好多条连续的16字节对齐的地址都不会造成进程crash，而且这些地址+6的地址也不会crash，那么很有可能这就是某个PLT对应的项。
+    payload = &#39;A&#39;*length+canary+p64(pop_rdi_ret)+p64(0x400000)+p64(addr)+p64(stop gadget)
+    在程序还没有开启PIE保护的情况下，0x400000处为ELF文件的头部，内容是\x7fELF，可以判断addr是不是puts@plt
+6.利用PLT表中的puts（或者write）函数，配合useful gadget，来远程dump信息
+    不断循环输出程序内存信息 p64(0x400000)+p64(addr) -&gt; p64(target)+p64(puts)
+    payload = &#39;A&#39;*length+canary+p64(pop_rdi_ret)+p64(target)+p64(puts)+p64(stop gadget)</code></pre>
+<p>例子：BROP:pwn4</p>
+<pre><code>leakbuff_length 溢出长度为72
+Get_Stop_Gadgets 获取stop gadgets, 有些地址返回到main，有些正常结束，有些悬挂住，这些都可以。
+Get_Brop_Gadget 获取useful gadgets，比较好找的时brop gadgets，+9的位置就是pop_rdi_ret,不过需要验证一下
+Get_Put_addr 获取puts_plt
+leak泄露某地址内存，dump_memory不断泄露整块地址，可以dump整个程序
+把 dump 下来的文件用 IDA 的二进制模式打开，然后把基址改成 0x400000（编辑-&gt;段-&gt;重新设置基址），在 puts_plt 处，摁下 c 识别成汇编格式，可以看到 jmp 的地址 puts_got, 知道了这个地址，再用 libcsearch 去进行 ret2libc 就可以了</code></pre>
+<h3 id="一些技术"><a href="#一些技术" class="headerlink" title="一些技术"></a>一些技术</h3><h4 id="栈劫持（栈迁移）"><a href="#栈劫持（栈迁移）" class="headerlink" title="栈劫持（栈迁移）"></a>栈劫持（栈迁移）</h4><p>溢出长度不够，或者想在bss段、堆段等已知位置进行写入，就可以提前进行栈布局。栈劫持其实就是修改了rsp指针。</p>
+<p>方法：通过覆盖栈上存储的saved rbp和saved rip，就可以将栈进行劫持。</p>
+<pre><code>leave
+    mov rsp,rbp (把rsp弄回来)
+    pop rbp (把rbp弄回来)
+ret
+    pop rip   </code></pre>
+<p>例子：stack migration:migration</p>
+<pre><code>解题思路：
+1.通过劫持ebp和esp将栈劫持到bss段
+2.利用puts函数泄露libc内存空间信息，得到system函数在内存中的地址 ,顺便将栈劫持到另一个地方
+3.通过read函数读入&quot;/bin/sh&quot;字符串 然后返回调用system函数getshell
+
+参考：https://blog.csdn.net/zszcr/article/details/79841848</code></pre>
+<h4 id="ret2-csu"><a href="#ret2-csu" class="headerlink" title="ret2_csu"></a>ret2_csu</h4><p>原理：</p>
+<pre><code>__libc_csu_init是一般的程序都会调用libc中的函数，而此函数便是来将libc初始化的，几乎是每一个程序所必备的。我们在构造ROP链的时候，往往会用到能够给寄存器赋值的gadget，形如pop|ret。
+__libc_csu_init函数内也存在这样的gadget，我们称之为通用gadget，于是一种利用该通用gadget来构造ROP的方法便诞生了，名为ret2csu。
+
+gadget1:
+    pop     rbx
+    pop     rbp
+    pop     r12
+    pop     r13
+    pop     r14
+    pop     r15
+    retn
+gadget2:
+    mov     rdx, r13
+    mov     rsi, r14
+    mov     edi, r15d
+    call    qword ptr [r12+rbx*8]
+
+gadget1 我们可以利用栈溢出构造栈上数据来控制 rbx,rbp,r12,r13,r14,r15 寄存器的数据。
+
+https://ctf-wiki.org/pwn/linux/user-mode/stackoverflow/x86/medium-rop/#ret2csu</code></pre>
+<p>基本利用思路如下</p>
+<pre><code>利用栈溢出执行 libc_csu_gadgets 获取 write 函数地址，并使得程序重新执行 main 函数
+根据 libcsearcher 获取对应 libc 版本以及 execve 函数地址
+再次利用栈溢出执行 libc_csu_gadgets 向 bss 段写入 execve 地址以及 &#39;/bin/sh’ 地址，并使得程序重新执行 main 函数。
+再次利用栈溢出执行 libc_csu_gadgets 执行 execve(&#39;/bin/sh&#39;) 获取 shell。</code></pre>
+<p>例子：ret2_csu:ret2csu</p>
+<pre><code>ROPgadget --binary ret2csu --only &quot;pop|ret&quot;
+Gadgets information
+============================================================
+0x0000000000400512 : pop rbp ; ret
+0x0000000000400511 : pop rbx ; pop rbp ; ret
+0x0000000000400417 : ret
+0x0000000000400442 : ret 0x200b
+
+Unique gadgets found: 4
+
+能控制的寄存器很少，所以使用ret2csu
+
+解题参考：
+https://bbs.pediy.com/thread-257546.htm
+https://www.bilibili.com/video/BV1AT4y1K7XH?from=search&amp;seid=15509755529059163197</code></pre>
+<h4 id="ret2reg"><a href="#ret2reg" class="headerlink" title="ret2reg"></a>ret2reg</h4><p>原理</p>
+<pre><code>查看溢出函返回时哪个寄存值指向溢出缓冲区空间
+然后反编译二进制，查找 call reg 或者 jmp reg 指令，将 EIP 设置为该指令地址
+reg 所指向的空间上注入 Shellcode (需要确保该空间是可以执行的，但通常都是栈上的)</code></pre>
+<p>攻击简介：<br>    ret2shellcode需要事先确定shellcode的地址作为返回地址，若开了ASLR，则难以确定别的机器上的栈（esp）地址。ret2reg则可以绕过ASLR，通过jmp 寄存器的方式跳转到shellcode。</p>
+<p>例子：ret2_reg:ret2reg</p>
+<pre><code>示例程序中，main函数调用子函数，子函数将输入拷贝到buffer中去，导致缓冲区溢出覆盖子函数返回地址，刚好此时eax指向shellcode，则通过call eax跳转到shellcode。
+
+echo 2 &gt; /proc/sys/kernel/randomize_va_space命令打开了地址随机化，但仅对栈空间，堆地址和动态库加载空间进行随机化，没有对程序做地址随机化。Linux gcc编译器提供了-fPIE选项，可使程序空间做地址混淆，但一般的开源软件和商用Linux发行商的服务进程并没有使用-fPIE进行安全增强。
+
+0x565554ac : call eax
+
+exp:
+gdb --args ret2reg $(python -c &quot;print(&#39;\xeb\x16\x5e\x31\xc0\x88\x46\x06\xb0\x27\x8d\x1e\x66\xb9\xed\x01\xcd\x80\xb0\x01\x31\xdb\xcd\x80\xe8\xe5\xff\xff\xff\x68\x61\x63\x6b\x65\x64\x23&#39;+&#39;A&#39;*0x1e8+&#39;\xac\x54\x55\x56&#39;)&quot;)
+前面0x24字节的作用是在当前目录mkdir hacked
+
+参考：
+https://blog.csdn.net/sinat_35695255/article/details/52031813</code></pre>
+<h4 id="JOP-COP"><a href="#JOP-COP" class="headerlink" title="JOP/COP"></a>JOP/COP</h4><p>原理</p>
+<pre><code>换汤不换药，把使用的的代码片段从ret结尾拓展到jmp/call结尾
+JOP（Jump Oriented Programming）
+    pop esi ; jmp dword [esi-0x70]
+COP（Call Oriented Programming）
+    mov edx,dowrd [esp+0x48] ; call doword [eax+0x10]</code></pre>
+<h4 id="SROP"><a href="#SROP" class="headerlink" title="SROP"></a>SROP</h4><p>原理：</p>
+<pre><code>Srop 的全称是Sigreturn Oriented Programming
+Srop 可以理解成一种高级的ROP，利用了linux下15号系统调用的-&gt;rt_sigreturn
+Signal是Unix系统中的一种通信机制，通常用于在进程之间传递信息，也可以说是软中断信息
+常见于在一个进程中，内核向其发送发送软中断信号，该进程将暂时被挂起，系统进入内核态
+因为是暂时被挂起，所以系统会保留该进程的上下文，将所有的寄存器压入栈中，以及signal信息和指向sigreturn的系统调用地址在栈顶上放置rt_sigreturn</code></pre>
+<p>漏洞利用点</p>
+<pre><code>Signal Frame 被放置在用户进程的内存空间中，也就说Signal Frame是可以读写的
+在恢复Signal信号的时候没有检测，也就是说我们可以通过改变Signal Frame中的信息来劫持控制流</code></pre>
+<p>例子：SROP:pwn5</p>
+<pre><code>参考：
+https://www.cnblogs.com/z2yh/p/13731277.html
+https://www.yuque.com/hxfqg9/bin/erh0l7#cS7rH
+https://www.bilibili.com/video/BV1u7411f7JF?from=search&amp;seid=18157463463451786392</code></pre>
+<h4 id="ret2dlresolve"><a href="#ret2dlresolve" class="headerlink" title="ret2dlresolve"></a>ret2dlresolve</h4><h3 id="拓展"><a href="#拓展" class="headerlink" title="拓展"></a>拓展</h3><h4 id="windows-canary"><a href="#windows-canary" class="headerlink" title="windows canary"></a>windows canary</h4><h4 id="linux内核"><a href="#linux内核" class="headerlink" title="linux内核"></a>linux内核</h4><h2 id="格式化字符串漏洞"><a href="#格式化字符串漏洞" class="headerlink" title="格式化字符串漏洞"></a>格式化字符串漏洞</h2><h2 id="整型溢出"><a href="#整型溢出" class="headerlink" title="整型溢出"></a>整型溢出</h2><h2 id="堆"><a href="#堆" class="headerlink" title="堆"></a>堆</h2></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">MambaInVeins</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://mambainveins.gitee.io/mambainveins/2021/08/15/2021/2021-08-15-HWS_PWN/">http://mambainveins.gitee.io/mambainveins/2021/08/15/2021/2021-08-15-HWS_PWN/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://mambainveins.gitee.io/mambainveins" target="_blank">MambaInVeins Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/pwn/">pwn</a></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0152.png" data-sites="wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i> 打赏<div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/blogpublic/wechat.jpg" target="_blank"><img class="post-qr-code-img" src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/blogpublic/wechat.jpg" alt="wechat"/></a><div class="post-qr-code-desc">wechat</div></li><li class="reward-item"><a href="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/blogpublic/alipay.jpg" target="_blank"><img class="post-qr-code-img" src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/blogpublic/alipay.jpg" alt="alipay"/></a><div class="post-qr-code-desc">alipay</div></li></ul></div></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2021/07/23/2021/2021-07-23-pwn_env/"><img class="next-cover" src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0079.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">pwn环境搭建</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> 相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2021/03/20/2021/2021-03-20-linux_elf_hook/" title="linux hook"><img class="cover" src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0105.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-03-20</div><div class="title">linux hook</div></div></a></div><div><a href="/2021/07/23/2021/2021-07-23-pwn_env/" title="pwn环境搭建"><img class="cover" src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0079.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-07-23</div><div class="title">pwn环境搭建</div></div></a></div><div><a href="/2020/08/18/2020/2020-08-18-CTF_world_pwn_newbee_level0/" title="CTF攻防世界 pwn新手题 level0(ret2text)"><img class="cover" src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0285.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-08-18</div><div class="title">CTF攻防世界 pwn新手题 level0(ret2text)</div></div></a></div><div><a href="/2020/08/18/2020/2020-08-18-CTF_world_pwn_newbee_level2/" title="CTF攻防世界 pwn新手题 level2(ret2libc)"><img class="cover" src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0426.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-08-18</div><div class="title">CTF攻防世界 pwn新手题 level2(ret2libc)</div></div></a></div><div><a href="/2020/08/18/2020/2020-08-18-CTF_world_pwn_newbee_when_did_you_born/" title="CTF攻防世界 pwn新手题 when_did_you_born"><img class="cover" src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0059.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-08-18</div><div class="title">CTF攻防世界 pwn新手题 when_did_you_born</div></div></a></div><div><a href="/2020/08/18/2020/2020-08-18-pwn_study/" title="pwn入门"><img class="cover" src="https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0071.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-08-18</div><div class="title">pwn入门</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%A0%86%E6%A0%88%E5%88%A9%E7%94%A8%E4%B9%8B%E5%AF%B9%E6%8A%97linux%E4%BF%9D%E6%8A%A4"><span class="toc-number">1.</span> <span class="toc-text">堆栈利用之对抗linux保护</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#linux%E5%B8%B8%E8%A7%81%E4%BF%9D%E6%8A%A4%E6%9C%BA%E5%88%B6"><span class="toc-number">1.1.</span> <span class="toc-text">linux常见保护机制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E7%BD%91%E5%9D%80"><span class="toc-number">1.2.</span> <span class="toc-text">常用网址</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A0%88"><span class="toc-number">1.3.</span> <span class="toc-text">栈</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E7%A1%80%E6%A0%88%E7%BB%93%E6%9E%84"><span class="toc-number">1.3.1.</span> <span class="toc-text">基础栈结构</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BC%A0%E5%8F%82"><span class="toc-number">1.3.1.1.</span> <span class="toc-text">传参</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8"><span class="toc-number">1.3.1.2.</span> <span class="toc-text">函数调用</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%88%E6%BA%A2%E5%87%BA"><span class="toc-number">1.3.2.</span> <span class="toc-text">栈溢出</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9%E6%8A%97DEP-NX%E4%BF%9D%E6%8A%A4%E6%9C%BA%E5%88%B6"><span class="toc-number">1.3.3.</span> <span class="toc-text">对抗DEP&#x2F;NX保护机制</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#ret2-text"><span class="toc-number">1.3.3.1.</span> <span class="toc-text">ret2_text</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%A0%88%E7%9A%84%E5%AD%97%E8%8A%82%E5%AF%B9%E9%BD%90"><span class="toc-number">1.3.3.1.1.</span> <span class="toc-text">栈的字节对齐</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ret2-shellcode"><span class="toc-number">1.3.3.2.</span> <span class="toc-text">ret2_shellcode</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ret2-libc"><span class="toc-number">1.3.3.3.</span> <span class="toc-text">ret2_libc</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#ROP%EF%BC%88Return-Oriented-Programming%EF%BC%89"><span class="toc-number">1.3.3.3.1.</span> <span class="toc-text">ROP（Return Oriented Programming）</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ROP-ret2libc"><span class="toc-number">1.3.3.4.</span> <span class="toc-text">ROP(ret2libc)</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9%E6%8A%97Canary%E4%BF%9D%E6%8A%A4"><span class="toc-number">1.3.4.</span> <span class="toc-text">对抗Canary保护</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B3%84%E9%9C%B2Canary%E7%9A%84%E5%80%BC%EF%BC%88%E4%BB%BB%E6%84%8F%E8%AF%BB%E7%9A%84%E5%8A%9F%E8%83%BD%EF%BC%89"><span class="toc-number">1.3.4.1.</span> <span class="toc-text">泄露Canary的值（任意读的功能）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A6%86%E5%86%99%E5%89%AF%E6%9C%AC%E5%80%BC"><span class="toc-number">1.3.4.2.</span> <span class="toc-text">覆写副本值</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8A%AB%E6%8C%81stack-chk-fail%E5%87%BD%E6%95%B0"><span class="toc-number">1.3.4.3.</span> <span class="toc-text">劫持stack_chk_fail函数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#stack-smashing"><span class="toc-number">1.3.4.4.</span> <span class="toc-text">stack smashing</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#BROP%E9%80%90%E5%AD%97%E8%8A%82%E7%88%86%E7%A0%B4-%E6%B2%A1%E6%9C%89%E6%BA%90%E7%A0%81%E5%8F%8A%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%96%87%E4%BB%B6"><span class="toc-number">1.3.4.5.</span> <span class="toc-text">BROP逐字节爆破(没有源码及二进制文件)</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E4%BA%9B%E6%8A%80%E6%9C%AF"><span class="toc-number">1.3.5.</span> <span class="toc-text">一些技术</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A0%88%E5%8A%AB%E6%8C%81%EF%BC%88%E6%A0%88%E8%BF%81%E7%A7%BB%EF%BC%89"><span class="toc-number">1.3.5.1.</span> <span class="toc-text">栈劫持（栈迁移）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ret2-csu"><span class="toc-number">1.3.5.2.</span> <span class="toc-text">ret2_csu</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ret2reg"><span class="toc-number">1.3.5.3.</span> <span class="toc-text">ret2reg</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#JOP-COP"><span class="toc-number">1.3.5.4.</span> <span class="toc-text">JOP&#x2F;COP</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#SROP"><span class="toc-number">1.3.5.5.</span> <span class="toc-text">SROP</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ret2dlresolve"><span class="toc-number">1.3.5.6.</span> <span class="toc-text">ret2dlresolve</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8B%93%E5%B1%95"><span class="toc-number">1.3.6.</span> <span class="toc-text">拓展</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#windows-canary"><span class="toc-number">1.3.6.1.</span> <span class="toc-text">windows canary</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#linux%E5%86%85%E6%A0%B8"><span class="toc-number">1.3.6.2.</span> <span class="toc-text">linux内核</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%BC%8F%E6%B4%9E"><span class="toc-number">1.4.</span> <span class="toc-text">格式化字符串漏洞</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B4%E5%9E%8B%E6%BA%A2%E5%87%BA"><span class="toc-number">1.5.</span> <span class="toc-text">整型溢出</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A0%86"><span class="toc-number">1.6.</span> <span class="toc-text">堆</span></a></li></ol></li></ol></div></div></div></div></main><footer id="footer" style="background-image: url(https://cdn.jsdelivr.net/gh/mambainveins/ImageHosting/img/wallpaper/0152.png)"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By MambaInVeins</div><div class="footer_custom_text"><a href="http://mambainveins.gitee.io/">Mamba Never Out</a>!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="font-plus" type="button" title="放大字体"><i class="fas fa-plus"></i></button><button id="font-minus" type="button" title="缩小字体"><i class="fas fa-minus"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="false" data-click="true"></script><script>(function(){
+  const bp = document.createElement('script');
+  const curProtocol = window.location.protocol.split(':')[0];
+  if (curProtocol === 'https') {
+    bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+  }
+  else{
+    bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+  }
+  bp.dataset.pjax = ''
+  const s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(bp, s);
+})()</script></div></body></html>

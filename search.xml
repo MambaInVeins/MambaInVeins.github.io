@@ -4,6 +4,35 @@
   
     
     <entry>
+      <title>ubuntu开启ssh服务</title>
+      <link href="2022/02/12/2022/2022-02-12-ubuntu_ssh/"/>
+      <url>2022/02/12/2022/2022-02-12-ubuntu_ssh/</url>
+      
+        <content type="html"><![CDATA[<h2 id="ubuntu开启ssh服务"><a href="#ubuntu开启ssh服务" class="headerlink" title="ubuntu开启ssh服务"></a>ubuntu开启ssh服务</h2><p>Secure Shell（SSH）是Linux系统管理中的经常要用到的一种远程访问技术。在Ubuntu 18.04系统仓库中，已经收录了同为开源的OpenSSH，我们可以用它来为系统开启SSH访问功能。</p><p>打开终端，输入以下命令安装OpenSSH服务</p><pre><code>sudo apt-get install openssh-server</code></pre><p>修改/etc/ssh/sshd_config</p><pre><code>sudo vim /etc/ssh/sshd_configPermitRootLogin yes （默认为#PermitRootLogin prohibit-password）</code></pre><p>重启SSH</p><pre><code>sudo service ssh restart</code></pre><p>安装完成之后，就可以在客户端用系统用户来远程登录了</p><pre><code>在Windows系统下可以用XShell之类软件，在Linux中则可以使用openssh-client，可以用命令来安装：sudo apt-get install openssh-client</code></pre>]]></content>
+      
+      
+      <categories>
+          
+          <category> 安全 </category>
+          
+          <category> 基础知识 </category>
+          
+          <category> linux </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> pwn </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>小米6完全root</title>
       <link href="2021/09/14/2021/2021-09-14-mi6root/"/>
       <url>2021/09/14/2021/2021-09-14-mi6root/</url>
